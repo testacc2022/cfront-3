@@ -1,5 +1,6 @@
+CC  ?=  gcc
 CXX	?=	g++
-CCFLAGS	=	-I../incl
+CCFLAGS	= -fpermissive -I../incl
 
 #MPMACRO = PATCH
 MPMACRO = MUNCH
@@ -21,7 +22,6 @@ COMDEP	=	$(COMDEP0) yystype.h
 
 cfront:	$(OFILES)
 	$(CXX)	-o cfront $(OFILES)
-	-@ test -x ../cfront && mv ../cfront ../cfront.old
 	cp cfront ..
 
 szal.result: szal/szal.c
@@ -29,7 +29,7 @@ szal.result: szal/szal.c
 	./szal/szal > szal.result
 
 y.tab.C yystype.h: gram.y $(COMDEP0)
-	yacc -d gram.y
+	byacc -d gram.y
 	mv y.tab.c y.tab.C
 	mv y.tab.h yystype.h
 	sed -i -e 's/^#ifdef __cplusplus/#if 0/' y.tab.C
@@ -140,6 +140,6 @@ _stdio.o: _stdio.c
 	cc -c _stdio.c
 
 clean:
-	-@rm szal.result szal/szal
-	-@rm y.tab.C yystype.h
-	-@rm *.o cfront *..c
+	-@rm szal.result szal/szal >& /dev/null
+	-@rm y.tab.C yystype.h >& /dev/null
+	-@rm *.o *..c cfront ../cfront >& /dev/null

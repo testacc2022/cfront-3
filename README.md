@@ -25,3 +25,20 @@ PPS: features not implement in cfront 3.x
     Support for wide character strings.
     Exceptions.
     - Support for the `long long` type (done)
+
+## Notes
+
+    Fix the issues of compilation under Ubuntu.
+
+    # Ubuntu package needed:
+    sudo apt install byacc
+
+    # Build
+    make
+
+    # Demo
+    make demo
+
+    # Clean
+    make clean
+

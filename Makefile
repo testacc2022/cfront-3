@@ -17,22 +17,24 @@ PATH:=$(CURDIR):$(PATH)
 
 CC	=	CC
 
-all:	libC.a munch cfront
-	:
+.PHONY: demo
+all: cfront munch libC.a
 
 libC.a:	always
-	cd lib/mk; $(MAKE) CC=$(CC) CCFLAGS="$(CCFLAGS)" BSD=$(BSD)
+	cd lib/mk && $(MAKE) CC=$(CC) CCFLAGS="$(CCFLAGS)" BSD=$(BSD)
 	mv lib/mk/libC.a .
 
 munch:	_munch/munch.c
 	cc -o munch _munch/munch.c
 
 cfront: always
-	cd src; $(MAKE) CXX=$(CC) CCFLAGS="$(CCFLAGS)"
-	mv src/cfront cfront
-	
+	$(MAKE) -C src
+
+demo: all
+	$(MAKE) -C demo/hello
+
 scratch: always
-	cd scratch; $(MAKE) CC=$(scratchCC) BSD=$(BSD) CCFLAGS="$(CCFLAGS)"
+	cd scratch && $(MAKE) CC=$(scratchCC) BSD=$(BSD) CCFLAGS="$(CCFLAGS)"
 
 #This target will populate the scratch directories with good-old-c
 #files.  This is used to port to another machine.
@@ -46,3 +48,10 @@ fillscratch:
 	cp _munch/*.c scratch/mnch/
 
 always:	
+
+clean:
+	$(MAKE) -C src clean
+	$(MAKE) -C lib/mk clean
+	$(MAKE) -C demo/hello clean
+	-@rm munch libC.a >& /dev/null
+
