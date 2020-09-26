@@ -28,7 +28,7 @@ PPS: features not implement in cfront 3.x
 
 ## Notes
 
-    Fix the issues of compilation under Ubuntu.
+Fix the issues of compilation under Ubuntu.
 
     # Ubuntu package needed:
     sudo apt install byacc
