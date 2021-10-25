@@ -75,7 +75,7 @@ extern int fprintf(FILE*, const char* ...);
 extern int sprintf(char*, const char* ...);
 extern int scanf(const char* ...);
 extern int fscanf(FILE*, const char* ...);
-extern int sscanf(char*, const char* ...);
+extern int sscanf(const char*, const char* ...);
 extern int fread(char*, int, int, FILE*);
 extern int fwrite(const char*, int, int, FILE*);
 extern int fclose(FILE*);
@@ -107,9 +107,9 @@ extern char	*ctermid(char*),
                 *cuserid(char*),
                 *tempnam(char*, char*),
                 *tmpnam(char*);
-extern int      vprintf(char*, va_list),
-                vfprintf(FILE*, char*, va_list), 
-                vsprintf(char*, char*, va_list),
+extern int      vprintf(const char*, va_list),
+                vfprintf(FILE*, const char*, va_list), 
+                vsprintf(char*, const char*, va_list),
 		setvbuf(FILE*, char*, int, int); 
 
 extern void perror (const char*);

@@ -56,8 +56,8 @@ Ptype size_t_type;
 
 Pstmt trim_tail(Pstmt tt);
 Pname find_vptr(Pclass);
-char *get_classname(char*);
-char *drop_classname(char*);
+const char *get_classname(const char*);
+const char *drop_classname(const char*);
 loc no_where;	// 0,0
 
 int imeasure;	// a counter trying to measure the complexity of a function
@@ -117,8 +117,8 @@ int replace_ret(Pstmt sl, int level, Ptable tbl)
 
 void simpl_init()
 {
-       char* ns = oper_name(NEW);
-       char* ds = oper_name(DELETE);
+       const char* ns = oper_name(NEW);
+       const char* ds = oper_name(DELETE);
 
 	size_t_type = Pvoid_type->tsizeof()>uint_type->tsizeof()?
                       Pvoid_type->tsizeof()>ulong_type->tsizeof()?ullong_type:ulong_type :
@@ -561,9 +561,9 @@ Pstmt fct::dtor_simpl(Pclass cl, Pexpr th)
 		Pname cn;
 		Pname dtor;
 
-		if (cn = t->is_cl_obj()) {
+		if ((cn = t->is_cl_obj())) {
 			Pclass cl = (Pclass)cn->tp;
-			if (dtor = cl->has_dtor()) {	// dtor(this,0,ones);
+			if ((dtor = cl->has_dtor())) {	// dtor(this,0,ones);
 				ee = new ref(REF,th,m);
 				ee->tp = m->tp;
 				ee = call_dtor(ee,dtor,0,DOT,one);
@@ -572,7 +572,7 @@ Pstmt fct::dtor_simpl(Pclass cl, Pexpr th)
 		}
 		else if (cl_obj_vec) {
 			Pclass cl = Pclass(cl_obj_vec->tp);
-			if (dtor = cl->has_dtor()) {
+			if ((dtor = cl->has_dtor())) {
 	Pfct f = Pfct(dtor->tp);
 	int i = 0;
 	for (Pname nn = f->f_args->n_list; nn && nn->n_list; nn=nn->n_list) i++;
@@ -721,7 +721,7 @@ Pclass second_base(Pclass cl, Pclass base)
 
 //Pclass topclass;
 
-Pexpr classdef::get_vptr_exp(char *s)
+Pexpr classdef::get_vptr_exp(const char *s)
 {
 //error('d',"%t::get_vptr_exp(%s)",this,s?s:"0");
 	if (c_body == 1) dcl_print(0);
@@ -880,7 +880,7 @@ int fct::ctor_simpl(Pclass cl, Pexpr th)
 		Pexpr vp = cl->get_vptr_exp(blist->string);
 
                 char *str = 0;
-		char *cs = cl->nested_sig?cl->nested_sig:cl->string;
+		const char *cs = cl->nested_sig?cl->nested_sig:cl->string;
                 if (cl->lex_level && cl->nested_sig==0) {
 			str = new char[ cl->c_strlen + 1 ];
 			strcpy(str,cl->local_sig);
@@ -925,9 +925,9 @@ int fct::ctor_simpl(Pclass cl, Pexpr th)
 			// init of non-class mem
 			// set in fct::mem_init()
 		}
-		else if (cn=t->is_cl_obj()) {	// try for default
+		else if ((cn=t->is_cl_obj())) {	// try for default
 			Pclass cl = Pclass(cn->tp);
-			if (ctor = cl->has_ictor()) {
+			if ((ctor = cl->has_ictor())) {
 				Pexpr r = new ref(REF,th,m);
 				ee = call_ctor(tbl,r,ctor,0,DOT);
 				check_visibility(ctor,0,Pclass(ctor->n_table->t_name->tp),tbl,curr_fct);
@@ -938,7 +938,7 @@ int fct::ctor_simpl(Pclass cl, Pexpr th)
 		}
 		else if (cl_obj_vec) {
 			Pclass cl = Pclass(cl_obj_vec->tp);
-			if (ctor = cl->has_ictor()) { // _new_vec(vec,noe,sz,ctor);
+			if ((ctor = cl->has_ictor())) { // _new_vec(vec,noe,sz,ctor);
 				Pexpr mm = new ref(REF,th,m);
 				mm->tp = m->tp;
 				// ctor may contain default arguments: check and replace
@@ -1140,7 +1140,7 @@ void fct::simpl()
 		Pexpr vp = cl->get_vptr_exp(blist->string);
 
                 char *str = 0;
-		char *cs = cl->nested_sig?cl->nested_sig:cl->string;
+		const char *cs = cl->nested_sig?cl->nested_sig:cl->string;
                 if (cl->lex_level && cl->nested_sig==0) {
 			str = new char[ cl->c_strlen + 1 ];
 			strcpy(str,cl->local_sig);

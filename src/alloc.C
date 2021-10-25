@@ -44,7 +44,7 @@ Ptfct  templ_fct::ptfct_free = 0;
 
 void* chunk(int i)	// get memory that is not to be freed
 {
-	register char* cp = (char*)malloc(i*CHUNK-8);
+	/*register*/ char* cp = (char*)malloc(i*CHUNK-8);
 	if (cp == 0) {			// no space
 		free((char*)gtbl);	// get space for error message
 		error('i',"free store exhausted");
@@ -91,10 +91,10 @@ void operator delete (void* p)
 void*
 expr::operator new(size_t sz)
 {
-	register Pexpr p;
+	/*register*/ Pexpr p;
 
         if ( (p=expr_free) == 0 ) {
-                register Pexpr q = (Pexpr) chunk(1);
+                /*register*/ Pexpr q = (Pexpr) chunk(1);
                 for (p=expr_free=&q[EBITE-1]; q<p; p--) {
                         p->e1 = p-1;
                         DB(p->node::allocated=0);
@@ -125,9 +125,9 @@ expr::operator delete(void* vp, size_t)
 void*
 stmt::operator new(size_t sz)
 {
-	register Pstmt p;
+	/*register*/ Pstmt p;
 	if ( (p=stmt_free) == 0 ) {
-		register Pstmt q = (Pstmt) chunk(1);
+		/*register*/ Pstmt q = (Pstmt) chunk(1);
 		for (p=stmt_free=&q[SBITE-1]; q<p; p--) {
 			p->s_list = p-1;
 			DB(p->node::allocated=0);
@@ -157,10 +157,10 @@ stmt::operator delete(void* vp,size_t)
 void*
 name::operator new(size_t sz)
 {
-	register Pname p;
+	/*register*/ Pname p;
 
 	if ( (p=name_free) == 0 ) {
-		register Pname q = (Pname) chunk(1);
+		/*register*/ Pname q = (Pname) chunk(1);
 		for (p=name_free=&q[NBITE-1]; q<p; p--) {
 			p->n_tbl_list = p-1;
 			DB(p->node::allocated=0);
@@ -190,10 +190,10 @@ name::operator delete(void* vp,size_t)
 void*
 table::operator new(size_t sz)
 {
-	register Ptable p;
+	/*register*/ Ptable p;
 
 	if ( (p=table_free) == 0 ) {
-		register Ptable q = (Ptable) chunk(1);
+		/*register*/ Ptable q = (Ptable) chunk(1);
 		for (p=table_free=&q[TBITE-1]; q<p; p--) {
 			p->next = p-1;
 			DB(p->node::allocated=0);
@@ -210,10 +210,10 @@ table::operator new(size_t sz)
 void*
 ktable::operator new(size_t sz)
 {
-	register Pktab p;
+	/*register*/ Pktab p;
 
 	if ( (p=table_free) == 0 ) {
-		register Pktab q = (Pktab) chunk(1);
+		/*register*/ Pktab q = (Pktab) chunk(1);
 		for (p=table_free=&q[KBITE-1]; q<p; p--) {
 			p->k_next = p-1;
 			DB(p->node::allocated=0);
@@ -250,10 +250,10 @@ void ktable::operator delete(void* vp,size_t)
 void*
 vec::operator new(size_t sz)
 {
-	register Pvec p;
+	/*register*/ Pvec p;
 
 	if ( (p=vec_free) == 0 ) {
-		register Pvec q = (Pvec) chunk(1);
+		/*register*/ Pvec q = (Pvec) chunk(1);
 		for (p=vec_free=&q[VBITE-1]; q<p; p--) {
 			p->tlist = p-1;
 			DB(p->node::allocated=0);
@@ -283,10 +283,10 @@ vec::operator delete(void* vp,size_t)
 void*
 fct::operator new(size_t sz)
 {
-	register Pfct p;
+	/*register*/ Pfct p;
 
 	if ( (p=fct_free) == 0 ) {
-		register Pfct q = (Pfct) chunk(1);
+		/*register*/ Pfct q = (Pfct) chunk(1);
 		for (p=fct_free=&q[FBITE-1]; q<p; p--) {
 			p->tlist = p-1;
 			DB(p->node::allocated=0);
@@ -316,11 +316,11 @@ fct::operator delete(void* vp,size_t)
 void*
 ptr::operator new(size_t sz)
 {
-	register Pptr p;
+	/*register*/ Pptr p;
 
 //error('d',"ptr new");
 	if ( (p=ptr_free) == 0 ) {
-		register Pptr q = (Pptr) chunk(1);
+		/*register*/ Pptr q = (Pptr) chunk(1);
 		for (p=ptr_free=&q[PBITE-1]; q<p; p--) {
 			p->tlist = p-1;
 			DB(p->node::allocated=0);
@@ -350,10 +350,10 @@ ptr::operator delete(void* vp,size_t)
 void*
 templ_fct::operator new(size_t sz)
 {
-	register Ptfct p;
+	/*register*/ Ptfct p;
 
 	if ( (p=ptfct_free) == 0 ) {
-		register Ptfct q = (Ptfct) chunk(1);
+		/*register*/ Ptfct q = (Ptfct) chunk(1);
 		for (p=ptfct_free=&q[PTBIT-1]; q<p; p--) {
 			p->tlist = p-1;
 			DB(p->node::allocated=0);

@@ -35,7 +35,7 @@ char scan_started;
 
 #define ERRTRACE    20
 
-static char* abbrev_tbl[] = {
+static const char* abbrev_tbl[] = {
 	" argument",
 	" base",
 	" class",
@@ -287,7 +287,7 @@ int error(int t, loc* lc, const char* s, const ea& a0, const ea& a1, const ea& a
 
 	int c;
 
-	while (c = *s++) {
+	while ((c = *s++)) {
 		if ('A'<=c && c<='Z')
 			putstring(abbrev_tbl[c-'A']);
 		else if (c == '%') {
@@ -330,7 +330,7 @@ int error(int t, loc* lc, const char* s, const ea& a0, const ea& a1, const ea& a
 				break;
 			}
 			case 'p':	// pointer
-			{	char* f = sizeof(char*)==sizeof(int)?" %d":" %ld";
+			{	const char* f = sizeof(char*)==sizeof(int)?" %d":" %ld";
 				fprintf(out_file,f,a->p);
 				break;
 			}

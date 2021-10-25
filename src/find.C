@@ -114,7 +114,7 @@ Pexpr find_name(Pname n, Pclass cl, Ptable tbl, int f, Pname m)
 	if ( n == 0 ) 
 	    error('i',"find_name(n==0,cl==%t,tbl==%d,f==%k,m==%n)",cl,tbl,f,m);
 	Pname q = n->n_qualifier;
-	char* s = n->string;
+	const char* s = n->string;
 	Pfct mf = m ? m->fct_type() : 0;
 	Pname tnrv;
 
@@ -138,7 +138,7 @@ Pexpr find_name(Pname n, Pclass cl, Ptable tbl, int f, Pname m)
 	tcl = cl;
 
 	mex = 1;
-	if (me = m) {
+	if ((me = m)) {
 		mef = Pfct(me->tp);
                 if (mef->base!=FCT) 
                     error('i',"mef %d %k",mef,mef->base);
@@ -546,7 +546,7 @@ finishing_up:
 	    return undef(n,gtbl,f);
 	} // if not . or ->
 
-	if (ee = cl->find_name(s,cl)) {	// .s or ->s
+	if ((ee = cl->find_name(s,cl))) {	// .s or ->s
 		DEL(n);
 		me = 0;
 		return ee;
@@ -590,7 +590,7 @@ TOK Nvis;
 TOK Nvirt;
 TOK ppbase;
 
-Pclass classdef::is_base(char* s, TOK* pptr, int level)
+Pclass classdef::is_base(const char* s, TOK* pptr, int level)
 /*
 	is "s" a public base class of this?
 */
@@ -603,7 +603,7 @@ Pclass classdef::is_base(char* s, TOK* pptr, int level)
 	for (Pbcl b = baselist; b; b=b->next) {
 		if (b->promoted)
 			continue;
-		char *str = 0;
+		const char *str = 0;
 		if (b->bclass->class_base == INSTANTIATED) 
 			str = ((Ptclass)b->bclass)->unparametrized_tname()->string;
 // error('d',"base: %s str: %s", b->bclass->string, str);
@@ -702,7 +702,7 @@ bit classdef::has_base(Pclass cl, int level, int ccflag)
 
 int Noffset;
 Pexpr Nptr;
-char *Nalloc_base;
+const char *Nalloc_base;
 clist* vcllist;
 
 int clist::onlist(Pclass c)
@@ -725,7 +725,7 @@ void clist::clear()
 }
 
 Pbcl Nvbc_alloc;
-int is_unique_base(Pclass cl, char* s, int offset, int in_base,
+int is_unique_base(Pclass cl, const char* s, int offset, int in_base,
 		   Pclass priSeen )
 /*
 	is "s" a unique base class of this?
@@ -864,8 +864,8 @@ extern bit Vvtab;
 extern bit Vvbc_inher;
 extern bit Vvbc_alloc;
 
-char *
-classdef::has_allocated_base(char *str) 
+const char *
+classdef::has_allocated_base(const char *str) 
 /*
  *	str is an unallocated virtual base class of this
  *	return the name of the second or subsequent base class 
@@ -1140,7 +1140,7 @@ Pname find_virtual(Pclass cl, Pname s)
 	for (Pbcl b = cl->baselist; b; b = b->next) {
 		Pclass bcl = b->bclass;
 		Pname n;
-		if (n = bcl->memtbl->look(s->string,0)) {
+		if ((n = bcl->memtbl->look(s->string,0))) {
 // error('d', "find_virtual: n: %d base: %k", n, n->base );
 			if ( n->base == PUBLIC ) // x::foo;
 				continue;
@@ -1158,7 +1158,7 @@ Pname find_virtual(Pclass cl, Pname s)
 			else if (f->f_virtual && n->tp->check(s->tp,VIRTUAL)==0)
 				return n;
 		}
-		else if (n = find_virtual(bcl,s))
+		else if ((n = find_virtual(bcl,s)))
 			return n;
 	}
 	return 0;
@@ -1224,7 +1224,7 @@ is_accessible(Pname n, Pclass this_class, bit noCdcl = 0)
 	return 0;
 }
 
-Pexpr classdef::find_name(char* s, Pclass cl, int access_only, int newflag)
+Pexpr classdef::find_name(const char* s, Pclass cl, int access_only, int newflag)
 /*
 	look for "s" in "this" class and its base classes
 	if (cl)
@@ -1386,10 +1386,10 @@ static Pbcl pubVClass;
 static struct PendingMessage { 
     Pbcl bc;
     Pname mf;
-    char *nm;
+    const char *nm;
 } *pM;
 
-Pexpr classdef::find_in_base(char* s, Pclass cl, int access_only, int newflag)
+Pexpr classdef::find_in_base(const char* s, Pclass cl, int access_only, int newflag)
 {
 	static  Pbcl bc_found_in = 0;
 	int statflag = 0; // is data member static
@@ -1565,7 +1565,7 @@ Pexpr classdef::find_in_base(char* s, Pclass cl, int access_only, int newflag)
     		if ( pM ) {
 			// deferred until all base classes of ``this'' examined
 			Pbcl b = pM->bc;
-			char *str = b->bclass->string;
+			const char *str = b->bclass->string;
 			error("%n cannot access %s: %s is a%kBC",pM->mf,name_oper(pM->nm),str,b->ppp);
         		delete pM; pM=0;
     		}
@@ -1714,7 +1714,7 @@ void check_visibility(Pname n, Pname q, Pclass cl, Ptable tbl, Pname fn)
                 fn = dummy_fct;
 	}
 	Pname nn = new name;
-        char* s = n->n_gen_fct_name;    // overloaded name
+        const char* s = n->n_gen_fct_name;    // overloaded name
 	nn->string = s?s:n->string;
 	nn->n_qualifier = q;
 	Pname nx = Pname(find_name(nn,cl,tbl,REF,fn)); // nn deleted by find_name

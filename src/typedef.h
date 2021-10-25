@@ -53,4 +53,5 @@ typedef class slist * Pslist;
 typedef class elist * Pelist;
 typedef class virt * Pvirt;
 typedef char* Pchar;
+typedef const char* CPchar;
 

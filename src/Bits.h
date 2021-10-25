@@ -52,7 +52,7 @@ private:
 
 	// turn off unused high-order bits in the high-order chunk
 	void normalize() {
-		register int ct = n & Bits_mask_ATTLC;
+		/*register*/ int ct = n & Bits_mask_ATTLC;
 		if (ct)
 			b[chunk(n)] &= ~(~Bits_chunk(0) << ct);
 	}
@@ -91,8 +91,8 @@ public:
 	}
 	Bits& set(unsigned i, unsigned long x) {
 		if (i < n) {
-			register Bits_chunk* p = &b[chunk(i)];
-			register Bits_chunk mask = Bits_chunk(1) << (i&Bits_mask_ATTLC);
+			/*register*/ Bits_chunk* p = &b[chunk(i)];
+			/*register*/ Bits_chunk mask = Bits_chunk(1) << (i&Bits_mask_ATTLC);
 			if (x)
 				*p |= mask;
 			else

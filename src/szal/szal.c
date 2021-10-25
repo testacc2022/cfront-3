@@ -68,12 +68,12 @@ struct st9 { char v[7]; char : 2; };	/* fits in 8 bytes */
 struct st10 { char v[7]; int : 2; };	/* might not */
 struct st11 { char v[7]; char : 2; char : 2; };
 
-out(s,a1) char* s; int a1;
+void out(s,a1) char* s; int a1;
 {
 	printf("%s %d\n",s,a1);
 }
 
-outstr(s,str2) char* s; char* str2;
+void outstr(s,str2) char* s; char* str2;
 {
 	printf("%s \"%s\"\n",s,str2);
 }
@@ -118,22 +118,22 @@ int main()
 	out("#define DBI_IN_WORD",i2);
 	out("#define DBI_IN_BYTE",i1);
 	out("#define DSZ_CHAR",sizeof(char));
-	out("#define DAL_CHAR",(int)&oo.c1-(int)&oo.c0);
+	out("#define DAL_CHAR",(size_t)&oo.c1-(size_t)&oo.c0);
 	out("#define DSZ_SHORT",sizeof(short));
-	out("#define DAL_SHORT",(int)&oo.s1-(int)&oo.c00);
+	out("#define DAL_SHORT",(size_t)&oo.s1-(size_t)&oo.c00);
 	out("#define DSZ_INT",sizeof(int));
-	out("#define DAL_INT",(int)&oo.i1-(int)&oo.c2);
+	out("#define DAL_INT",(size_t)&oo.i1-(size_t)&oo.c2);
 	out("#define DSZ_LONG",sizeof(long));
-	out("#define DAL_LONG",(int)&oo.l1-(int)&oo.c3);
+	out("#define DAL_LONG",(size_t)&oo.l1-(size_t)&oo.c3);
 	out("#define DSZ_LLONG",sizeof(long long));
-	out("#define DAL_LLONG",(int)&oo.ll1-(int)&oo.lc3);
+	out("#define DAL_LLONG",(size_t)&oo.ll1-(size_t)&oo.lc3);
 	out("#define DSZ_FLOAT",sizeof(float));
-	out("#define DAL_FLOAT",(int)&oo.f1-(int)&oo.c4);
+	out("#define DAL_FLOAT",(size_t)&oo.f1-(size_t)&oo.c4);
 	out("#define DSZ_DOUBLE",sizeof(double));
-	out("#define DAL_DOUBLE",(int)&oo.d1-(int)&oo.c5);
+	out("#define DAL_DOUBLE",(size_t)&oo.d1-(size_t)&oo.c5);
 	/*  next two should just be repeats of above two */
 	out("#define DSZ_LDOUBLE",sizeof(double));
-	out("#define DAL_LDOUBLE",(int)&oo.d1-(int)&oo.c5);
+	out("#define DAL_LDOUBLE",(size_t)&oo.d1-(size_t)&oo.c5);
 	i = 1<<(sizeof(char*)*i1-2); 
 	if (i<400*1024L)
 		fprintf(stderr,"Pointers to data too small to handle C++\n");
@@ -145,12 +145,12 @@ int main()
 	if (sizeof(PF)!=sizeof(struct ss*))
 		fprintf(stderr,"Cannot handle sizeof(pointer to function) != sizeof(pointer to struct)\n");
 	out("#define DSZ_STRUCT",sizeof(struct st1));
-	out("#define DAL_STRUCT",(int)&oo.oo-(int)&oo.c8);
+	out("#define DAL_STRUCT",(size_t)&oo.oo-(size_t)&oo.c8);
 	out("#define DSZ_WORD",sizeof(struct st5));
 	out("#define DSZ_WPTR",sizeof(struct ss *));
-	out("#define DAL_WPTR",(int)&oo.p2-(int)&oo.c7);
+	out("#define DAL_WPTR",(size_t)&oo.p2-(size_t)&oo.c7);
 	out("#define DSZ_BPTR",sizeof(char*));
-	out("#define DAL_BPTR",(int)&oo.p1-(int)&oo.c6);
+	out("#define DAL_BPTR",(size_t)&oo.p1-(size_t)&oo.c6);
 	large = (unsigned)~0;
 	large = large >> 1;
 	sprintf(largest,"%d",large);		/* largest integer */

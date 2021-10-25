@@ -131,4 +131,4 @@ ios_compat.o:	../stream/ios_compat.C $(DEPEND)
 	$(CC) $(CCFLAGS) -I../stream -c ../stream/ios_compat.C
 
 clean:
-	-@$(RM) -f *.o *..c >& /dev/null
+	$(RM) -f *.o *..c

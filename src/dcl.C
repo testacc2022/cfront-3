@@ -1037,7 +1037,7 @@ xdr:
 				for (Pvirt n=bcl->bclass->virt_list;n;n=n->next) {
 					velem* ivec=n->virt_init;
 					Pname vn;
-					for (int i=0;vn=ivec[i].n;i++) {
+					for (int i=0;(vn=ivec[i].n);i++) {
 						Pname n=cl->memtbl->look(vn->string,0);
 						if (vn->n_initializer && (n==0 || n->base==PUBLIC))
 							error('c',"%n ",vn);
@@ -2054,10 +2054,10 @@ ggg:
 
 
 char*
-make_nested_name(char *s, Pclass cl)
+make_nested_name(const char *s, Pclass cl)
 { // Q<cnt>_<class_names><space><null>
 	const int nested_depth = 9;
-    	char *str_arr[nested_depth];
+    	const char *str_arr[nested_depth];
     	int  size_arr[nested_depth];
     	int cnt = 1;
     	int size = 4; // Q,<cnt>,<_>,<null>

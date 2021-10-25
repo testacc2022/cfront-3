@@ -1,6 +1,6 @@
 /*ident	"@(#)cls4:src/print2.c	1.36" */
 /*******************************************************************************
- 
+
 C++ source for the C++ Language System, Release 3.0.  This product
 is a new release of the original cfront developed in the computer
 science research center of AT&T Bell Laboratories.
@@ -48,7 +48,7 @@ int ispt_data(Pname n)
 {
 	if (!n->tp || !n->n_table || !n->n_table->t_name || !n->n_table->t_name->tp)
 		return 0;
-	char* s = Pclass(n->n_table->t_name->tp)->string;
+	const char* s = Pclass(n->n_table->t_name->tp)->string;
 	while (*s) {
 		if (!strncmp(s, "__pt__", 6))
 			return 1;
@@ -75,7 +75,7 @@ static void end_mem()
 	}
 }
 
-static int dem_mem(char* cn, char* mn)
+static int dem_mem(const char* cn, const char* mn)
 {
 	char buf[1024];
 	Pname n;
@@ -189,7 +189,7 @@ void dcl_buf::put()
 	    if (cf)
 		b->ansi_const = ac_save;
 	}
-	
+
 	for( ; li; li--) {
 		switch (left[li]) {
 		case LP:
@@ -383,7 +383,7 @@ void fct::arg_print()
 	putch('(');
 	for (Pname nn=argtype; nn;) {
 		nn->tp->dcl_print(0);
-		if (nn=nn->n_list)
+		if ((nn=nn->n_list))
 			puttok(CM);
 		else
 			break;
@@ -396,7 +396,7 @@ void fct::arg_print()
 	putch(')');
 
 	if (f_const)
-		puttok(CONST);	
+		puttok(CONST);
 	if (f_static)
 		puttok(STATIC);	// wrong place for ``static''
 }
@@ -432,11 +432,11 @@ void name::dcl_print(TOK list)
 		if (n->n_stclass==ENUM) if (list) continue; else return;
 
 		if (n->where.line!=last_line.line || n->where.file!=last_line.file)
-			if (last_ll = n->where.line)
+			if ((last_ll = n->where.line))
 				n->where.putline();
 			else
 				last_line.putline();
-	
+
 		bit tc = 0;
 		Ptype tt = t->skiptypedefs(tc);
 
@@ -454,27 +454,27 @@ void name::dcl_print(TOK list)
 			break;
 
 		case FCT:
-		{	
+		{
 			Pfct f = Pfct(t);
 
 
 
 
-			if (	dtpt_opt && 
-				all_flag==0 && 
-				curloc.file!=first_file && 
-				f->f_inline==0 && 
-				f->f_is_inline==0 && 
+			if (	dtpt_opt &&
+				all_flag==0 &&
+				curloc.file!=first_file &&
+				f->f_inline==0 &&
+				f->f_is_inline==0 &&
 				!(n->n_sto==STATIC && !n->n_stclass) &&
-				none_flag==0) 
+				none_flag==0)
 					f->body=0;
 
-			if (t->is_templ_instance() && 
-                		current_fct_instantiation != f) 
+			if (t->is_templ_instance() &&
+                		current_fct_instantiation != f)
 			{
 				if (n->n_addr_taken == 1 &&
 					current_fct_instantiation == 0 &&
-				       	(f->f_inline || f->last_expanded)) 
+				       	(f->f_inline || f->last_expanded))
 					// special case of inline needing to printed
 					// permit it to continue ...
 						;
@@ -568,13 +568,13 @@ void name::dcl_print(TOK list)
 
 				if (
 					n->n_sto == STATIC
-					&& 
+					&&
 					pdef_name == 0
 					&&
 					def_name == 0
 				) {
 					pdef_name = n;
-					if (last_ll = n->where.line)
+					if ((last_ll = n->where.line))
 						n->where.putline();
 					else
 						last_line.putline();
@@ -647,12 +647,12 @@ void name::dcl_print(TOK list)
 			Pexpr i = n->n_initializer;
 			if (n->base == TNAME && n->tpdef ) i = 0;
 
-			if (	dtpt_opt && 
-				all_flag==0 && 
-				n->n_scope!=STATIC && 
+			if (	dtpt_opt &&
+				all_flag==0 &&
+				n->n_scope!=STATIC &&
 				none_flag==0 &&
 				curloc.file != first_file
-			) 
+			)
 			{
 				if (n->base==TNAME && n->tpdef)
 					; // do nothing
@@ -662,7 +662,7 @@ void name::dcl_print(TOK list)
 					if (n->n_scope==EXTERN && Pbase(t)->b_const==0)
 						n->n_sto=EXTERN;
 				}
-			} 
+			}
 
 			if (tc) {
 				switch (tt->base) {
@@ -678,8 +678,8 @@ void name::dcl_print(TOK list)
 
 			if (n->base == TNAME) {
 // error('d',"%s->dcl_print %k lex_level: %d", n->string, n->base, n->lex_level );
-       			/* Always print template formals, even when they have the same 
-			 * formal name, since the instantiation name is different. This 
+       			/* Always print template formals, even when they have the same
+			 * formal name, since the instantiation name is different. This
 			 * fix should not be required when the copy mechanism is in place. */
           			if (! n_template_arg) {
 				//  Pname tn=k_find_name(n->string,Ctbl,HIDDEN);
@@ -692,7 +692,7 @@ void name::dcl_print(TOK list)
 
 			if (n->n_stclass == REGISTER) {
 				// (imperfect) check against member functions
-				// register s a; a.f() illegal
+				// /*register*/ s a; a.f() illegal
 				Pname cln = n->tp->is_cl_obj();
 				if (cln) {
 					Pclass cl = Pclass(cln->tp);
@@ -742,7 +742,7 @@ void name::dcl_print(TOK list)
 					t->dcl_print(n);
 					puttok(SM);
 					if (n->where.line!=last_line.line || n->where.file!=last_line.file)
-						if (last_ll = n->where.line)
+						if ((last_ll = n->where.line))
 							n->where.putline();
 						else
 							last_line.putline();
@@ -797,9 +797,9 @@ void name::dcl_print(TOK list)
 					&&
 					(n->n_table==gtbl || ispt_data(n))
 				) {
-					if (n->n_val && n->n_evaluated==0) { 
+					if (n->n_val && n->n_evaluated==0) {
 						// extern x = f();
-						// generate int x = 0;       
+						// generate int x = 0;
 						// plus dynamic initialization
 						n->n_sto = 0;
 					}
@@ -823,7 +823,7 @@ void name::dcl_print(TOK list)
 					puttok(ASSIGN);
 
 					Pexpr i2 = i;
-					while (i2->base == CAST || i2->base == G_CAST) 
+					while (i2->base == CAST || i2->base == G_CAST)
 						i2 = i2->e1;
 					if (i2->base == ILIST) i = i2;
 
@@ -848,15 +848,15 @@ void name::dcl_print(TOK list)
 							// no break
 						case PTR:
 						case RPTR:
-							if (i->tp==0 || 
-								(!ansi_opt 
-					  			&& 
+							if (i->tp==0 ||
+								(!ansi_opt
+					  			&&
 					  			Pptr(t)->typ
-					  			&& 
+					  			&&
 					  			Pptr(t)->typ->skiptypedefs()->base==VEC
-					  			&& 
-					  			i->base != G_CAST 
-					  			&& 
+					  			&&
+					  			i->base != G_CAST
+					  			&&
 					  			i->base != CAST
 								)
 								||
@@ -911,7 +911,7 @@ void name::dcl_print(TOK list)
 			break;
 		}
 	}
-} 
+}
 
 char *local_sign( Ptype pt )
 { // get function signature for local class
@@ -926,8 +926,8 @@ char *local_sign( Ptype pt )
 
 void enumdef::dcl_print(Pname cln)
 {
-	// note: ***** modify to handle local enums 
-	char* s = nested_sig?nested_sig:(cln ? cln->string:0);
+	// note: ***** modify to handle local enums
+	const char* s = nested_sig?nested_sig:(cln ? cln->string:0);
 	if ( nested_sig )
 		fprintf(out_file,"enum __%s { ",nested_sig);
 	else
@@ -949,13 +949,13 @@ void enumdef::dcl_print(Pname cln)
 		}
 		if (px) puttok(CM);
 		p->n_initializer = 0;
-		
+
 		// nested enum within a class template
-		if (in_class == 0 || 
+		if (in_class == 0 ||
 			in_class->class_base != INSTANTIATED )
 				delete p;
 	}
-	if (in_class == 0 || 
+	if (in_class == 0 ||
 		in_class->class_base != INSTANTIATED )
 			mem = 0;
 	else e_body = 3; // already printed
@@ -1020,7 +1020,7 @@ void name::print(bit fullprint)
 					ft->returns->print();
 			}
 			default:
-				if (tbl=n_table) {
+				if ((tbl=n_table)) {
 					if (tbl == gtbl) {
 						if (f == 0) putstring("::");
 					}
@@ -1080,7 +1080,7 @@ void name::print(bit fullprint)
 					putstring(tbl->t_name->string);
 				} else {
 					if (string)
-						fprintf(out_file,"%s", n_template_arg_string 
+						fprintf(out_file,"%s", n_template_arg_string
 							? n_template_arg_string : "destructor");
 					else
 						putstring("destructor");
@@ -1092,7 +1092,7 @@ void name::print(bit fullprint)
 					putstring(tbl->t_name->string);
 				else {
 					if (string)
-						fprintf(out_file,"%s", n_template_arg_string 
+						fprintf(out_file,"%s", n_template_arg_string
 							? n_template_arg_string : "constructor");
 					else
 						putstring("constructor");
@@ -1108,31 +1108,31 @@ void name::print(bit fullprint)
 				break;
 			}
 
-			if (f) 
+			if (f)
 				if (fullprint)
 					Pfct(tp)->arg_print();
 				else putstring("()");
 		}
 		else {
 			if (n_oper) goto nop;
-			if (string) 
- 				putstring(n_template_arg_string 
+			if (string)
+ 				putstring(n_template_arg_string
 					? n_template_arg_string : string);
 		}
 		return;
 	}
 
-	char* sig = 0;
-	char* templ_fct_name = 0;
+	const char* sig = 0;
+	const char* templ_fct_name = 0;
 	Pclass cl = 0;
-	char* asig = n_anon;
+	const char* asig = n_anon;
 
 	if (tp) {
 		Ptable tbl;
 
 		switch (tp->base) {
 		default:
-			if (tbl=n_table) {	// global or member
+			if ((tbl=n_table)) {	// global or member
 				Pname tn;
 				if (tbl == gtbl) {
 					if ( asig ) {
@@ -1141,12 +1141,12 @@ void name::print(bit fullprint)
 					break;
 				}
 
-				if (tn=tbl->t_name) {
+				if ((tn=tbl->t_name)) {
 					cl = Pclass(tn->tp);
 //error('d',"%n %t cl%t",this,tp,cl);
-					if (asig) { 
+					if (asig) {
 						if (
-							cl->string[0]=='_'	
+							cl->string[0]=='_'
 							&&
 							cl->string[1]=='_'
 							&&
@@ -1155,7 +1155,7 @@ void name::print(bit fullprint)
 							fprintf(out_file,"%s.",asig);
 						}
 						else {
-							char* cn;
+							const char* cn;
 							int f;
 							char buf[1024];
 							if (cl->nested_sig)
@@ -1166,7 +1166,7 @@ void name::print(bit fullprint)
 								cn = cl->string;
 							f = dem_opt_mem && dem_mem(cn, asig);
 							fprintf(out_file, "%s", asig);
-							if ( cl->nested_sig ) { 
+							if ( cl->nested_sig ) {
 								sprintf(buf, "__%s", cl->nested_sig);
 							}
 							else if ( cl->lex_level ) {
@@ -1275,7 +1275,7 @@ void name::print(bit fullprint)
 				sprintf(buf,"%s__%d%s",string,cl->c_strlen,cl->string);
 			else if (sig)
 				sprintf(buf,"%s__%s",templ_fct_name?templ_fct_name:string,sig);
-			else 
+			else
 				sprintf(buf,"%s",string);
 			chop(buf);
 			fprintf(out_file,"%s ",buf);
@@ -1283,18 +1283,18 @@ void name::print(bit fullprint)
 		}
 #endif
 
-		char* mn;
+		const char* mn;
 		{
-		char *s = n_template_arg_string ? n_template_arg_string 
+		const char *s = n_template_arg_string ? n_template_arg_string
 				: (templ_fct_name ? templ_fct_name : string);
-		putstring(s); 
+		putstring(s);
 		mn = s;
 		}
 
 		if ( cl ) {
 			int f = 0;
 			if (tp->base != FCT && n_stclass != STATIC && dem_opt_mem) {
-				char* cn;
+				const char* cn;
 				if (cl->nested_sig)
 					cn = cl->nested_sig;
 				else if (cl->lex_level)
@@ -1332,7 +1332,7 @@ void chop(char* buf)
 
 	if (strlen(buf) <= 30)
 		return;
-			
+
 	while (*p) {
 		hash <<= 1;
 		if (hash & (1<<12)) {
@@ -1371,7 +1371,7 @@ void type::print()
 			else
 				fprintf(out_file,"struct %s *",Pclass(this)->local_sig ? Pclass(this)->local_sig : Pclass(this)->string);
 		}
-		else 
+		else
 			fprintf(out_file,"enum %s *",Penum(this)->string);
 		break;
 	case TYPE:
@@ -1385,7 +1385,7 @@ void type::print()
 	}
 }
 
-char* type::signature(register char* p, int ptflag)
+char* type::signature(/*register*/ char* p, int ptflag)
 /*
 	take a signature suitable for argument types for overloaded
 	function names
@@ -1423,7 +1423,7 @@ xx:
 	case PTR:
 		if (Pptr(t)->b_const)
 			*p++ = 'C';			// *const
-		register char* s;
+		/*register*/ const char* s;
 		int d;
 		s = 0;
 		d = 0;
@@ -1450,7 +1450,7 @@ xx:
 				*p++ = '0' + (d % 100) / 10;
 			if (d)
 				*p++ = '0'+ d%10;
-			while (*p++ = *s++);
+			while ((*p++ = *s++));
 			--p;				// not the '\0'
 		}
 		else
@@ -1500,22 +1500,22 @@ xx:
 							else
 								break;
 						}
-		
+
 						if (x == 1)		// Ti
 							*p++ = 'T';
 						else {			// Nxi
 							*p++ = 'N';
 							*p++ = '0'+x;
 						}
-			
+
 						// assume <100 arguments
 						if (9<i)
 							*p++ = '0'+i/10;
 						*p++ = '0'+i%10;
 						goto zk;
-					}	
+					}
 				}
-		
+
 				// ``normal'' case print argument type signature
 				p = n->tp->signature(p);
 				zk:;
@@ -1544,7 +1544,7 @@ xx:
 
 	// now base types:
 
-	register char *s, *ns = 0;;
+	/*register*/ const char *s, *ns = 0;;
 	char* ls;
 	int d;
 	Pclass cl;
@@ -1563,7 +1563,7 @@ xx:
 	case EOBJ:
 	{	Penum en = Penum(Pbase(t)->b_name->tp);
 		ls = en->local_sig;
-		ns = en->nested_sig; 
+		ns = en->nested_sig;
 		s = en->string;
 		d = en->e_strlen;
 		goto pppp;
@@ -1585,7 +1585,7 @@ xx:
 				*p++ = '0' + (d % 100) / 10;
 			*p++ = '0' + d%10;
 		}
-		while (*p++ = *s++);
+		while ((*p++ = *s++));
 		--p;
 		break;
 	}
@@ -1637,7 +1637,7 @@ void basetype::dcl_print()
 			// note simpl.c knows that VOID -> CHAR grep for VCVC
 			puttok(CHAR);
 			break;
-		} 
+		}
 	case CHAR:
 	case SHORT:
 	case INT:
@@ -1655,7 +1655,7 @@ void basetype::dcl_print()
 		if (emode == 0 && Penum(nn->tp)->e_type) {
 			Penum(nn->tp)->e_type->dcl_print();
 		} else {
-			char* s = nn->string;
+			const char* s = nn->string;
 			puttok(ENUM);
 			if ( *s!='_' || s[1]!='_' || s[2]!='E' )
 				nn->print();
@@ -1667,7 +1667,7 @@ void basetype::dcl_print()
 	cob:
 		cl = Pclass(nn->tp);
 		if ( emode && cl && cl->base == CLASS ) {
-			char* s = nn->string;
+			const char* s = nn->string;
 			puttok(cl->csu);
 			if ( *s!='_' || s[1]!='_' || s[2]!='C' )
 				nn->print();
@@ -1877,7 +1877,7 @@ void type::dcl_print(Pname n)
 		default: // the base has been reached
 		dobase:
 			if (emode) {
-				char* s;
+				const char* s;
 				Ptype tt = t->skiptypedefs();
 
 				switch (tt->base) {
@@ -1934,7 +1934,7 @@ void fct::dcl_print()
 
 	if (ansi_opt) {
 		// print typed arguments:
-		at = (f_this) ? f_this : (f_result) ? f_result : argtype; 
+		at = (f_this) ? f_this : (f_result) ? f_result : argtype;
 		// WNG -- note:  at = f_args had 0 value with ansi_opt set
 		//	mystery fix added here
 		if (at == 0) {
@@ -1958,7 +1958,7 @@ void fct::dcl_print()
 			for (nn=at; nn;) {
 				nn->tp->dcl_print(nn);	// print argument type
 							// (there may not be a name)
-				if (nn=nn->n_list)
+				if ((nn=nn->n_list))
 					puttok(CM);
 				else
 					break;
@@ -1973,7 +1973,7 @@ void fct::dcl_print()
 		if (body && Cast==0) {
 			for (nn=at; nn;) {
 				nn->print();
-				if (nn=nn->n_list)
+				if ((nn=nn->n_list))
 					puttok(CM);
 				else
 					break;
@@ -2027,7 +2027,7 @@ void print_body(Pfct f)
 void classdef::print_members()
 {
 	int i;
-	
+
 	Pbcl l = baselist;
 	if (l) {
 		if (l->base == NAME) {
@@ -2056,7 +2056,7 @@ void classdef::print_members()
 			if (l->base == NAME) {
 				Pclass bcl = l->bclass;
 				char *str =  0;
-				char *cs = bcl->nested_sig?bcl->nested_sig:bcl->string;
+				const char *cs = bcl->nested_sig?bcl->nested_sig:bcl->string;
 				if (bcl->lex_level && !bcl->nested_sig)
 					str=bcl->local_sig;
 				puttok(STRUCT);
@@ -2096,7 +2096,7 @@ void classdef::print_members()
 		if (l->base==VIRTUAL && l->ptr_offset) {
 			Pclass bcl = l->bclass;
        			char* str =  0;
-			char *cs = bcl->nested_sig?bcl->nested_sig:bcl->string;
+			const char *cs = bcl->nested_sig?bcl->nested_sig:bcl->string;
 
 			if (bcl->lex_level && !bcl->nested_sig)
 				str=bcl->local_sig;
@@ -2140,9 +2140,9 @@ int p2(Pname nn, Ptype t, Pclass cl, Pvirt vtab, char* s)
 
 	int oo = vtbl_opt;
 	vtbl_opt = 1;	// make sure the name is universal
-	char *cs = cl->nested_sig?cl->nested_sig:cl->string;
-	char* sstr = (cl->lex_level&&!cl->nested_sig)? cl->local_sig : 0;
-	char* ss = vtbl_name(vtab->string,sstr?sstr:cs);
+	const char *cs = cl->nested_sig?cl->nested_sig:cl->string;
+	const char* sstr = (cl->lex_level&&!cl->nested_sig)? cl->local_sig : 0;
+	const char* ss = vtbl_name(vtab->string,sstr?sstr:cs);
 
 	if (init) {	// unique definition here
 		really_really_print(cl,vtab,ss,s);
@@ -2155,11 +2155,11 @@ int p2(Pname nn, Ptype t, Pclass cl, Pvirt vtab, char* s)
 			strcat( vstr, cl->string );
 		}
 		Pname nn;
-		if (nn=ptbl->look(vstr?vstr:cl->string,0)) { // use of ptbl in file
+		if ((nn=ptbl->look(vstr?vstr:cl->string,0))) { // use of ptbl in file
 			fprintf(out_file,"extern struct __mptr %s[];\n",ss);
 			s[2] = 'p';
 			ptbl_add_pair(s, ss);
-			nn->n_key=HIDDEN; 
+			nn->n_key=HIDDEN;
 		}
 		delete vstr;
 	}
@@ -2174,7 +2174,7 @@ void classdef::really_print(Pvirt vtab)
 {
 	int oo = vtbl_opt;	// make `simulated static' name
 	vtbl_opt = -1;
-	char *cs = nested_sig?nested_sig:string;
+	const char *cs = nested_sig?nested_sig:string;
 	char* str = (lex_level&&!nested_sig) ? this->local_sig : 0;
 	char* s = vtbl_name(vtab->string,str?str:cs);
 	vtbl_opt = oo;
@@ -2214,11 +2214,11 @@ void classdef::really_print(Pvirt vtab)
 			strcat( vstr, string );
 		}
 		Pname nn;
-		if (nn=ptbl->look(vstr?vstr:string,0)) { // use of ptbl in file
+		if ((nn=ptbl->look(vstr?vstr:string,0))) { // use of ptbl in file
 			fprintf(out_file,"extern struct __mptr %s[];\n",ss);
 			s[2] = 'p';
 			ptbl_add_pair(s, ss);
-			nn->n_key=HIDDEN; 
+			nn->n_key=HIDDEN;
 		}
 		delete vstr;
 	}
@@ -2234,7 +2234,7 @@ void really_really_print(Pclass cl, Pvirt vtab, char* s, char* ss)
 	// it in vtbl initializer
 	Pname nn;
 	int i;
-	for (i=0; nn = vtab->virt_init[i].n; i++) {
+	for (i=0; (nn = vtab->virt_init[i].n); i++) {
 		if (nn->tp->base == OVERLOAD) {
 			nn = Pgen(nn->tp)->fct_list->f;
 		}
@@ -2269,7 +2269,7 @@ void really_really_print(Pclass cl, Pvirt vtab, char* s, char* ss)
 	fprintf(out_file,"struct __mptr %s[] = {0,0,0,\n",s);
 
 	Pname n;
-	for (i=0; n=vtab->virt_init[i].n; i++) {
+	for (i=0; (n=vtab->virt_init[i].n); i++) {
 		if (n->tp->base == OVERLOAD) {
 			n = Pgen(n->tp)->fct_list->f;
 		}
@@ -2290,19 +2290,20 @@ void really_really_print(Pclass cl, Pvirt vtab, char* s, char* ss)
 
 	Pname nm;
 	char *cstr = 0;
-	char *vstr = 0;
-	char *cs = cl->nested_sig?cl->nested_sig:cl->string;
+	const char *vstr = 0;
+	const char *cs = cl->nested_sig?cl->nested_sig:cl->string;
 	if (cl->lex_level && !cl->nested_sig)
 		cstr = cl->local_sig;
 	if ( vtab && vtab->string ) {
-		vstr = new char[strlen(vtab->string)+(cstr?strlen(cstr):strlen(cs))+1];
-		strcpy( vstr, vtab->string );
-		strcat( vstr, cstr?cstr:cs );
+		char *str_tmp = new char[strlen(vtab->string)+(cstr?strlen(cstr):strlen(cs))+1];
+		strcpy( str_tmp, vtab->string );
+		strcat( str_tmp, cstr?cstr:cs );
+                vstr = str_tmp;
 	}
 
 	if ( vstr == 0 )
 		vstr = cstr?cstr:(cs?cs:cl->string);
-	if ( nm = ptbl->look(vstr,0) )  {
+	if ( (nm = ptbl->look(vstr,0)) )  {
 		nm->n_key = HIDDEN;
 		if ( vstr != cstr && vstr != cs && vstr != cl->string ) delete vstr;
 	} else if ( ptbl->look(vstr,HIDDEN) == 0 )
@@ -2312,9 +2313,9 @@ void really_really_print(Pclass cl, Pvirt vtab, char* s, char* ss)
 }
 
 #include <ctype.h>
-char* vtbl_name(char* s1, char* s2)
+char* vtbl_name(const char* s1, const char* s2)
 {
-	char* s3 = (vtbl_opt == -1 && *src_file_name) ? src_file_name : 0;
+	const char* s3 = (vtbl_opt == -1 && *src_file_name) ? src_file_name : 0;
 		// if vtbl_opt == -1 fake a static (there are no portable
 		// way of doing a forward declaration of a static in C)
 	int ll = s1 ? strlen(s1) : 0;
@@ -2364,11 +2365,11 @@ void classdef::print_all_vtbls(Pclass bcl)
 }
 
 void classdef::dcl_print(Pname n)
-{ 
+{
 	defined |= REF_SEEN;
 // ensure template instantiations are printed exactly once.
-//	if (class_base != VANILLA && !::same_class(current_instantiation,this) && 
-//		(n==0 || n->n_redefined != 1)) 
+//	if (class_base != VANILLA && !::same_class(current_instantiation,this) &&
+//		(n==0 || n->n_redefined != 1))
 //			return;
 
 	DB(if(Pdebug>=1) error('d',"%t::dcl_print(%n)   c_body %d defined%o",this,n,c_body,defined););
@@ -2385,14 +2386,14 @@ void classdef::dcl_print(Pname n)
 			nn->tp->base==CLASS &&
 			Pclass(nn->tp)->c_body==1)
 				Pclass(nn->tp)->dcl_print(nn);
-		else 
+		else
 		if (nn->base == TNAME && nn->tp->base != COBJ)
 			nn->dcl_print(0);
-		else 
-		if (nn->tp && 
+		else
+		if (nn->tp &&
 			nn->n_anon == 0 &&
-			nn->tp->base == ENUM && 
-			Penum(nn->tp)->e_body != 3) 
+			nn->tp->base == ENUM &&
+			Penum(nn->tp)->e_body != 3)
 				Penum(nn->tp)->dcl_print(nn);
 	}
 
@@ -2405,7 +2406,7 @@ void classdef::dcl_print(Pname n)
 			||
 			n->where.file!=last_line.file
 		)
-			if (last_ll = n->where.line)
+			if ((last_ll = n->where.line))
 				n->where.putline();
 			else
 				last_line.putline();
@@ -2435,7 +2436,7 @@ void classdef::dcl_print(Pname n)
 	begin_mem();
 	print_members();
 	end_mem();
-	for (Pbcl b = baselist; b; b = b->next) {	
+	for (Pbcl b = baselist; b; b = b->next) {
 		if (b->base != VIRTUAL)
 			continue;
 		Pclass bcl = b->bclass;
@@ -2443,7 +2444,7 @@ void classdef::dcl_print(Pname n)
 		if (b->allocated==0)
 			continue;
 		char* str = 0;
-		char* cs = bcl->nested_sig?bcl->nested_sig:bcl->string;
+		const char* cs = bcl->nested_sig?bcl->nested_sig:bcl->string;
 		if (bcl->lex_level && !bcl->nested_sig)
 			str = bcl->local_sig;
 		puttok(STRUCT);			// struct bcl Obcl;
@@ -2482,9 +2483,9 @@ void classdef::dcl_print(Pname n)
 char *
 make_local_name( Ptype tt, Pname fn )
 {
-	char *buf; 
+	char *buf;
 	int tlen;
-	char* tstring;
+	const char* tstring;
 	switch ( tt->base ) {
 	case CLASS:
 		tlen = Pclass(tt)->c_strlen;
@@ -2499,12 +2500,12 @@ make_local_name( Ptype tt, Pname fn )
 	}
 	char* lcl = make_name('L');
 	if ( fn == 0 || fn->tp == 0 || fn->tp->base != FCT )
-		error( 'i', "localC %smissing or badFN%n", tstring, fn ); 
+		error( 'i', "localC %smissing or badFN%n", tstring, fn );
 	tt->in_fct = fn;
-	char *fsig = Pfct(fn->tp)->f_signature;
+	const char *fsig = Pfct(fn->tp)->f_signature;
 	if ( fsig == 0 )
 		fsig = local_sign( fn->tp );
-	char *fs = fn->string;
+	const char *fs = fn->string;
 	int name_len=tlen+strlen(fsig)+strlen(fs)+strlen(lcl)+4;
 	int sz = (name_len+20)/32+1; // from vtbl_name()
 
@@ -2515,7 +2516,7 @@ make_local_name( Ptype tt, Pname fn )
 		sprintf(buf, "%s__%s__%s%s", tstring, fs, fsig, lcl);
 	}
 	else {
-		char *cs = Pclass(Pfct(fn->tp)->memof)->string;
+		const char *cs = Pclass(Pfct(fn->tp)->memof)->string;
 		int len = Pclass(Pfct(fn->tp)->memof)->c_strlen;
 		if ( len < 10 )
 			++name_len;
@@ -2524,7 +2525,7 @@ make_local_name( Ptype tt, Pname fn )
 		else
 			name_len += 2;
 		name_len += len;
-		sz = (name_len+20)/32+1; 
+		sz = (name_len+20)/32+1;
 		sz *= 32;
 		buf = new char[ sz ];
 

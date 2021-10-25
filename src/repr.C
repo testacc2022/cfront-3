@@ -17,7 +17,7 @@ any actual or intended publication of such source code.
 
 #include "cfront.h"
 
-char* oper_name(TOK op)
+const char* oper_name(TOK op)
 /*
 	return the string representation of operator "op"
 */
@@ -80,7 +80,7 @@ char* oper_name(TOK op)
 	}
 }
 
-char* name_oper(char *s)
+const char* name_oper(const char *s)
 {
 	if (strcmp(s,"__nw")==0) return "operator new";
 	if (strcmp(s,"__dl")==0) return "operator delete";

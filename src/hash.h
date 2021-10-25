@@ -1,6 +1,6 @@
 /* ident "@(#)cls4:src/hash.h	1.6" */
 /*******************************************************************************
- 
+
 C++ source for the C++ Language System, Release 3.0.  This product
 is a new release of the original cfront developed in the computer
 science research center of AT&T Bell Laboratories.
@@ -18,14 +18,15 @@ any actual or intended publication of such source code.
 *    Copyright (c) 1989 by Object Design, Inc., Burlington, Mass.
 *    All rights reserved.
 *******************************************************************************/
-/* 
-	Compiler interface to hash tables from odi library. 
+/*
+	Compiler interface to hash tables from odi library.
 */
 
 #ifndef _HASH_H
 #define _HASH_H
 
 #include <string.h>
+#include <stddef.h>
 
 typedef void (*Error_Proc) (const char*) ;
 
@@ -58,12 +59,12 @@ class Hash
 
 public:
   unsigned int		(*key_hash_function)(int)  ;
-   int            	(*key_key_equality_function) (int, int) ;
+   int            	(*key_key_equality_function) (size_t, size_t) ;
 
   unsigned int          key_hash(int  a) ;
-  int                   key_key_eq(int a, int  b);    
+  int                   key_key_eq(int a, int  b);
 
-                        Hash(int sz) ;
+                        Hash(int sz = DEFAULT_INITIAL_HASH_SIZE) ;
                         Hash(Hash& a) ;
                         ~Hash() ;
 
@@ -79,7 +80,7 @@ public:
 
   enum insert_action	{ probe, insert, replace };
   void			action (int key, int val, insert_action what,
-				int& found, int& old_val);
+				size_t& found, size_t& old_val);
   int&                  operator [] (int  k) ;
   int                   contains(int  key) ;
   int                   del(int  key) ;
@@ -201,7 +202,7 @@ inline int& HashWalker::get()
   return h->tab[pos].cont ;
 }
 
-int pointer_hasheq(int, int);
+int pointer_hasheq(size_t, size_t);
 unsigned int pointer_hash_fcn(int);
 
 class pointer_hash : public Hash {

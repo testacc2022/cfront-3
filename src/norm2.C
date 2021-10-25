@@ -42,7 +42,7 @@ fct::fct(Ptype t, Pname arg, TOK known)
 
 	if (arg==0 || arg->base==ELIST) return;
 //error('d',"fct::fct %d sig %d",this,f_signature);
-	register Pname n;
+	/*register*/ Pname n;
 	Pname pn = 0;
 	for (n=arg; n; pn=n,n=n->n_list) {
 		if( n->n_sto==EXTERN ) error("cannot specify extern linkage for anA");
@@ -114,6 +114,11 @@ classdef::~classdef()
 
 basetype::basetype(TOK b, Pname n)
 {
+        b_xname = 0;
+        b_unsigned = b_signed = b_volatile = b_typedef =
+            b_inline = b_virtual = b_short = b_long =
+            b_bits = b_offset = 0;
+        b_linkage = 0;
 	switch (b) {
 	case 0:				break;
 	case TYPEDEF:	b_typedef = 1;	break;
@@ -158,7 +163,7 @@ basetype::basetype(TOK b, Pname n)
 	DBID();
 }
 
-name::name(char* s) : expr(NAME,0,0)
+name::name(const char* s) : expr(NAME,0,0)
 {
 	// DBCHECK() called in expr::expr()
 	string = s;

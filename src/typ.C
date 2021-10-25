@@ -768,7 +768,7 @@ bit type::check(Ptype t, TOK oper, bit level)
 */
 {
 
-	register Ptype t1 = this, t2 = t;
+	/*register*/ Ptype t1 = this, t2 = t;
 	bit cnst1 = 0, cnst2 = 0;
 	TOK b1, b2;
 	bit vv=0, over=0, strict_any_check = 0;

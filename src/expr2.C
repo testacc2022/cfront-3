@@ -121,10 +121,10 @@ static int is_dataMemPtr(Pexpr);
 
 int expr::lval(TOK oper)
 {
-	register Pexpr ee = this;
-	register Pname n;
+	/*register*/ Pexpr ee = this;
+	/*register*/ Pname n;
 	int deref = 0;
-	char* es;
+	const char* es;
 
 //error('d',"%k expr::lval %k",base,oper);
 
@@ -432,7 +432,7 @@ int expr::lval(TOK oper)
 	}
 }
 
-int char_to_int(char* s)
+int char_to_int(const char* s)
 /*	assume s points to a string:
 		'c'
 	or	'\c'
@@ -442,8 +442,8 @@ int char_to_int(char* s)
 	(hex constants have been converted to octal by the parser)
 */
 {
-	register int i = 0;
-	register char c, d, e;
+	/*register*/ int i = 0;
+	/*register*/ char c, d, e;
 
 	switch (*s) {
 	default:
@@ -522,13 +522,13 @@ int char_to_int(char* s)
 const int A10 = 'A'-10;
 const int a10 = 'a'-10;
 
-long long str_to_llong(register const char* p)
+long long str_to_llong(/*register*/ const char* p)
 {
-	register int c,j;
-	register int dotflag=0;
-	register int dotcount=0;
-	register long long exp=0;
-	register unsigned long long i= 0;
+	/*register*/ int c,j;
+	/*register*/ int dotflag=0;
+	/*register*/ int dotcount=0;
+	/*register*/ long long exp=0;
+	/*register*/ unsigned long long i= 0;
 	const char* pp = p;
 
 // error( 'd', "str_to_llong: %s", p );
@@ -544,7 +544,7 @@ long long str_to_llong(register const char* p)
 
 		case 'x':
 		case 'X':	/* hexadecimal */
-			while (c=*p++) {
+			while ((c=*p++)) {
 				switch (c) {
 				case 'l':
 				case 'L':
@@ -584,13 +584,13 @@ long long str_to_llong(register const char* p)
 				default:
 					i = i*8 + c-'0';
 				}
-			while (c=*p++);
+			while ((c=*p++));
 			return i;
 		}
 	}	
 				/* decimal */
 	i = c-'0';
-	while (c=*p++)
+	while ((c=*p++))
 		switch (c) {
 		case 'l':
 		case 'L':
@@ -644,11 +644,11 @@ ftp_normalize(char*& str)
 	char* p = str;
 	char* pp = str;
 	char  c;
-	register int adjust = 0;
-	register int dotflag = 0;
-	register int dotcnt = 0;
+	/*register*/ int adjust = 0;
+	/*register*/ int dotflag = 0;
+	/*register*/ int dotcnt = 0;
 
-	while (c = *p) {
+	while ((c = *p)) {
 		switch (c) {
 		case '+': 
 		case '-': 
@@ -714,7 +714,7 @@ bit type::is_unsigned()
 	return Pbase(t)->b_unsigned;
 }
 
-char* Neval;
+const char* Neval;
 bit binary_val;
 
 unsigned long long expr::ueval(long long x1, long long x2)
@@ -790,7 +790,7 @@ long long expr::eval()
 	{
 		extern int no_sizeof;
 		if (no_sizeof) Neval = "sizeof";
-		char *cese = "cannot evaluate sizeof expression";
+		const char *cese = "cannot evaluate sizeof expression";
 		if (!tp2) {
 			Neval = cese;
 			return 1;
@@ -850,16 +850,21 @@ long long expr::eval()
 	case G_CAST:
 	{	if (tp2->base!=FLOAT && tp2->base!=DOUBLE && (e1->base==FCON 
 		|| (e1->base==UMINUS || e1->base==UPLUS) && e1->e2->base==FCON)) {
-			char*& str = (e1->base==FCON ? e1->string : e1->e2->string);
-			char* p = str;
+			const char*& str = (e1->base==FCON ? e1->string : e1->e2->string);
+			const char* p = str;
 			while (*p && *p!='.' && *p!='E' && *p!='e') p++;
 			if (*p) {
+                            char *str_tmp = strdup(str);
 			    if ((strchr(p,'E')==0) && (strchr(p,'e')==0)) {
-				if (p==str) *p++ = '0';
-				*p = 0;
+                                char *p2 = str_tmp + (p-str);
+				if (p2==str_tmp) *p2++ = '0';
+				*p2 = 0;
 			    } else {
-				ftp_normalize(str);
+				ftp_normalize(str_tmp);
 			    }
+                            //free(e1->string, e1->e2->string); ???
+                            if(e1->base==FCON) e1->string = str_tmp;
+                            else e1->e2->string = str_tmp;
 			}
 			if (e1->base == FCON)
 				e1->base = ICON;
@@ -1664,7 +1669,7 @@ static int id_match(Pexpr th, Pfct f, Pclass cl, int anac)
 
 static Pexpr id_overload(Pexpr th, Pclass cl, int anac)
 {
-	char* on = oper_name(th->base);
+	const char* on = oper_name(th->base);
 	Pexpr e;
 
 	if (cl)
@@ -1731,11 +1736,11 @@ Pexpr expr::oper_overload(Ptable tbl)
 	Pexpr oe2 = e2;
 	Pexpr ee2 = (e2 && e2->base!=ELIST) ? e2 = new expr(ELIST,e2,0) : 0;
 	Pexpr ee1 = e1 ? new expr(ELIST,e1,e2) : ee2;
-	char* obb = oper_name(bb);
+	const char* obb = oper_name(bb);
 
 	if (bb == INCR || bb == DECR) {
 		Pclass cl = Pclass(e1 ? n1->tp : n2->tp);
-		char* on = oper_name(bb);
+		const char* on = oper_name(bb);
 		bit ismem = 1;
 		Pexpr e;
 		Pexpr ee;
@@ -1926,7 +1931,7 @@ Pexpr expr::oper_overload(Ptable tbl)
 			Pname aa = gname->fct_type()->argtype;
 			Ptype savep = 0;
 			Pptr p;
-			if (p = aa->tp->is_ref()) {
+			if ((p = aa->tp->is_ref())) {
 				savep = p;
 				aa->tp = p->typ;
 			}
@@ -1938,7 +1943,7 @@ Pexpr expr::oper_overload(Ptable tbl)
 			if(ambig) already_ambig = 1;
 
 			if(savep) aa->tp = p;
-			delete a1,a2;
+			delete a1; delete a2;
 			DEL( mm->tp );
 
 			delete tgen;
@@ -2474,7 +2479,7 @@ ll:
                                 (void) tt->tsizeof();
                                 sz->tp = uint_type;
                                 Pexpr ee = new expr(ELIST,sz,args);
-                                char *s = oper_name(NEW);
+                                const char *s = oper_name(NEW);
                                 Pname n = new name(s);
                                 if (base == GNEW)
                                         p = gtbl->look(s,0);

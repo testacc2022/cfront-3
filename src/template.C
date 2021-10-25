@@ -261,14 +261,14 @@ classdef::same_class(Pclass pc,int access)
         // now makes this a possibility
         if (this_base == INSTANTIATED && 
 	    pc_base == UNINSTANTIATED) {
-		char *str = Ptclass(this)->inst->def->namep->string;
+		const char *str = Ptclass(this)->inst->def->namep->string;
 // error('d',"same_class: this: %s pc: %s", str, pc->string);
 		return (strcmp(str,pc->string)==0);
         }
 
         if (pc_base == INSTANTIATED && 
 	    this_base == UNINSTANTIATED) {
-		char *str = Ptclass(pc)->inst->def->namep->string;
+		const char *str = Ptclass(pc)->inst->def->namep->string;
 // error('d',"same_class: pc: %s this: %s", str, string);
 		return (strcmp(str,string)==0);
         }
@@ -307,7 +307,7 @@ templ_compilation::is_template(Pname p)
 }
 
 Ptempl 
-templ_compilation::is_template(char *s) 
+templ_compilation::is_template(const char *s) 
 { 
 // error('d',"is_template(char *%s)",s );
 	Pname n = templates->look(s,0);
@@ -315,7 +315,7 @@ templ_compilation::is_template(char *s)
 }
 
 Pfunt 
-templ_compilation::is_template(char *s, TOK t) 
+templ_compilation::is_template(const char *s, TOK t) 
 { 
 // error('d',"is_template(char *%s, %k)",s,t );
 	Pname n = templates->look(s,t);
@@ -676,8 +676,8 @@ has_formal_type(Pname nn, Plist list)
 	Pname bn;
 	Ptype t, nt = nn->tp;
 
-	while(t=nt->is_ptr()) nt = Pptr(t)->typ; 
-	while(t=nt->is_ref()) nt = Pptr(t)->typ; 
+	while((t=nt->is_ptr())) nt = Pptr(t)->typ; 
+	while((t=nt->is_ref())) nt = Pptr(t)->typ; 
 
 	if(nt->base != TYPE) return 0;
 	while (nt->base == TYPE) {
@@ -976,7 +976,7 @@ templ_compilation::end(Pname p)
 					for (fn=tl->fn; tl; tl=tl->gen_list,fn=tl?tl->fn:0) {
 					    extern bit return_error; // set in type::check
 					    if (n_fct->check(fn->tp,PT_OVERLOAD)==0) break;
-					    if (error_cnt = return_error) break;
+					    if ((error_cnt = return_error)) break;
 					}
 					if (error_cnt)
 					    error("FY%n: declared twice with different returnTs",p);
@@ -1167,8 +1167,8 @@ templ_inst::data_copy(Pdata dat, Pcons &templ_refs)
 
      	for (Plist fformal = dat->formals, cformal = inst_formals;
   	     fformal; fformal = fformal->l, cformal = cformal->l) {
-		fcorr[int(fformal->f)] = int(cformal->f);
-		if (fcorr[int(fformal->f)] != int(cformal->f))
+		fcorr[size_t(fformal->f)] = size_t(cformal->f);
+		if (fcorr[size_t(fformal->f)] != size_t(cformal->f))
 			error ('i', "templ_inst::fuction_copy: hash table bug");
       	}
 
@@ -1176,7 +1176,7 @@ templ_inst::data_copy(Pdata dat, Pcons &templ_refs)
       	info.hook_info = this;
 
       	templ_refs = ref_copy(fcorr,info,templ_refs);
-      	if (fcorr[int(def->namep)] != int(tname))
+      	if (fcorr[size_t(def->namep)] != size_t(tname))
   	  	error ('i', "Y to instantiationTN correspondence is missing");
     
       	copy_tree(root,info,&fcorr);
@@ -2194,9 +2194,9 @@ extern char emode;
 
 
 void 
-stradd(char *&target, char *source, int numeric = 0) {
+stradd(char *&target, const char *source, int numeric = 0) {
 // error('d',"stradd: target: %s\t source: %s\tnumeric: %d",target,source,numeric);
-  	while (*target = *source) {
+  	while ((*target = *source)) {
 		if ( *target == '-' && numeric ) 
 			*target = 'n';
 		target++; source++;
@@ -2211,7 +2211,7 @@ stradd(char *&p, long long i) {
   	if (!emode) { *p++ = 'L'; }
   	sprintf(s,"%lld", i);
 	if (!emode) {
-		int len = strlen(s);
+		size_t len = strlen(s);
 		if (len >= 10)
   	    		sprintf(t,"%lld_%s", len,s);
         	else sprintf(t,"%lld%s", len,s);
@@ -2267,7 +2267,7 @@ mangled_expr(char *p, Pexpr e, bool mangle_for_address = false)
 				{ // &X::i ==> 5i__1X
 					char xx[1024];
 					char s[1024];
-					char *st = t->base!=FCT
+					const char *st = t->base!=FCT
 						? n->n_table->t_name->string 
 						: Pfct(t)->memof->string;
 					if (emode)
@@ -2350,7 +2350,7 @@ mangled_expr(char *p, Pexpr e, bool mangle_for_address = false)
 		{
 			*p++ = 'L';
 		}
-		int len = strlen(e->string);
+		size_t len = strlen(e->string);
 		char s[64];
 		if (!emode)
 		{
@@ -2910,12 +2910,12 @@ basic_inst::instantiation_string()
 } 
     
 void 
-classdef::modify_inst_names(char *s)
+classdef::modify_inst_names(const char *s)
 { /* Change the names for the class, constructors, 
    * and destructors to reflect the new class instantiation name.  */ 
 // error('d',"%t->modify_inst_names(%s)",this,s);
 
-  	char *old = string;
+  	const char *old = string;
   	string = s;   // Change the class name
 	if ( lex_level && (in_class==0 || lex_level!=in_class->lex_level) ) {
 		error('i',"localCY");
@@ -3097,7 +3097,7 @@ const_formal_hack(Pname n)
 }
 
 char *
-make_formal_name(char *fns, char *ins)
+make_formal_name(const char *fns, const char *ins)
 {// create formal parameter name: ``fns__<length>ins''
     char s[1024];
     char t[6];
@@ -3510,12 +3510,12 @@ void
 establish_class_subtree_correspondence(pointer_hash &h, Pname key_tname,
 					    Pname value_tname) 
 {
-  h[int(key_tname)] = int(value_tname) ;
-  h[int(key_tname->tp)] = int(value_tname->tp) ;
-  h[int(Pbase(key_tname->tp)->b_name)] =
-    int(Pbase(value_tname->tp)->b_name) ;
-  h[int(Pbase(key_tname->tp)->b_name->tp)] =
-    int(Pbase(value_tname->tp)->b_name->tp) ;
+  h[size_t(key_tname)] = size_t(value_tname) ;
+  h[size_t(key_tname->tp)] = size_t(value_tname->tp) ;
+  h[size_t(Pbase(key_tname->tp)->b_name)] =
+    size_t(Pbase(value_tname->tp)->b_name) ;
+  h[size_t(Pbase(key_tname->tp)->b_name->tp)] =
+    size_t(Pbase(value_tname->tp)->b_name->tp) ;
 }
 
 Pcons 
@@ -3607,13 +3607,13 @@ templ_inst::class_copy(Pcons &templ_refs, bool recopy)
   if (recopy) {
     // remove the class def node from the table, so that it's attributes are
     // copied. 
-    corr->del(int(Pbase(def->namep->tp)->b_name->tp)) ;
-    corr->del(int(Pbase(def->namep->tp)->b_name)) ;
-    corr->del(int(def->namep->tp)) ;
+    corr->del(size_t(Pbase(def->namep->tp)->b_name->tp)) ;
+    corr->del(size_t(Pbase(def->namep->tp)->b_name)) ;
+    corr->del(size_t(def->namep->tp)) ;
     
-    corr->del(int(tname->tp)) ;
-    corr->del(int(Pbase(tname->tp)->b_name)) ;
-    corr->del(int(Pbase(tname->tp)->b_name->tp)) ;
+    corr->del(size_t(tname->tp)) ;
+    corr->del(size_t(Pbase(tname->tp)->b_name)) ;
+    corr->del(size_t(Pbase(tname->tp)->b_name->tp)) ;
   }else corr = new pointer_hash(default_copy_hash_size) ;
   
   { // copy the formals & install them in the correspondence table
@@ -3625,7 +3625,7 @@ templ_inst::class_copy(Pcons &templ_refs, bool recopy)
       *copy_name = *formal->f ;
       copy_name->n_tbl_list = 0 ;
       last = last->l = new name_list(copy_name, 0) ;
-      (*corr)[int(formal->f)] = (int)copy_name ;
+      (*corr)[size_t(formal->f)] = (size_t)copy_name ;
     }
     inst_formals = dummy_formal.l ;
   }
@@ -3648,7 +3648,7 @@ templ_inst::class_copy(Pcons &templ_refs, bool recopy)
     info.node_hook = ::copy_hook ;
     info.hook_info = this ;
     
-    (*corr)[int(def->namep)] = int(tname) ; // make the tnames correspond
+    (*corr)[size_t(def->namep)] = size_t(tname) ; // make the tnames correspond
 
     templ_refs = ref_copy(*corr, info, templ_refs) ;
     Pnode root = def->basep ;	// start the copy at the cobj node
@@ -3707,7 +3707,7 @@ function_copy_hook(void *current_templ_inst, Pnode &node, node_class,
 	  action = tna_stop;
 	  return;
       }
-      char *s = Pname(node)->string ;
+      const char *s = Pname(node)->string ;
       Pname f =  0 ;
       if (s && (*s == '$') &&
 	  (f = Ptempl_inst(current_templ_inst)->get_parameter(s+1))) {
@@ -3751,8 +3751,8 @@ templ_inst::function_copy(Pfunt fnt, Pcons &templ_refs)
      for (Plist fformal = fnt->formals, cformal = inst_formals;
 	  fformal; fformal = fformal->l, cformal = cformal->l)
      {
-	fcorr[int(fformal->f)] = int(cformal->f) ;
-	if (fcorr[int(fformal->f)] != int(cformal->f))
+	fcorr[size_t(fformal->f)] = size_t(cformal->f) ;
+	if (fcorr[size_t(fformal->f)] != size_t(cformal->f))
 		error ('i', "templ_inst::fuction_copy: hash table bug");
       }
 
@@ -3760,7 +3760,7 @@ templ_inst::function_copy(Pfunt fnt, Pcons &templ_refs)
       info.hook_info = this;
 
       templ_refs = ref_copy(fcorr,info,templ_refs);
-      if (fcorr[int(def->namep)] != int(tname))
+      if (fcorr[size_t(def->namep)] != size_t(tname))
     	  error ('i', "Y to instantiationTN correspondence is missing");
     
       copy_tree(root,info,&fcorr);
@@ -4153,7 +4153,7 @@ function_template::function_template(Plist params,Pname n)
 }
 
 Pname 
-templ_inst::get_parameter(char *s) {
+templ_inst::get_parameter(const char *s) {
   	for (Plist formal=inst_formals; formal; formal=formal->l) 
     		if (strcmp(formal->f->string,s)== 0)
       			return formal->f;
@@ -4169,8 +4169,8 @@ funct_inst::tfct_copy(Pcons &templ_refs, bool recopy)
   	if (recopy) {
     		// remove the function def node from the table, 
     		// so that it's attributes are copied. 
-    		corr->del(int(def->fn));
-    	 	corr->del(int(tname));
+    		corr->del(size_t(def->fn));
+    	 	corr->del(size_t(tname));
   	}
   	else corr = new pointer_hash(default_copy_hash_size) ;
   
@@ -4183,7 +4183,7 @@ funct_inst::tfct_copy(Pcons &templ_refs, bool recopy)
       		*copy_name = *formal->f;
       		copy_name->n_tbl_list = 0;
       		last = last->l = new name_list(copy_name, 0);
-      		(*corr)[int(formal->f)] = (int)copy_name;
+      		(*corr)[size_t(formal->f)] = (size_t)copy_name;
     	}
     	inst_formals = dummy_formal.l;
   
@@ -4203,7 +4203,7 @@ funct_inst::tfct_copy(Pcons &templ_refs, bool recopy)
 	fct_node = Pfct(tname->tp);
 
  	// make the tnames correspond ???
- 	(*corr)[int(def->fn)] = int(tname); 
+ 	(*corr)[size_t(def->fn)] = size_t(tname); 
 	templ_refs = ref_copy(*corr,info,templ_refs);
     	copy_tree(root,info,corr);
 	return 0;
@@ -4255,7 +4255,7 @@ funct_inst::instantiate(bool reinstantiate) {
 			e->e1->tp = non_template_arg_type(Pbase(e->e1->tp));
 
 		Pfunct_inst dup;
-    		if (dup=tfct_copy(templ_refs, false))
+    		if ((dup=tfct_copy(templ_refs, false)))
 		{
 			// don't believe it should happen -- let's check
 			error('i',"FT %n already instantiated", namep);
@@ -4493,7 +4493,7 @@ is_ftempl_match(Pexpr actuals, Pfunt ft)
 		if (nn == 0) { 
 			if (f->nargs_known==ELLIPSIS) 
 				{return parray;}
-			delete parray;
+			delete[] parray;
 			return 0;
 		}
 
@@ -4517,11 +4517,11 @@ is_ftempl_match(Pexpr actuals, Pfunt ft)
 			     et->is_ptr_or_ref() != 0 &&
 			     formal_not_const(nn)) 
 			{
-				delete parray;
+				delete[] parray;
 				return 0;
 			}
 		    } else {
-			delete parray;
+			delete[] parray;
 			return 0;
 		        }
 		}
@@ -4535,7 +4535,7 @@ is_ftempl_match(Pexpr actuals, Pfunt ft)
 		if (nt->is_ref()) {
 			nt = Pptr(nt->skiptypedefs())->typ;
 		}
-		while(t=nt->is_ptr()) { 
+		while((t=nt->is_ptr())) { 
 			++ptr_count; 
 			Pptr p = Pptr(t);
 			if (p->ptname) { ptm = p->ptname; break; }
@@ -4550,7 +4550,7 @@ is_ftempl_match(Pexpr actuals, Pfunt ft)
 
 		Pname bn = ptm;
 		if (bn == 0) {
-			while(t=nt->is_ref()) { ++ref_count; nt = Pptr(t)->typ; }
+			while((t=nt->is_ref())) { ++ref_count; nt = Pptr(t)->typ; }
 			while(ref_count-- && (t=et->is_ref())) et = Pptr(t)->typ; 
 
 			if(nt->base != TYPE) continue;
@@ -4590,7 +4590,7 @@ is_ftempl_match(Pexpr actuals, Pfunt ft)
 			    bound_formals = has_templ_arg(c1,Ptclass(c2),parray,ni);
 			else bound_formals= has_templ_arg(Ptclass(c1),Ptclass(c2),parray,ni);
 
-			if ( !bound_formals ) { delete parray; return 0; }
+			if ( !bound_formals ) { delete[] parray; return 0; }
 			continue;
 		    }
 		    else continue;
@@ -4601,7 +4601,7 @@ is_ftempl_match(Pexpr actuals, Pfunt ft)
 			Pfct f = Pfct(Pptr(et)->typ);
 			if (f->fct_base == FCT_TEMPLATE) {
 				error("actual argument toFY%n is an uninstantiatedFY",ft->fn);
-				delete parray;
+				delete[] parray;
 				return 0;
 			}
 				
@@ -4626,14 +4626,14 @@ is_ftempl_match(Pexpr actuals, Pfunt ft)
 				if (const_problem)
 					continue;
 
-				delete parray;
+				delete[] parray;
 				return 0;
 			}
 			continue;
 		}
 
 		if ( et->base == OVERLOAD ) {
-			delete parray;
+			delete[] parray;
 			return 0;
 		}
 
@@ -4641,7 +4641,7 @@ is_ftempl_match(Pexpr actuals, Pfunt ft)
 		parray[ni++].typ = p == 0 ? et : p;
 	}
 	if (nn && !nn->n_initializer) {
-		delete parray;
+		delete[] parray;
 		return 0;
 	}
 	if (ni < count) return 0;
@@ -4678,7 +4678,7 @@ has_templ_instance(Pname fn, Pexpr arg, bit no_err)
 		template_hier = 1;
 		Nvirt = 0; // set by classdef::is_base() if conversion used
 // error('d',"template_hier : %d fn: %n", template_hier, ft->fn);
-		if (b = is_ftempl_match(arg,p)) {
+		if ((b = is_ftempl_match(arg,p))) {
 			if (!instance)
 			{
 				pb = b;

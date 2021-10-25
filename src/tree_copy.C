@@ -115,9 +115,11 @@ copy_walker (Pnode& node, node_class cl, void * info,
 	n.f = Pfct(tci->malloc(sizeof(fct)));
 	*n.f = *Pfct(node);
 	if(n.f->f_signature) {
-	    n.f->f_signature =
+	    char *str_tmp =
 		(char *)tci->malloc(strlen(Pfct(node)->f_signature)+1);
-	    strcpy(n.f->f_signature, Pfct(node)->f_signature);
+	    strcpy(str_tmp, Pfct(node)->f_signature);
+            //free(n.f->f_signature);
+            n.f->f_signature = str_tmp;
 	};
 	goto Replace;
 
@@ -148,8 +150,10 @@ copy_walker (Pnode& node, node_class cl, void * info,
 	*n.bt = *Pbase(node);
 	n.bt->defined |= COPIED;
 	if(n.bt->discriminator(0) == 2 && n.bt->b_linkage) {
-	    n.bt->b_linkage = tci->malloc(strlen(n.bt->b_linkage) + 1);
-	    strcpy(n.bt->b_linkage, Pbase(node)->b_linkage);
+	    char *str_tmp = tci->malloc(strlen(n.bt->b_linkage) + 1);
+	    strcpy(str_tmp, Pbase(node)->b_linkage);
+            //free(n.bt->b_linkage);
+            n.bt->b_linkage = str_tmp;
 	}
 	goto Replace;
 
@@ -162,12 +166,16 @@ copy_walker (Pnode& node, node_class cl, void * info,
 	n.x = Pexpr(tci->malloc(sizeof(expr)));
 	*n.x = *Pexpr(node);
 	if(n.x->discriminator(1) == 3 && n.x->string) {
-	    n.x->string = tci->malloc(strlen(n.x->string) + 1);
-	    strcpy(n.x->string, Pexpr(node)->string);
+	    char *str_tmp = tci->malloc(strlen(n.x->string) + 1);
+	    strcpy(str_tmp, Pexpr(node)->string);
+            //free(n.x->string);
+            n.x->string = str_tmp;
 	}
 	if(n.x->discriminator(2) == 3 && n.x->string2) {
-	    n.x->string2 = tci->malloc(strlen(n.x->string2) + 1);
-	    strcpy(n.x->string2, Pexpr(node)->string2);
+	    char *str_tmp = tci->malloc(strlen(n.x->string2) + 1);
+	    strcpy(str_tmp, Pexpr(node)->string2);
+            //free(n.x->string2);
+            n.x->string2 = str_tmp;
 	}
 	goto Replace;
 
@@ -185,8 +193,10 @@ copy_walker (Pnode& node, node_class cl, void * info,
 	*n.e = *Penum(node);
 	n.e->defined |= COPIED;
 	if(n.e->string) {
-	    n.e->string = tci->malloc(n.e->e_strlen+1);
-	    strcpy(n.e->string, Penum(node)->string);
+	    char *str_tmp = tci->malloc(n.e->e_strlen+1);
+	    strcpy(str_tmp, Penum(node)->string);
+            //free(n.e->string);
+            n.e->string = str_tmp;
 	}
 	if (n.e->nested_sig)
 	{
@@ -204,8 +214,10 @@ copy_walker (Pnode& node, node_class cl, void * info,
 	*n.c = *Pclass(node);
 	n.c->defined |= COPIED;
 	if(n.c->string) {
-	    n.c->string = tci->malloc(strlen(n.c->string)+1);
-	    strcpy(n.c->string, Pclass(node)->string);
+	    char *str_tmp = tci->malloc(strlen(n.c->string)+1);
+	    strcpy(str_tmp, Pclass(node)->string);
+            //free(n.c->string);
+            n.c->string = str_tmp;
 	}
 	if (n.c->nested_sig)
 	{
@@ -269,8 +281,10 @@ copy_walker (Pnode& node, node_class cl, void * info,
 					Ptype t = formal->f->tp;
 					Pname cn = t->is_cl_obj();
 					if (cn || eobj) {
-						n.n->string = tci->malloc(strlen(eobj ? Penum(eobj->tp)->string : Pclass(cn->tp)->string)+1);
-						strcpy(n.n->string, eobj ? Penum(eobj->tp)->string : Pclass(cn->tp)->string);
+						char *str_tmp = tci->malloc(strlen(eobj ? Penum(eobj->tp)->string : Pclass(cn->tp)->string)+1);
+						strcpy(str_tmp, eobj ? Penum(eobj->tp)->string : Pclass(cn->tp)->string);
+                                                //free(n.n->string);
+                                                n.n->string = str_tmp;
 					} else {
 						n.n->string = 0;
 					}
@@ -279,18 +293,24 @@ copy_walker (Pnode& node, node_class cl, void * info,
 				}
 			}
 		} else if(!done && n.x->discriminator(1) == 3 && n.n->string) {
-			n.n->string = tci->malloc(strlen(n.n->string) + 1);
-			strcpy(n.n->string, Pexpr(node)->string);
+			char *str_tmp = tci->malloc(strlen(n.n->string) + 1);
+			strcpy(str_tmp, Pexpr(node)->string);
+                        //free(n.n->string);
+                        n.n->string = str_tmp;
 		}
 	}
 	if(n.x->discriminator(2) == 3 && n.n->string2) {
-	    n.n->string2 = tci->malloc(strlen(n.n->string2) + 1);
-	    strcpy(n.n->string2, Pexpr(node)->string2);
+	    char *str_tmp = tci->malloc(strlen(n.n->string2) + 1);
+	    strcpy(str_tmp, Pexpr(node)->string2);
+            //free(n.n->string2);
+            n.n->string2 = str_tmp;
 /* ok, name stuff */
 	}
 	if(n.n->n_anon) {
-	    n.n->n_anon = tci->malloc(strlen(n.n->n_anon)+1);
-	    strcpy(n.n->n_anon, Pname(node)->n_anon);
+	    char *str_tmp = tci->malloc(strlen(n.n->n_anon)+1);
+	    strcpy(str_tmp, Pname(node)->n_anon);
+            //free(n.n->n_anon);
+            n.n->n_anon = str_tmp;
 	}
 	if(n.n->n_template_arg_string) {
 	    n.n->n_template_arg_string =

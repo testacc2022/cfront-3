@@ -145,8 +145,8 @@ public:
  	bool  current_template(Pname p, Pexpr actuals);
 	bool  friend_template(Pexpr actuals);
   	Ptempl is_template(Pname);
-  	Ptempl is_template(char*);
-  	Pfunt  is_template(char*,TOK);
+  	Ptempl is_template(const char*);
+  	Pfunt  is_template(const char*,TOK);
 };
 
 /* 
@@ -236,7 +236,7 @@ public:
 class function_template : public basic_template {
 /* SBL: go through these */
   friend Pbinding is_ftempl_match(Pexpr,Pfunt);
-  friend Pname has_templ_instance(Pname,Pexpr,bit=0);
+  friend Pname has_templ_instance(Pname,Pexpr,bit);
   friend class templ_compilation;
   friend class templ;
   friend class templ_inst;
@@ -449,7 +449,7 @@ public:
   // special check for instantiations used in qualifiers for template function
   // member declarations. 
   bool check_qualifier(Plist formals) ;
-  Pname get_parameter(char *s) ;
+  Pname get_parameter(const char *s) ;
 } ;
 
 // Experimental debugging toggle ???
@@ -488,6 +488,7 @@ extern Ptempl_inst get_templ_inst(Pbase b);
 // functions and data structures needed for directed instantiation
 
 #include "Block.h"
+Blockdeclare(CPchar);
 Blockdeclare(Pchar);
 extern Block(Pchar) instfct;
 extern int noinst;
@@ -499,4 +500,4 @@ extern int first_file;
 extern bit all_flag,alltc_flag,data_flag,ft_flag,none_flag;
 extern void set_flags();
 extern Pname righttname;
-Pname has_templ_instance(Pname fn, Pexpr arg, bit no_err);
+Pname has_templ_instance(Pname fn, Pexpr arg, bit no_err=0);

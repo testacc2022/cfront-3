@@ -1,6 +1,6 @@
 /*ident	"@(#)cls4:src/gram.y	1.29" */
 /*******************************************************************************
- 
+
 C++ source for the C++ Language System, Release 3.0.  This product
 is a new release of the original cfront developed in the computer
 science research center of AT&T Bell Laboratories.
@@ -14,7 +14,7 @@ Laboratories, Inc.  The copyright notice above does not evidence
 any actual or intended publication of such source code.
 
 gram.y:
-	
+
 	This is the C++ syntax analyser.
 
 	Syntax extensions for error handling:
@@ -228,7 +228,7 @@ SET_XSCOPE( Pktab tb )
 
 
 // macros
-#define copy_if_need_be(s)  ((templp->in_progress || templp->parameters_in_progress) ? strdup(s) : s) 
+#define copy_if_need_be(s)  ((templp->in_progress || templp->parameters_in_progress) ? strdup(s) : s)
 #define YYMAXDEPTH 600
 
 #if 0
@@ -259,11 +259,11 @@ static Pname err_name = 0;
 static Pcons templ_friends;
 
 // fcts put into norm2.c just to get them out of gram.y
-void sig_name(Pname);	
+void sig_name(Pname);
 Ptype tok_to_type(TOK);
 void memptrdcl(Pname, Pname, Ptype, Pname);
 
-static bit decl_with_init(Pnlist cd) 
+static bit decl_with_init(Pnlist cd)
 /* do the declarations have an initializer
    or a class object with a constructor */
 {
@@ -277,24 +277,24 @@ static bit decl_with_init(Pnlist cd)
 }
 
 
-static char* 
-get_classname(char* s)
+static char*
+get_classname(const char* s)
 {
 // error('d',"get_classname(%s)",s);
 	char* r = new char[strlen(s)+1];
-	sprintf(r,s);
-	s = r;
+	sprintf(r,"%s", s);
+	char *s2 = r;
 
-	char* s1 = s;
+	const char* s1 = s;
 	while (*s) {
 		for ( ; s[0] && (s[0] != '_' || s[1] && s[1] != '_'); s++) s1++;;
 		if (*s) {
 			if (strncmp(s,"___pt__",7)==0) {
-				*s1 = 0;
+				*s2 = 0;
 				return r;
 			}
 			if (strncmp(s,"__pt__",6)==0) { // parameterized class
-				*s1 = '\0';
+				*s2 = '\0';
 				return r;
 			}
 		}
@@ -477,7 +477,7 @@ inline Pname Ncopy(Pname n)
 %}
 
 %union {
-	char*	s;
+	const char*	s;
 	TOK	t;
 	int	i;
 	loc	l;
@@ -550,8 +550,8 @@ ll:
 %token ELSE		12
 %token ENUM		13
 %token FOR		16
-%token FORTRAN		17 
-%token FRIEND		18 
+%token FORTRAN		17
+%token FRIEND		18
 %token GOTO		19
 %token IF		20
 %token NEW		23
@@ -637,18 +637,18 @@ ll:
 %token XNLIST		201 /* struct name_list */
 %token XILINE		202
 %token XIA		203
-%token SM_PARAM         207 
+%token SM_PARAM         207
 %token PTNAME           209
 %token NEW_INIT_KLUDGE  210
 %token XDELETED_NODE    211
 %token DUMMY_LAST_NODE  212
 
-%type <p>	external_def fct_dcl fct_def att_fct_def arg_dcl_list 
+%type <p>	external_def fct_dcl fct_def att_fct_def arg_dcl_list
 		base_init init_list binit
 		data_dcl ext_def vec ptr
-		type tp enum_dcl moe_list moe 
-		tag ttag enumtag class_head class_dcl cl_mem_list 
-		cl_mem dl decl_list 
+		type tp enum_dcl moe_list moe
+		tag ttag enumtag class_head class_dcl cl_mem_list
+		cl_mem dl decl_list
 		fname decl initializer stmt_list
 		caselab_stmt caselablist
 		block statement simple ex_list elist e ee term prim
@@ -668,7 +668,7 @@ ll:
 		BREAK CONTINUE
 %type <t>	oper ellipsis_opt
 		EQUOP DIVOP SHIFTOP ICOP RELOP GT LT ASOP
-		ANDAND OROR PLUS MINUS MUL ASSIGN OR ER AND 
+		ANDAND OROR PLUS MINUS MUL ASSIGN OR ER AND
 		LP LB NOT COMPL AGGR
 		TYPE PR REFMUL
 %type <s>	CCON ZERO ICON FCON STRING LINKAGE
@@ -730,11 +730,11 @@ ext_def		:  external_def		{	YYCLEAN;return 2; }
 				bl_level++;
 				YYCLEAN;return 1;
 			}
- 		|  template              {  YYCLEAN;return 1; } 
+ 		|  template              {  YYCLEAN;return 1; }
 		;
 
 template    :    TEMPLATE
-                 {	
+                 {
 			PUSH_TEMPLATE_SCOPE();//SYM
 // error('d',"template seen: in_class_decl %d", in_class_decl);
 			if (in_class_decl) {
@@ -748,7 +748,7 @@ template    :    TEMPLATE
 		 }
                  LT { in_arg_list = 2; } template_parm_list GT
                  {
-			templp->enter_parameters(); 
+			templp->enter_parameters();
 			templp->formals_in_progress = false;
 			in_arg_list = 0;
 		 }
@@ -760,7 +760,7 @@ template    :    TEMPLATE
 				delete templp->save_templ;
 				templp->save_templ = 0;
 			}
-			else { 
+			else {
 				templp->in_progress = false;
 				bound_expr_tbl->reinit();
 			}
@@ -768,29 +768,29 @@ template    :    TEMPLATE
                  }
                 ;
 
-template_def    : data_dcl 
+template_def    : data_dcl
 		| att_fct_def { goto mod; }
                 | fct_def    { goto mod; }
                 | fct_dcl
                 | class_dcl SM
-                  { 
+                  {
 			Pname pn = $<pb>1->aggr();
-			/* basetype:aggr() does not return the name for a forward 
+			/* basetype:aggr() does not return the name for a forward
 		    	 * declaration, so extract it directly */
                     	$$ = (pn ? pn : $<pb>1->b_name);
                     	DECL_TYPE = 0;
 		  }
                  ;
 
-identifier	: ID 
+identifier	: ID
 		|  qualified_tname
 			{ $<pn>$ = Ncopy($<pn>1) ;}
 		;
 
 external_def	:  data_dcl
-			{	
+			{
 				//SYM -- tn stuff removed
-				if ($<pn>1==0) $<i>$ = 1; 
+				if ($<pn>1==0) $<i>$ = 1;
 			}
 		|  att_fct_def  { goto mod; }
 		|  fct_def
@@ -898,8 +898,8 @@ fct_def		:  decl arg_dcl_list check_inline
 		   base_init block
 			{	Pname n = $<pn>4;//SYM
 				Fbody(n->tp) = Pblock($6);//SYM
-				if ( $<pn>5 && $<pn>5->n_list && 
-     					ccl && ccl->csu == UNION )  
+				if ( $<pn>5 && $<pn>5->n_list &&
+     					ccl && ccl->csu == UNION )
 						error( "multiple initializers in unionK %s::%n", $<pn>1->string, $<pn>1 );
 				Finit(n->tp) = $<pn>5;
 				$$ = n;
@@ -931,7 +931,7 @@ fct_def		:  decl arg_dcl_list check_inline
 			}
 		;
 
-inline_fct_def	:  FDEF 
+inline_fct_def	:  FDEF
 			{	PUSH_ARG_SCOPE();//SYM
                         	arg_redec($<pn>1);
                         	Ctbl->k_name = $<pn>1;
@@ -960,7 +960,7 @@ check_inline	:  /* empty */
 					la_backup(yychar,yylval);
 					// yylval used as dummy...
 					la_backup(FDEF, yylval);
-					if ( yylval.q = save_text() ) {
+					if ( (yylval.q = save_text()) ) {
 						yychar = EMPTY;
 						POP_SCOPE();//SYM
 					} else { // syntax error
@@ -984,8 +984,8 @@ check_inline	:  /* empty */
 		;
 
 base_init	:  COLON { ++in_binit_list; } init_list
-			{	
-				$$ = $3; 
+			{
+				$$ = $3;
 				in_arg_list = 0;
 				--in_binit_list;
 			}
@@ -1032,12 +1032,12 @@ arg_dcl_list	:  arg_dcl_list data_dcl
 		|  %prec EMPTY
 			{
 				PUSH_ARG_SCOPE();//SYM
-                                $$ = 0; 
+                                $$ = 0;
 			}
 		;
 
 dl		:  decl
-		|  ID COLON 
+		|  ID COLON
                         {
                                 if ( in_typedef ) {
                                         error("Tdef field");
@@ -1080,7 +1080,7 @@ decl_list	:  dl
 					    n->n_qualifier = 0;
 				    }
 				}
-				if ( NEXTTOK() == CM && la_look() == TNAME ) 
+				if ( NEXTTOK() == CM && la_look() == TNAME )
 					EXPECT_ID();
 			}
 		|  decl_list CM dl
@@ -1102,33 +1102,33 @@ decl_list	:  dl
 					    n->n_qualifier = 0;
 				    }
 				}
-				if ( NEXTTOK() == CM && la_look() == TNAME ) 
+				if ( NEXTTOK() == CM && la_look() == TNAME )
 					EXPECT_ID();
 			}
 		;
 
-data_dcl	:  type decl_list SM	
-			{ 
+data_dcl	:  type decl_list SM
+			{
 				extern int co_hack;
 				co_hack = 1;
 				/*$$ = Ndata($1,name_unlist($<nl>2));*/
-				Pname n = Ndata($1,name_unlist($<nl>2)); 
+				Pname n = Ndata($1,name_unlist($<nl>2));
 //error('d',"data_dcl:type decl_list sm: %n%t in_typedef%t in_tag%n",n,n->tp,in_typedef,in_tag);
 				//SYM redef check removed
 				in_typedef = 0;
 				in_friend = 0;
 				in_tag = 0;
 				co_hack = 0;
-				DECL_TYPE = 0; 
+				DECL_TYPE = 0;
 				$$ = n;
 			}
-		|  type SM		
+		|  type SM
 			{
-				$$ = $<pb>1->aggr(); 
+				$$ = $<pb>1->aggr();
 				in_typedef = 0;
 				in_friend = 0;
 				in_tag = 0;
-				DECL_TYPE = 0; 
+				DECL_TYPE = 0;
 			}
 		;
 
@@ -1149,16 +1149,16 @@ gt 		: GT
 
 tname		: qualified_tname { $<pn>$ = templp->check_tname($<pn>1) ; }
                 | qualified_tname lt temp_inst_parms gt
-                  { 
+                  {
 			int sm = NEXTTOK()==SM;
 			if (in_friend) in_friend += sm;
 			bit flag=0;
-			if (dtpt_opt && in_typedef &&  
+			if (dtpt_opt && in_typedef &&
 				!templp->parameters_in_progress &&
 				curloc.file == first_file)
 				flag=1;
 		    	$<pn>$ = parametrized_typename($<pn>1,
-						  (expr_unlist($<el>3)),in_friend) ; 
+						  (expr_unlist($<el>3)),in_friend) ;
 			if (flag)
 				righttname=$<pn>$;
 		  }
@@ -1171,9 +1171,9 @@ tname		: qualified_tname { $<pn>$ = templp->check_tname($<pn>1) ; }
 
 
 
-tp		:  TYPE			
-			{ 
-				$$ = new basetype($<t>1,0); 
+tp		:  TYPE
+			{
+				$$ = new basetype($<t>1,0);
 				if ( $<t>1 == TYPEDEF ) {
 					in_typedef = $<pt>$;
 // error('d',"typedef: ccl %t ", ccl, $<pn>1);
@@ -1184,14 +1184,14 @@ tp		:  TYPE
 				}
 				if (DECL_TYPE == -1) DECL_TYPE = 0;
 			}
-		|  LINKAGE		
+		|  LINKAGE
 			{	$$ = new basetype(EXTERN,0);
 				$<pb>$->b_linkage = $<s>1;
 				if (DECL_TYPE == -1) DECL_TYPE = 0;
 			}
 		|  tname %prec NO_ID
 			{
-				$$ = new basetype(TYPE,$<pn>1); 
+				$$ = new basetype(TYPE,$<pn>1);
 				if (DECL_TYPE == -1) DECL_TYPE = 0;
 			}
 	/*XXX*/	|  tn_list DECL_MARKER
@@ -1200,55 +1200,55 @@ tp		:  TYPE
 				//xxx qualifier currently ignored...
 				if (DECL_TYPE == -1) DECL_TYPE = 0;
 			}
-		|  class_dcl 
+		|  class_dcl
 		|  enum_dcl
-		|  DECL_MARKER		
-			{ 
+		|  DECL_MARKER
+			{
 				if (DECL_TYPE == TNAME)
-					$$ = new basetype(TYPE,$<pn>1); 
+					$$ = new basetype(TYPE,$<pn>1);
 		//	else if (DECL_TYPE == TSCOPE)
 		//	$$ = 0;
 				else
 				if (DECL_TYPE == 0 &&
 					$<p>1->base == TNAME)
-						$$ = new basetype(TYPE,$<pn>1); 
+						$$ = new basetype(TYPE,$<pn>1);
 				else
-					$$ = new basetype($<t>1,0); 
+					$$ = new basetype($<t>1,0);
 				DECL_TYPE = -1;
 			}
 		;
 
 type		:  tp
-		|  type TYPE		
-			{ 
+		|  type TYPE
+			{
 				if ( DECL_TYPE != -1 ) {
-					switch ($<pb>1->base) { 
+					switch ($<pb>1->base) {
 					case COBJ: case EOBJ:
-						Pbase bt;	
+						Pbase bt;
 						bt = new basetype(0,0);
 						*bt = *$<pb>1;
 						DEL($<pb>1);
 						$<pb>1 = bt;
 					}
-					$$ = $<pb>1->type_adj($<t>2); 
+					$$ = $<pb>1->type_adj($<t>2);
 				}
 				DECL_TYPE = 0;
 			}
 		|  type tname %prec NO_ID
 			{
 //error('d',"decl_type: %d  $1: %t  $2: %n",DECL_TYPE,$<pb>1,$<pn>2);
-				if ( DECL_TYPE != -1 ) 
+				if ( DECL_TYPE != -1 )
 			 		$$ = $<pb>1->name_adj($<pn>2);
 			/*XXX*/	else if($<pb>1==0) $$=new basetype(TYPE,$<pn>2);
 				DECL_TYPE = 0;
 			}
 		|  type class_dcl	{ $$ = $<pb>1->base_adj($<pb>2); }
 		|  type enum_dcl	{ $$ = $<pb>1->base_adj($<pb>2); }
-		|  type DECL_MARKER		
-			{ 
+		|  type DECL_MARKER
+			{
 				if (DECL_TYPE == TYPE) {
-					switch ($<pb>1->base) { 
-					case COBJ: case EOBJ: 
+					switch ($<pb>1->base) {
+					case COBJ: case EOBJ:
 						{
 						Pbase bt;
 						bt = new basetype(0,0);
@@ -1257,19 +1257,20 @@ type		:  tp
 						$<pb>1 = bt;
 						}
 					}
-					$$ = $<pb>1->type_adj($<t>2);  
+					$$ = $<pb>1->type_adj($<t>2);
 				}
 			/*XXX*/	else if (DECL_TYPE == TSCOPE) {
 			/*XXX*/		error('i',"T decl_marker(tscope)");
 			/*XXX*/	//	$$ = $1;//ignore(?)
 			/*XXX*/	}
 				else
-					$$ = $<pb>1->name_adj($<pn>2); 
+					$$ = $<pb>1->name_adj($<pn>2);
 				DECL_TYPE = -1;
 			}
 		;
 
 cm		: CM {in_arg_list = 2; check_decl();}
+		;
 
 temp_inst_parms : temp_inst_parms cm temp_inst_parm
                   {$<el>1->add(new expr(ELIST,$<pe>3,0)) ; }
@@ -1311,12 +1312,12 @@ new_type2	: type new_decl2	{ $$ = Ncast($1,$<pn>2); };
 temp_inst_parm  : new_type2
 		 	{
 				$<pn>1->n_template_arg = template_actual_arg_dummy;
-				$<pe>$ = $<pn>1; /* keep yacc happy */ 
+				$<pe>$ = $<pn>1; /* keep yacc happy */
 			}
                 | e %prec GT
-                  	{ 
+                  	{
 				if ($<pe>1 == dummy) error("emptyYZL");
-				$<pe>$ = $<pe>1; 
+				$<pe>$ = $<pe>1;
 			}
 		;
 
@@ -1328,15 +1329,15 @@ enumtag	:  tag { $$ = enumcheck( $<pn>1); }
 			if ( DECL_TYPE != TNAME ) {
 				error("syntax error -- enum%k",$<t>1);
 				$$ = 0;
-			} else 
+			} else
 				$$ = enumcheck( $<pn>1);
 		}
-	|  tn_list DECL_MARKER 
+	|  tn_list DECL_MARKER
 		{
 			if ( DECL_TYPE != TNAME ) {
 				error("enum declaration syntax");
 				$$ = 0;
-			} else 
+			} else
 				$<pn>$ = enumcheck($<pn>2);
 			if (in_typedef && in_typedef->base == 0)
 				in_typedef->defined = TNAME_SEEN;
@@ -1365,19 +1366,19 @@ moe_list	:  moe
 template_parm_list : template_parm_list CM template_parm
                    | template_parm
                    | /* empty */
-			{ 
+			{
 				$<pn>$ = 0;
 				error("emptyYZL");
 			}
 		;
 
 template_parm   : AGGR identifier
-                  /* Build the name for the parameter
+                  /* Build the name for the parameter */
 		  /* Check that AGGR is indeed CLASS */
                  { templp->collect($<t>1, $<pn>2) ; }
                  | type formal_decl
 			{templp->collect(Ndata($1,$<pn>2)); }
-		;	
+		;
 
 
 /* these productions are a variant of the ones for arg_decl,
@@ -1477,9 +1478,9 @@ class_dcl	:  class_head cl_mem_list RC
 				end_cl();
 				declTag = 1;
 			}
-        	|  AGGR tag 
+        	|  AGGR tag
 			{ aggrcheck:
-				$<pb>$ = (Pbase)$<pn>2->tp; 
+				$<pb>$ = (Pbase)$<pn>2->tp;
 				if ( $$ == 0 ) {
 					if (templp->parameters_in_progress)
 						error("TX for%n -- did you misdeclare aY?",$<pn>2);
@@ -1499,7 +1500,7 @@ class_dcl	:  class_head cl_mem_list RC
 				check_tag();
 			}
                 | AGGR qualified_tname lt temp_inst_parms gt
-                  { 
+                  {
                     /* don't place the template on the instantiation list if it is
                      * a friend declaration or a foward declaration of a specialization
                      * friend class x<int> and struct x<int>; */
@@ -1523,7 +1524,7 @@ class_dcl	:  class_head cl_mem_list RC
 			// watch out for redefinition -- if exists,
 			// use forward declaration or create instance
 			pti = t->get_match(e,0,false);
-			if ( pti ) { 
+			if ( pti ) {
 				if (pti->get_class()->class_base == INSTANTIATED)
 					error("ZC%n multiply instantiated",$<pn>2);
 			}
@@ -1531,7 +1532,7 @@ class_dcl	:  class_head cl_mem_list RC
 			pti->inst_formals = t->get_formals();
 
 			error('s',"forwardD of a specialized version ofY%n",$<pn>2);
-			error('C',"\tclass %n",pti->get_tname()); 
+			error('C',"\tclass %n",pti->get_tname());
 			error('c'," -- did you mean a general forward declaration of theY?\n");
 			error('C',"\tif so, use:  template <formal-parameters> class %n;\n",$<pn>2);
 	            }
@@ -1545,7 +1546,7 @@ class_dcl	:  class_head cl_mem_list RC
                     $<pb>$ = (Pbase)p->tp;
                     check_tag();
                   }
-        	|  AGGR DECL_MARKER 
+        	|  AGGR DECL_MARKER
 			{
 				goto aggrcheck;
 			}
@@ -1572,7 +1573,7 @@ base_unit	:  ttag			{ $$ = dobase(0,$<pn>1); }
 		|  TYPE PR ttag		{ $$ = dobase($<t>2,$<pn>3,$<t>1); }
 		;
 
-class_head	:  AGGR LC	
+class_head	:  AGGR LC
 			{
 				Pname n = start_cl($<t>1,0,0);
 				PUSH_CLASS_SCOPE(n);//SYM
@@ -1616,7 +1617,7 @@ class_head	:  AGGR LC
 			// watch out for redefinition -- if exists,
 			// use forward declaration or create instance
 			pti = t->get_match(e,0,false);
-			if ( pti ) { 
+			if ( pti ) {
 				if (pti->get_class()->class_base == INSTANTIATED)
 					error("ZC%n multiply instantiated",$<pn>2);
 			}
@@ -1783,7 +1784,7 @@ scope_qualifiers:  tn_list { $<pn>$ = SET_SCOPE($<pn>1); }/*SYM*/
 tn_list		:  tscope
 		/*XXX*/	{   if ( $<pn>1 != sta_name ) {
 				Pname n = $<pn>1;
-				char *str = 0, *str2 = 0, *s = n->string;
+				const char *str = 0, *str2 = 0, *s = n->string;
 				if (n->n_template_arg != template_type_formal) {
 				    n = n->tp->is_cl_obj();
 				    if ( n ) str = s = get_classname(n->string);
@@ -1809,7 +1810,7 @@ tn_list		:  tscope
 			   } else {
 // error('d',"tn_list: tn_list tscope: pn2: %s", $<pn>2->string);
 				Pname cn = $<pn>2;
-				char *str = 0, *str2 = 0, *s = cn->string;
+				const char *str = 0, *str2 = 0, *s = cn->string;
 				if (cn->n_template_arg != template_type_formal){
 				    cn = $<pn>2->tp->is_cl_obj();
 				    if (cn) str = s = get_classname(cn->string);
@@ -1836,7 +1837,7 @@ tn_list		:  tscope
 		;
 
 qualified_tname	: tn_list TNAME
-			{	
+			{
 				$<pn>$ = $<pn>2;
 				if (in_typedef && in_typedef->base == 0)
 					in_typedef->defined = TNAME_SEEN;
@@ -1846,7 +1847,7 @@ qualified_tname	: tn_list TNAME
 				// $<pn>$->n_qualifier = $<pn>1;
 			}
 		| TNAME
-			{	
+			{
 				$<pn>$ = $<pn>1;
 				if (in_typedef && in_typedef->base == 0)
 					in_typedef->defined = TNAME_SEEN;
@@ -1915,8 +1916,8 @@ decl		:  decl arg_list
 				class object vector initializer,
 				if not elist will be a CM or an ID
 			*/
-			{	
-				$<pn>1->tp = new fct($<pn>1->tp,$<pn>3,1); 
+			{
+				$<pn>1->tp = new fct($<pn>1->tp,$<pn>3,1);
  				in_arg_list = 0;
  				//SYM end_al($2,0);
  				POP_SCOPE();//SYM
@@ -2005,8 +2006,8 @@ decl		:  decl arg_list
 		|  scope_qualifiers fname
 			{	$$ = $2;
 				//SYM if ( $<pn>1 != sta_name ) {
-    				//SYM	set_scope($<pn>1); 
-					if ( $<pn>1 == sta_name 
+    				//SYM	set_scope($<pn>1);
+					if ( $<pn>1 == sta_name
     					&&   $<pn>$->n_oper==DTOR )
 						error("bad syntax for destructor ::%n",$<pn>$);
     					$<pn>$->n_qualifier = $<pn>1;
@@ -2018,7 +2019,7 @@ decl		:  decl arg_list
 				error("`.' used for qualification; please use `::'");
 				error("non-type qualifier%n",$<pn>2);
 				//if ( $<pn>1 != sta_name ) {
-    				//SYM	set_scope($<pn>1); 
+    				//SYM	set_scope($<pn>1);
     				//	$<pn>2->n_qualifier = $<pn>1;
 				//}
 			}
@@ -2044,7 +2045,7 @@ decl		:  decl arg_list
 				else in_tag = $<pn>1;//SYM???
 				$<pn>$->tp = $<pt>2;
 			}
-		|  decl vec	%prec LB	
+		|  decl vec	%prec LB
 			{	Vtype($2) = $<pn>1->tp;
 				$<pn>1->tp = $<pt>2;
 			}
@@ -2061,9 +2062,9 @@ decl		:  decl arg_list
 				$$ = $2;
 			}
 */
-		|  arg_lp decl RP 
-			{ 
-				$$ = $2; 
+		|  arg_lp decl RP
+			{
+				$$ = $2;
 				in_arg_list = 0;
 				hoist_al();//SYM end_al($1,0);
 				//RESTORE_STATE();
@@ -2085,8 +2086,8 @@ arg_decl	:  ID
 				$<pn>$->tp = $<pt>1;
 			}
 		|  %prec NO_ID
-			{	
-				$$ = new name; 
+			{
+				$$ = new name;
 				NOT_EXPECT_ID();
 			}
 		|  ptr arg_decl		%prec MUL
@@ -2114,10 +2115,10 @@ arg_decl	:  ID
 				$$ = $2;
 			}
 */
-		|  arg_lp arg_decl RP	
-			{ 
+		|  arg_lp arg_decl RP
+			{
 // error('d', "arg_lp arg_decl rp in_arg_list: %d", in_arg_list );
-				$$ = $2; 
+				$$ = $2;
 				in_arg_list = 0;
 				hoist_al();//SYM end_al($1,0);
 				//RESTORE_STATE();
@@ -2175,7 +2176,7 @@ c_decl		:  %prec NO_ID
 /***************** statements: returns Pstmt *****************/
 stmt_list	:  /* empty */
 			{
-				$$ = 0; 
+				$$ = 0;
 			}
 		|  stmt_list TEMPLATE
 			{
@@ -2183,7 +2184,7 @@ stmt_list	:  /* empty */
 				error('i', "cannot recover from previous error" );
 			}
          	|  stmt_list caselab_stmt
-			{	
+			{
 				if ($2)
 					if ($1)
 						$<sl>1->add($<ps>2);
@@ -2256,7 +2257,7 @@ simple		:  ee
 		|  DO { stmt_seen=1; } caselab_stmt WHILE condition
 			{	$$ = new estmt(DO,$<l>1,$<pe>5,$<ps>3); }
 		|  ASM LP STRING RP
-			{	
+			{
 				if (stmt_seen)
 					$$ = new estmt(ASM,curloc,(Pexpr)$<s>3,0);
 				else {
@@ -2333,9 +2334,9 @@ statement	:  simple sm
 		|  FOR LP { stmt_seen=1; } caselab_stmt e SM e RP caselab_stmt
 			{	$$ = new forstmt($<l>1,$<ps>4,$<pe>5,$<pe>7,$<ps>9); }
 		|  SWITCH  { scd[++scdp] = cd;} condition caselab_stmt
-			{	
+			{
 				--scdp;
-				$$ = new estmt(SWITCH,$<l>1,$<pe>3,$<ps>4); 
+				$$ = new estmt(SWITCH,$<l>1,$<pe>3,$<ps>4);
 			}
 		|  ID COLON { $$ = $1; stmt_seen=1; } caselab_stmt
 			{	Pname n = $<pn>3;
@@ -2346,15 +2347,15 @@ statement	:  simple sm
 				$$ = new lstmt(LABEL,n->where,n,$<ps>4);
 			}
 		|  CASE { stmt_seen=1; } e COLON caselab_stmt
-			{	
+			{
 				if (scdp>=0 && scd[scdp]!=cd && cd && decl_with_init(cd)) error("jump past initializer (did you forget a '{ }'?)");
 				if ($<pe>3 == dummy) error("empty case label");
 				$$ = new estmt(CASE,$<l>1,$<pe>3,$<ps>5);
 			}
 		|  DEFAULT COLON { stmt_seen=1; } caselab_stmt
-			{	
+			{
 				if (scdp>=0 && scd[scdp]!=cd && cd && $<pe>3 && decl_with_init(cd)) error("jump past initializer (did you forget a '{ }'?)");
-				$$ = new stmt(DEFAULT,$<l>1,$<ps>4); 
+				$$ = new stmt(DEFAULT,$<l>1,$<ps>4);
 			}
 		|  TRY block handler_list
 			{ $$ = new handler( $<ps>2, stmt_unlist($<sl>3) ); }
@@ -2364,7 +2365,7 @@ statement	:  simple sm
 handler_list	:  /* empty */
 			{ $$ = 0; }
 		|  handler_list handler
-			{	
+			{
 				if ($2)
 					if ($1)
 						$<sl>1->add($<ps>2);
@@ -2404,7 +2405,7 @@ exception_type	:  arg_lp type arg_decl RP
 elist		: ex_list
 			{	Pexpr e = expr_unlist($<el>1);
 				while (e && e->e1==dummy) {
-					register Pexpr ee2 = e->e2;
+					/*register*/ Pexpr ee2 = e->e2;
 					if (ee2) error("EX inEL");
 					delete e;
 					e = ee2;
@@ -2422,11 +2423,11 @@ ex_list		:  initializer		%prec CM
 initializer	:  e				%prec CM
 		|  LC elist RC
 			{
-  			  	if ( in_arg_list ) 
+  			  	if ( in_arg_list )
        			  		error( "syntax error: IrL not permitted in AL" );
 				else if ( in_binit_list )
 					error( "syntax error: IrL not permitted inMIr" );
-  			  	else 
+  			  	else
 					init_seen = 1;
 				Pexpr e;
 				if ($2)
@@ -2459,7 +2460,7 @@ ee		:  ee ASSIGN ee
 			{	$$ = new qexpr($<pe>1,$<pe>3,$<pe>5); }
 		|  ee REFMUL ee
 			{	$$ = new expr($<t>2,$<pe>1,$<pe>3); }
-		|  DELETE term 
+		|  DELETE term
 			{ $$ = new expr(DELETE,$<pe>2,0); }
 		|  DELETE LB e RB term
 			{
@@ -2469,11 +2470,11 @@ ee		:  ee ASSIGN ee
 				}
 				$$ = new expr(DELETE,$<pe>5,$<pe>3);
 			}
-		|  MEM DELETE term 
+		|  MEM DELETE term
 			{	$$ = new expr(GDELETE,$<pe>3,0); }
 		|  MEM DELETE LB e RB term
 			{
-				if($<pe>4 != dummy) { 
+				if($<pe>4 != dummy) {
 					if ( warning_opt || strict_opt )
 						error(strict_opt?0:'w',"v in `::delete[v]' is redundant; use `::delete[] instead (anachronism)");
 				}
@@ -2506,7 +2507,7 @@ e		:  e ASSIGN e
 			{	$$ = new qexpr($<pe>1,$<pe>3,$<pe>5); }
 		|  e REFMUL e
 			{	$$ = new expr($<t>2,$<pe>1,$<pe>3); }
-		|  DELETE term 
+		|  DELETE term
 			{	$$ = new expr(DELETE,$<pe>2,0); }
 		|  DELETE LB e RB term
 			{
@@ -2516,7 +2517,7 @@ e		:  e ASSIGN e
 				}
 				$$ = new expr(DELETE,$<pe>5,$<pe>3);
 			}
-		|  MEM DELETE term 
+		|  MEM DELETE term
 			{	$$ = new expr(GDELETE,$<pe>3,0); }
 		|  MEM DELETE LB e RB term
 			{
@@ -2526,14 +2527,14 @@ e		:  e ASSIGN e
 				}
 				$$ = new expr(DELETE,$<pe>6,$<pe>4);
 			}
-		|  term { 
-			init_seen = 0; 
-			} 
+		|  term {
+			init_seen = 0;
+			}
 		|  THROW term
 			{ $$ = dummy; }
 		|  %prec NO_EXPR
 			{	$$ = dummy; }
-		; 
+		;
 
 term		:  NEW cast_type	{ goto new1; }
 		|  NEW new_type
@@ -2570,13 +2571,13 @@ term		:  NEW cast_type	{ goto new1; }
 		|  ICOP term
 			{	$$ = new expr($<t>1,0,$<pe>2); }
 		|  SIZEOF term
-			{	
-				$$ = new texpr(SIZEOF,0,$<pe>2); 
+			{
+				$$ = new texpr(SIZEOF,0,$<pe>2);
 				--in_sizeof;
 			}
 		|  SIZEOF cast_type %prec SIZEOF
-			{	
-				$$ = new texpr(SIZEOF,$<pn>2->tp,0); 
+			{
+				$$ = new texpr(SIZEOF,$<pn>2->tp,0);
 				--in_sizeof;
 			}
 		|  term LB e RB
@@ -2647,7 +2648,7 @@ term		:  NEW cast_type	{ goto new1; }
 		|  scope_qualifiers prim
 			{ // set scope to parse 'C::operator N' where N is in C
 			  // still does not handle 'p->operator N'
-			  //     (requires either fancier structures or 
+			  //     (requires either fancier structures or
 			  //     on-the-fly type checking)
 				$$ = Ncopy($<pn>2);
 				$<pn>$->n_qualifier = $<pn>1;
@@ -2661,11 +2662,11 @@ term		:  NEW cast_type	{ goto new1; }
 				$<pn>$->n_dtag = $<pn>3;
 			}
 		|  tn_list COMPL TYPE	/* explicit call to basic type dtor */
-			{	
+			{
 				$$ = dummy_dtor( $<t>3, $<t>3 );
 				$<pn>$->n_qualifier = $<pn>1;
 			}
-		|  term_elist 
+		|  term_elist
 			{
 			if ( init_seen )
      				error( "syntax error:IrL illegal within ()");
@@ -2700,12 +2701,12 @@ term		:  NEW cast_type	{ goto new1; }
 		;
 
 dtorspec	:  COMPL tag /* explicit, unqualified dtor call */
-			{	
+			{
 				$$ = dummy_dtor();
 				$<pn>$->n_dtag = $<pn>2; // checked later
 			}
 		|  MEMQ COMPL tag /* explicit dtor call */
-			{	
+			{
 				$$ = dummy_dtor();
 				$<pn>$->n_qualifier = $<pn>1; // checked later
 				$<pn>$->n_dtag = $<pn>3; // checked later
@@ -2715,7 +2716,7 @@ dtorspec	:  COMPL tag /* explicit, unqualified dtor call */
 		|  COMPL TYPE /* call of basic type dtor */
 			{ $$ = dummy_dtor($<t>2,$<t>2); }
 		|  TYPE MEM COMPL tag	/* call to basic type dtor */
-			{	
+			{
 				$$ = dummy_dtor( $<t>1, $<t>1 );
 				$<pn>$->n_dtag = $<pn>4;
 			}
@@ -2743,8 +2744,8 @@ term_elist	: TYPE LP elist RP
 		|  qualified_tname LP elist RP
 */
 		|  tname LP elist RP
-			{	
-				$$ = new texpr(VALUE,$<pn>1->tp,$<pe>3); 
+			{
+				$$ = new texpr(VALUE,$<pn>1->tp,$<pe>3);
 				if ($<pn>1->is_template_arg() && $<pn>1->tp->base == ANY) {
 					$<pe>$->tp2 = new basetype(TYPE,$<pn>1);
 				}
@@ -2766,7 +2767,7 @@ term_elist	: TYPE LP elist RP
 				--in_new;
 			}
 		|  term LP elist RP
-			{	
+			{
 				Pexpr ee = $<pe>3;
 				Pexpr e = $<pe>1;
 				if (e->base==NEW || e->base==GNEW)
@@ -2779,7 +2780,7 @@ term_elist	: TYPE LP elist RP
 
 ptname         : PTNAME lt temp_inst_parms  gt
                  {
-			$<pn>$ = parametrized_typename($<pn>1,(expr_unlist($<el>3))); 
+			$<pn>$ = parametrized_typename($<pn>1,(expr_unlist($<el>3)));
 	 	 }
                ;
 
@@ -2816,7 +2817,7 @@ prim		:  ID
 
 
 /****************** abstract types (return type Pname) *************/
-cast_type	:  term_lp type cast_decl RP 
+cast_type	:  term_lp type cast_decl RP
 			{
 				$$ = Ncast($2,$<pn>3);
 			}
@@ -2825,7 +2826,7 @@ cast_type	:  term_lp type cast_decl RP
 term_lp		:  LP { check_cast(); }
 		;
 
-c_tp		:  TYPE	
+c_tp		:  TYPE
 			{
 				TOK t = $<t>1;
 
@@ -2839,17 +2840,17 @@ c_tp		:  TYPE
 				case VIRTUAL:
 					error("%k in operatorT",t);
 					t = INT;
-					
+
 				}
 
 				$$ = new basetype(t,0);
 
 			}
 		|  tname	{ $$ = new basetype(TYPE,$<pn>1); }
-		|  c_tp TYPE		
-			{ 
+		|  c_tp TYPE
+			{
 				if ( DECL_TYPE != -1 ) {
-					switch ($<pb>1->base) { 
+					switch ($<pb>1->base) {
 					case COBJ: case EOBJ:
 						{
 						Pbase bt;
@@ -2859,13 +2860,13 @@ c_tp		:  TYPE
 						$<pb>1 = bt;
 						}
 					}
-					$$ = $<pb>1->type_adj($<t>2); 
+					$$ = $<pb>1->type_adj($<t>2);
 				}
 				DECL_TYPE = 0;
 			}
 		|  c_tp tname
-			{ 
-				if ( DECL_TYPE != -1 ) 
+			{
+				if ( DECL_TYPE != -1 )
 			 		$$ = $<pb>1->name_adj($<pn>2);
 				DECL_TYPE = 0;
 			}
@@ -2877,26 +2878,26 @@ c_type		:  c_tp c_decl	{ $$ = Ncast($1,$<pn>2); }
 new_type	:  type new_decl	{ $$ = Ncast($1,$<pn>2); };
 
 arg_type	:  type arg_decl
-			{	
+			{
                          //      ENTER_NAME($<pn>2);
-				$$ = Ndata($1,$<pn>2); 
+				$$ = Ndata($1,$<pn>2);
 			}
                 |  type arg_decl ASSIGN
                         {
                         //      ENTER_NAME($<pn>2);
                         }
                    initializer
-                        {       
+                        {
 				$$ = Ndata($1,$<pn>2);
                                 $<pn>$->n_initializer = $<pe>5;
                         }
                 ;
 
-arg_lp		:  LP 
+arg_lp		:  LP
 			{	PUSH_ARG_SCOPE();//SYM
 				//SAVE_STATE();
-				in_arg_list=1; 
-				check_decl(); 
+				in_arg_list=1;
+				check_decl();
 				$$ = 0;
 				//SYM -- tn stuff removed
 			}
@@ -2904,7 +2905,7 @@ arg_lp		:  LP
 
 arg_list	:  arg_lp arg_type_list ellipsis_opt RP fct_attributes
 		    {
-			$$ = new fct(0,name_unlist($<nl>2),$<t>3); 
+			$$ = new fct(0,name_unlist($<nl>2),$<t>3);
 			if ( NEXTTOK() != COLON ) in_arg_list=0;
 			//in_arg_list=0;
 			Pfct($<pt>$)->f_const = ($<i>5 & 1);
@@ -2921,14 +2922,14 @@ arg_type_list	:  arg_type_list CM at
 						$<nl>1->add($<pn>3);
 					else {
 						error("AD syntax");
-						$<nl>$ = new nlist($<pn>3); 
+						$<nl>$ = new nlist($<pn>3);
 					}
 				else
 					error("AD syntax");
 			}
 		|  at	%prec CM
 			{
-				if ($1) $<nl>$ = new nlist($<pn>1); 
+				if ($1) $<nl>$ = new nlist($<pn>1);
 			}
 		;
 
@@ -2946,18 +2947,18 @@ ellipsis_opt	:  /* empty */
 
 ptr		:  MUL %prec NO_ID
 			{
-			$$ = new ptr(PTR,0); 
+			$$ = new ptr(PTR,0);
 			EXPECT_ID();
 			}
 		|  AND %prec NO_ID
 			{
-			$$ = new ptr(RPTR,0); 
+			$$ = new ptr(RPTR,0);
 			EXPECT_ID();
 			}
 		|  MUL TYPE %prec NO_ID
 			{	$$ = doptr(PTR,$<t>2); }
 		|  ptr TYPE %prec NO_ID
-			{	
+			{
 				switch ( $<t>2 ) {
 				case CONST:
                                      $<pp>1->b_const = 1; break;
@@ -2967,12 +2968,12 @@ ptr		:  MUL %prec NO_ID
 				default:
 				    error( "syntax error: *%k", $<t>2 );
 				}
-				$$ = $<pp>1; 
+				$$ = $<pp>1;
 			}
 		|  AND TYPE %prec NO_ID
 			{	$$ = doptr(RPTR,$<t>2); }
 		|  ptname MEMPTR %prec NO_ID
-			{	
+			{
 				memptr_pn = $<pn>1;
 				memptr_tok = 0;
 				goto memptr1;
@@ -3001,13 +3002,13 @@ ptr		:  MUL %prec NO_ID
 			EXPECT_ID();
 			}
 		|  ptname MEMPTR TYPE %prec NO_ID
-			{	
+			{
 				memptr_pn = $<pn>1;
 				memptr_tok = $<t>3;
 				goto memptr1;
 			}
 		|  MEMPTR TYPE %prec NO_ID
-			{	
+			{
 				memptr_pn = $<pn>1;
 				memptr_tok = $<t>2;
 				goto memptr1;
@@ -3042,8 +3043,8 @@ enumcheck( Pname n )
 static void
 check_tag()
 /*
-        Allow the case of inline/virtual/overload as 
-        modifiers of return type of form struct/class/union x foo() 
+        Allow the case of inline/virtual/overload as
+        modifiers of return type of form struct/class/union x foo()
         SM, COLON, LC ==> real class declaration, not return type
 */
 {

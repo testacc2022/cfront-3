@@ -198,7 +198,7 @@ void expr::print()
 					goto aok;
 			goto bok;
 		aok:
-			if (n = il->i_args[argno].local) {
+			if ((n = il->i_args[argno].local)) {
 				n->print();
 			}
 			else {
@@ -384,8 +384,10 @@ void expr::print()
 			ptbl->look( str?str:string2, HIDDEN ) == 0
 		) {
 			Pname nn = ptbl->insert(new name(str?str:string2),0);
-			nn->string2 = new char[strlen(s)+1];
-			strcpy(nn->string2,s);
+			char *str = new char[strlen(s)+1];
+			strcpy(str,s);
+                        //free(nn->string2);
+                        nn->string2 = str;
 		}
 
 		delete str;
@@ -689,7 +691,7 @@ void expr::print()
 		for(;;) {
 			if (e->base == ELIST) {
 				e->e1->print();
-				if (e = e->e2) {
+				if ((e = e->e2)) {
 					puttok(CM);
 				}
 				else
@@ -943,7 +945,7 @@ void stmt::print()
 	else {
 		csloc = where;
 		if (where.line!=last_line.line)
-		if (last_ll = where.line)
+		if ((last_ll = where.line))
 			where.putline();
 		else
 			last_line.putline();
@@ -959,7 +961,7 @@ void stmt::print()
 			if (n->tp == any_type)
 				continue;
 			/* avoid double declarartion of temporaries from inlines */
-			char* s = n->string;
+			const char* s = n->string;
 			if (
 				s[0]!='_'
 				||
@@ -1173,7 +1175,7 @@ DB(if(Pdebug>=4)display_expr(e,"SM_e"););
 				else {
 					csloc = else_stmt->where;
 					if (else_stmt->where.line!=last_line.line)
-						if (last_ll = else_stmt->where.line)
+						if ((last_ll = else_stmt->where.line))
 							else_stmt->where.putline();
 						else
 							last_line.putline();
@@ -1293,7 +1295,7 @@ DB(if(Pdebug>=1)error('d',&n->where,"print local%n base%k tp%t scope%k",n,n->bas
 		else {
 			csloc = where2;
 			if (where2.line!=last_line.line)
-				if (last_ll = where2.line)
+				if ((last_ll = where2.line))
 					where2.putline();
 				else
 					last_line.putline();
@@ -1323,7 +1325,7 @@ void ptbl_init(int flag)
 		char *p = st_name( "__ptbl_vec__" );	
 		ptbl_name = new char[strlen(p)+1];
 		strcpy(ptbl_name, p);
-		delete p;
+		delete[] p;
 		Loc old = curloc;
 		curloc.file = 0;
 		curloc.line = 1;
@@ -1355,7 +1357,7 @@ void ptbl_init(int flag)
 	}
 }
 
-char* ptbl_lookup(char *name)
+char* ptbl_lookup(const char *name)
 {
 	ptbl_rec *r, *s, *p = ptbl_rec_lookup_head;
 	int i = 0;
@@ -1383,7 +1385,7 @@ char* ptbl_lookup(char *name)
 	return(pp);
 }
 
-void ptbl_add_pair(char* ptbl, char* vtbl)
+void ptbl_add_pair(const char* ptbl, const char* vtbl)
 {
 // error('d', "ptbl_add_pair: ptbl: %s, vtbl: %s", ptbl, vtbl );
 	ptbl_rec *p = new ptbl_rec;

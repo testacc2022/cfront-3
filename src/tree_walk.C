@@ -101,7 +101,7 @@ class walker {
 	}
 	return ret;
     };
-    void error ( char *, unsigned long=0 );
+    void error ( const char *, unsigned long=0 );
     tree_node_action pre_act_on_node (Pnode node, node_class nc,
 				      Pnode node_copy, Pnode& replacement);
 				       
@@ -163,9 +163,9 @@ Hash *patch_tree::ht = 0;
 
 Pnode patch_tree::probe(Pnode n)
 {
-	int found=0, replacement=0;
+	size_t found=0, replacement=0;
 
-	ht->action((int)n, 0, Hash::probe, found, replacement);
+	ht->action((size_t)n, 0, Hash::probe, found, replacement);
 	return found ? (Pnode)replacement : n;
 }
 
@@ -229,7 +229,7 @@ walk_tree (tree_walk_control& c, Pnode& n)
 /* error messages are of finite length, so no need to run
    around mallocing strings */
 
-void walker::error (char *format, unsigned long v)
+void walker::error (const char *format, unsigned long v)
 {
     if(control.call_i_error) {
 	char buf[1000];
@@ -483,13 +483,13 @@ walker::pre_act_on_node (Pnode node, node_class nc,
 /* If we have been here before, then we never proceed */
 /* node_copy is != node when a fetcher is in use */
 
-    int found;
-    int old_node;
+    size_t found;
+    size_t old_node;
     tree_node_action action;
     Pnode new_node;
     int register_in_hash = 1;
 
-    nodes_seen_hash->action((int)node, 0, Hash::probe, found, old_node);
+    nodes_seen_hash->action((size_t)node, 0, Hash::probe, found, old_node);
 
     if(found) {
 	new_node = Pnode(old_node);
@@ -505,17 +505,17 @@ walker::pre_act_on_node (Pnode node, node_class nc,
 			   depth, orig_addr, *cur_tree,
 			   register_in_hash);
 
-    int zero1 = 0, zero2 = 0;
+    size_t zero1 = 0, zero2 = 0;
     if(action != tna_error && !fetching () && new_node != node) {
 	replacement = new_node;
 	if(register_in_hash)
-	    nodes_seen_hash->action((int)node, 
-				    (int)new_node, 
+	    nodes_seen_hash->action((size_t)node, 
+				    (size_t)new_node, 
 				    Hash::insert, zero1, zero2);
     }
     else {
 	if(register_in_hash)
-	    nodes_seen_hash->action((int)node, (int) node, Hash::insert, zero1, zero2);
+	    nodes_seen_hash->action((size_t)node, (size_t) node, Hash::insert, zero1, zero2);
     }
     return action;
 }			   
@@ -1059,8 +1059,10 @@ tree_node_action walker::a_name(Pnode ta, Pname n, Pnode& replacement)
 	    Ptype t = n->n_dtag->tp;
 	    Pname cn = t->is_cl_obj();
 	    if (cn || eobj) {
-		n->n_dtag->string = new char[strlen(eobj ? Penum(eobj->tp)->string : Pclass(cn->tp)->string)+1];
-		strcpy(n->n_dtag->string, eobj ? Penum(eobj->tp)->string : Pclass(cn->tp)->string);
+		char *str_tmp = new char[strlen(eobj ? Penum(eobj->tp)->string : Pclass(cn->tp)->string)+1];
+		strcpy(str_tmp, eobj ? Penum(eobj->tp)->string : Pclass(cn->tp)->string);
+                //free(n->n_dtag->string);
+                n->n_dtag->string = str_tmp;
 	    } else {
 		n->tpdef = t;
 	    }

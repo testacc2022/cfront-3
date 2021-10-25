@@ -23,7 +23,7 @@ expand.c:
 static Ptable Scope;
 // extern void display_expr(Pexpr);
 
-static char* temp(char* vn, Pname fn)
+static const char* temp(const char* vn, Pname fn)
 //
 //	make the name of the temporary: __Xvn00xxxxxx
 //	xxxxxx is a representation of fn's address -
@@ -48,7 +48,7 @@ static char* temp(char* vn, Pname fn)
 		// allocate memory for the result
 		int ll = strlen(vn);
 		char* s = new char[ll+al+8];
-		register char* p = s;
+		/*register*/ char* p = s;
 
 		// append _ _ X vn
 		*p++ = '_';
@@ -66,8 +66,8 @@ static char* temp(char* vn, Pname fn)
 		}
 
 	        // append scope representation and trailing null
-	        *p++ = "abcdefghijlkmnop" [ ((int(Scope)>>4)&15) ];
-	        *p++ = "abcdefghijlkmnop" [ ((int(Scope)>>8)&15) ];
+	        *p++ = "abcdefghijlkmnop" [ ((size_t(Scope)>>4)&15) ];
+	        *p++ = "abcdefghijlkmnop" [ ((size_t(Scope)>>8)&15) ];
 		*p = '\0';
 //tmp error('d',"temp(%s,%n) -- scope %d -- returning %s",vn,fn,scope,s);
 		return s;
@@ -95,7 +95,7 @@ Pname dcl_local(Ptable scope, Pname an, Pname fn, bit tempflag = 0)
 		return an;
 	}
 
-	char *s;
+	const char *s;
 	if (tempflag)
 		s = make_name('X');
 	else s = temp(an->string,fn);
@@ -272,9 +272,9 @@ Pstmt stmt::expand()
 	if ( where.line ) Cstmt = this;
 
 	if (memtbl) {	/* check for static variables */
-		register Ptable t = memtbl;
-		register int i;
-		for (register Pname n = t->get_mem(i=1); n; NEXT_NAME(t,n,i)) {
+		/*register*/ Ptable t = memtbl;
+		/*register*/ int i;
+		for (/*register*/ Pname n = t->get_mem(i=1); n; NEXT_NAME(t,n,i)) {
 			if (n->n_stclass == STATIC) {
 				if (n->tp->base == FCT || n->tp->base==OVERLOAD) continue;
 				error('s',"cannot expand inlineF with static%n",n);
@@ -568,7 +568,7 @@ Pexpr expr::expand()
 		&&   Pname(this)->n_scope == FCT 
 		&&   Pname(this)->lex_level > expand_fn->lex_level ) {
 			Pname n = Pname(this);
-			char* s = n->string;
+			const char* s = n->string;
 			if (s[0]=='_' && s[1]=='_' && (s[2]=='X'||s[2]=='K')) break;
 		//	Pname cn = expand_fn->n_table->t_name;
 		//	n->string = temp(s,expand_fn->string,(cn)?cn->string:0);
@@ -908,7 +908,7 @@ Pexpr fct::expand(Pname fn, Ptable scope, Pexpr ll)
 		Pptr p;
 		if (n!=m) {
 		//	if ((p=m->tp->is_ptr()) || (p=m->tp->is_ref()))
-			if (p=m->tp->is_ptr_or_ref())
+			if ((p=m->tp->is_ptr_or_ref()))
 				if (p->check(n->tp,0)==0 || p->typ->check(n->tp,0)==0) goto zxc;
 
 		}
@@ -925,7 +925,7 @@ Pexpr fct::expand(Pname fn, Ptable scope, Pexpr ll)
 		}
 		else if (n->n_addr_taken || n->n_assigned_to) 
 			goto zxc;
-		else if (s=notsimple) {
+		else if ((s=notsimple)) {
 			if (/*n->n_used==0	// n_used not set for ``this''
 			|| */1<s
 			|| 1<n->n_used ) {	// not safe

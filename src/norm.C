@@ -216,7 +216,7 @@ DB(if(Ndebug>=1)error('d',"'%k'->base_adj(%t) --%t b_xname%n",base,b,this,b_xnam
 		else
 			error("badBT:%k%k%n",base,b->base,bn);
 	}
-	else if ( t = type_set(this)) {
+	else if ( (t = type_set(this))) {
 		if (b_name)
 			error("badBT:%k%n%k%n",t,b_name,b->base,bn);
 		else {
@@ -466,7 +466,7 @@ DB(if(Ndebug>=1)error('d',"'%k'->aggr() --%t b_xname%n ccl%t",base,this,b_xname,
 	case COBJ:
 	{	
 		Pclass cl = Pclass(b_name->tp);
-		char* s = cl->string;
+		const char* s = cl->string;
   	/*SYM?*/if (cl->class_base != CL_TEMPLATE && 
 			(cl->in_class == 0 || cl->in_class->class_base != CL_TEMPLATE) &&
 			b_name->base == TNAME) 
@@ -1013,7 +1013,7 @@ Pname name::tname(TOK csu)
 */
 {
 //error('d',"'%n'::tname(%k)",this,csu);
-	char* s = 0;
+	const char* s = 0;
 	bit nt = 0;
 	switch (base) {
 	case TNAME:
@@ -1102,7 +1102,7 @@ Pname name::normalize(Pbase b, Pblock bl, bit Cast)
 	bit tpdf;
 	bit inli;
 	bit virt;
-	char * lnkg;
+	const char * lnkg;
 	DB( if(Ndebug>=1) {
 	    error('d',"'%n'::normalize(b%t, bl %d, cast %d)",this,b,bl,Cast);
 	    error('d',"    tp%k - lex_level %d - bl_level %d",tp?tp->base:0,lex_level,bl_level);
@@ -1240,7 +1240,7 @@ Pname name::normalize(Pbase b, Pblock bl, bit Cast)
 			case RPTR:
 			case PTR:	// x(* p)(args) ?
 			case VEC:	// x(* p[10])(args) ?
-				if (pt = Pptr(t)->typ) {
+				if ((pt = Pptr(t)->typ)) {
 					if (pt->base == TYPE) {
 						Pptr(t)->typ = 0;
 						b = Pbase(pt);
@@ -1468,7 +1468,7 @@ skipp:
                 f->f_virtual = virt?(vcounter++,VTOK):0;
 
 		if (tpdf) {
-			if (f->body = bl) {
+			if ((f->body = bl)) {
 				error("Tdef%n { ... }",n);
 				f->body = bl = 0;
 			}
@@ -1485,7 +1485,7 @@ skipp:
 			continue;
 		}
 
-		if (f->body = bl) continue;
+		if ((f->body = bl)) continue;
 
 		/*
 			Check function declarations.
@@ -1678,7 +1678,7 @@ Ptype fct::normalize(Ptype ret)
 */
 {
 //error('d',"%d%t()->norm(%d%t)",returns,returns,ret,ret);
-	register Ptype t = returns;
+	/*register*/ Ptype t = returns;
 	returns = ret;
 
 	if (argtype && argtype->base==NAME && argtype->n_qualifier) {
@@ -1790,7 +1790,7 @@ void fct::argdcl(Pname dcl, Pname fn)
 		*/
 
 		for (n=argtype; n; n=n->n_list) {
-			char* s = n->string;
+			const char* s = n->string;
 			if (s == 0) {
 				error("AN missing inF definition");
 				n->string = s = make_name('A');
@@ -1858,7 +1858,7 @@ Pname type::is_cl_obj()
 */
 {
 	bit v = 0;
-	register Ptype t = this;
+	/*register*/ Ptype t = this;
 
 	if (t == 0) return 0;
 	eobj = 0;
@@ -1917,7 +1917,7 @@ k_has_base( Pclass c1, Pclass c2, TOK& t )
 }
 
 static Pname
-k_find_in_base( char* s, Pclass cl, Pclass &acl, TOK k )
+k_find_in_base( const char* s, Pclass cl, Pclass &acl, TOK k )
 /* find s in class cl or one of its ancestors
  * (for consistency, may convert to using stuff in find.c...)
  */
@@ -1974,7 +1974,7 @@ DB(if(Kdebug>=3)error('d',"k_find_in_base( %s, %t, ...,%k)",s,cl,k););
 }
 
 Pname
-k_find_name(char* s, Pktab tbl, TOK k )
+k_find_name(const char* s, Pktab tbl, TOK k )
 /* parse table lookup
  */
 {
@@ -2018,7 +2018,7 @@ else error('d',"%s not found in %s",s,tbl->whereami());
 	goto recurse; //return tbl ? k_find_name(s,tbl,k) : 0;
 }
 Pname
-k_find_member(char* s, Pclass cl, TOK k )
+k_find_member(const char* s, Pclass cl, TOK k )
 /* parse table lookup
  */
 {
@@ -2133,7 +2133,7 @@ DB(if(Kdebug>=2)error('d',"new, unhiddenTN%n",nx););
 	return nx;
 }
 
-char*
+const char*
 ktable::whereami()
 {
 	if ( this == 0 ) return "NULL TABLE!!!";

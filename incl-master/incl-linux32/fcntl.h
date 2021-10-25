@@ -51,7 +51,7 @@ extern "C" {
 	int open(const char*, int, ...);
 	int creat(const char*, mode_t);
 	int close(int fd);int close(int fd);
-	int write(int fd, const void *buf, unsigned count);
-	int read(int fd, void *buf, unsigned count);
-	int lseek(int fildes, int offset, int whence);
+	int write(int fd, const void *buf, size_t count);
+	int read(int fd, void *buf, size_t count);
+	int lseek(int fildes, size_t offset, size_t whence);
 }

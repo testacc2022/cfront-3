@@ -26,7 +26,7 @@ typedef unsigned int Size_t ;
 			// Until then make it compatible with declaration
 			// of third argument of memcpy.
 
-static const int initsize = 16*sizeof(int) ;
+static const int initsize = (int)(16*sizeof(int)) ;
 static const int increment = 2 ; 	
 
 static const int arbitrary = 1024 ;	// used by ignore_oflow.

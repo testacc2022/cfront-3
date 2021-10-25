@@ -38,7 +38,7 @@ simpl2.c:
 
 extern Plist inllist;
 Pname find_vptr(Pclass);
-extern int is_probably_temp(char*);
+extern int is_probably_temp(const char*);
 
 extern int no_of_returns;
 
@@ -190,7 +190,7 @@ Pstmt trim_tail(Pstmt tt)
 				return tpx;
 			}
 		default:
-			if (tt = tt->s_list) break;
+			if ((tt = tt->s_list)) break;
 			return 0;
 		case RETURN:
 			if (tt->s_list->base != LABEL) tt->s_list = 0;
@@ -311,7 +311,7 @@ Pname n;
 
 static int prune;
 static void 
-find_temps_in_expr(Pexpr e, char *s=0)
+find_temps_in_expr(Pexpr e, const char *s=0)
 {
 	if ( e == 0 ) return;
 
@@ -374,7 +374,7 @@ find_temps_in_expr(Pexpr e, char *s=0)
 }
 
 static bit 
-find_in_Ntmp(char *s) 
+find_in_Ntmp(const char *s) 
 { // does `s' occur within Ntmp
 // error('d',"find_in_ntmp( %s )", s);
 Pexpr ee, ex;
@@ -491,7 +491,7 @@ Pstmt block::simpl()
 	Pstmt dd=0, ddt=0;
 	Pstmt stail;
 	Ptable old_scope = scope;
-	char *fudge_007 = 0; 	// license to hack
+	const char *fudge_007 = 0; 	// license to hack
 	// need_lift = 0;
 	if (!need_lift) tmp_tbl->reinit(); 
 
@@ -666,13 +666,13 @@ Pstmt block::simpl()
 		// `D' :: int; X; ==> generates int __D<some_number> */
 		// note: does not appear necessary since all go to int
 		{	
-			char* s = n->string;
+			const char* s = n->string;
 
 			if (s[0]=='_' && s[1]=='_' && s[2]=='D' && isdigit(s[3])) 
 					continue;
 		}
 
-		if ( cln=n->tp->is_cl_obj() ) {
+		if ( (cln=n->tp->is_cl_obj()) ) {
 			Pclass cl = Pclass(cln->tp);
 			Pname d = cl->has_dtor();
 
@@ -2101,7 +2101,7 @@ plugh:
 				if (n==nl->f) dtor=0;
 		}
 
-		if ( cln=n->tp->is_cl_obj() ) {
+		if ( (cln=n->tp->is_cl_obj()) ) {
 			Pclass cl = (Pclass)cln->tp;
 			Pname d = cl->has_dtor();
 
@@ -2210,7 +2210,7 @@ plugh:
 		Pname tn = memtbl->get_mem(i=1);
 		for (; tn; NEXT_NAME(memtbl,tn,i)) {
 // error('d',"tn: %n need_lift: %d",tn,need_lift);
-			if (cln = tn->tp->is_cl_obj()) {
+			if ((cln = tn->tp->is_cl_obj())) {
 				Pname d = Pclass(cln->tp)->has_dtor();
 				if (d) {	/* n->cl::~cl(0); */
 					if (need_lift && 
@@ -2386,7 +2386,7 @@ mk_new_with_args( Pexpr pe, Ptype tt, Pclass cl, Pexpr vec = 0 )
 	(void) tt->tsizeof();
 	ce->tp = size_t_type;
 	args = new expr(ELIST,ce,args);
-	char* s = oper_name(NEW);
+	const char* s = oper_name(NEW);
 	Pname n = new name(s);
 	if (pe->base == GNEW || vec)	// ::new
 		p = gtbl->look(s,0);
@@ -2612,7 +2612,7 @@ void expr::simpl_delete()
 		//xxx check for private/protected op delete
 		{
 			Pexpr ee = new expr(ELIST,e1,0);
-			char* s = oper_name(DELETE);
+			const char* s = oper_name(DELETE);
 			Pname n;
 //error('d',"%s( %k )",s,e1->base);
 			if (base!=GDELETE) {
@@ -2685,7 +2685,7 @@ void expr::simpl_delete()
 				ee->cond = r;
 			}
 			if (base == GDELETE) {
-				char* s = oper_name(DELETE);
+				const char* s = oper_name(DELETE);
 				Pexpr p = gtbl->look(s,0);
 				Pname n_gdelete = Pname (p);
 				if (n_gdelete && (!n_gdelete->n_dcl_printed)) {
@@ -2760,7 +2760,7 @@ void expr::simpl_delete()
 		if (e2==0 && e1->tp->is_ptr() && Pptr(e1->tp->skiptypedefs())->typ->base==VEC)
 			error("use delete[] to delete an array");
 		Pexpr ee = new expr(ELIST,e1,0);
-		char* s = oper_name(DELETE);
+		const char* s = oper_name(DELETE);
 		if (cl && base!=GDELETE) {
 			Pname n = new name(s);
 			e1 = find_name(n,cl,scope,CALL,curr_fct);

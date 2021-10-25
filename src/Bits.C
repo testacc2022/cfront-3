@@ -25,10 +25,10 @@ any actual or intended publication of such source code.
 
 Blockimplement(Bits_chunk)
 
-Bits::Bits(register Bits_chunk val, register unsigned ct)
+Bits::Bits(/*register*/ Bits_chunk val, /*register*/ unsigned ct)
 {
 	if (ct < Bits_len_ATTLC) {
-		register Bits_chunk mask = ~Bits_chunk(0) << ct;
+		/*register*/ Bits_chunk mask = ~Bits_chunk(0) << ct;
 		while (val & mask) {
 			ct++;
 			mask <<= 1;
@@ -57,9 +57,9 @@ Bits::operator&= (const Bits& x)
 	if (size() < x.size())
 		size(x.size());
 
-	register Bits_chunk* p = b;
-	register const Bits_chunk* q = x.b;
-	register const Bits_chunk* lim = x.limit();
+	/*register*/ Bits_chunk* p = b;
+	/*register*/ const Bits_chunk* q = x.b;
+	/*register*/ const Bits_chunk* lim = x.limit();
 
 	while (q < lim)
 		*p++ &= *q++;
@@ -77,9 +77,9 @@ Bits::operator|= (const Bits& x)
 	if (size() < x.size())
 		size(x.size());
 
-	register Bits_chunk* p = b;
-	register const Bits_chunk* q = x.b;
-	register const Bits_chunk* lim = x.limit();
+	/*register*/ Bits_chunk* p = b;
+	/*register*/ const Bits_chunk* q = x.b;
+	/*register*/ const Bits_chunk* lim = x.limit();
 
 	while (q < lim)
 		*p++ |= *q++;
@@ -93,9 +93,9 @@ Bits::operator^= (const Bits& x)
 	if (size() < x.size())
 		size(x.size());
 
-	register Bits_chunk* p = b;
-	register const Bits_chunk* q = x.b;
-	register const Bits_chunk* lim = x.limit();
+	/*register*/ Bits_chunk* p = b;
+	/*register*/ const Bits_chunk* q = x.b;
+	/*register*/ const Bits_chunk* lim = x.limit();
 
 	while (q < lim)
 		*p++ ^= *q++;
@@ -106,8 +106,8 @@ Bits::operator^= (const Bits& x)
 Bits&
 Bits::compl4()
 {
-	register Bits_chunk* p = b;
-	register const Bits_chunk* lim = limit();
+	/*register*/ Bits_chunk* p = b;
+	/*register*/ const Bits_chunk* lim = limit();
 
 	while (p < lim) {
 		*p = ~*p;
@@ -122,13 +122,13 @@ Bits::compl4()
 unsigned
 Bits::count() const
 {
-	register const Bits_chunk* p = b;
-	register const Bits_chunk* lim = limit();
-	register unsigned r = 0;
+	/*register*/ const Bits_chunk* p = b;
+	/*register*/ const Bits_chunk* lim = limit();
+	/*register*/ unsigned r = 0;
 
 	while (p < lim) {
-		register unsigned long x = *p++;
-		register int i = Bits_len_ATTLC;
+		/*register*/ unsigned long x = *p++;
+		/*register*/ int i = Bits_len_ATTLC;
 
 		while (--i >= 0) {
 			if (x & 1)
@@ -143,8 +143,8 @@ Bits::count() const
 #if 0
 Bits::operator Bits_chunk() const
 {
-	register const Bits_chunk* p = b;
-	register const Bits_chunk* lim = limit();
+	/*register*/ const Bits_chunk* p = b;
+	/*register*/ const Bits_chunk* lim = limit();
 
 	while (p < lim) {
 		if (*p++)
@@ -211,9 +211,9 @@ Bits::compare(const Bits& x) const
 	int w = bound(size());
 	int xw = bound(x.size());
 	int len, r;
-	register const Bits_chunk* p;
-	register const Bits_chunk* q;
-	register const Bits_chunk* lim;
+	/*register*/ const Bits_chunk* p;
+	/*register*/ const Bits_chunk* q;
+	/*register*/ const Bits_chunk* lim;
 
 	// two null strings are equal
 	if (w == 0 && xw == 0)
@@ -303,13 +303,13 @@ Bits::operator<<= (int k)
 	if (size(size() + k) == 0)
 		return *this;
 
-	register Bits_chunk* lim = b;
+	/*register*/ Bits_chunk* lim = b;
 
 	// If needed, shift left by chunks
 	int chunkoffset = k >> Bits_shift_ATTLC;
 	if (chunkoffset) {
-		register Bits_chunk* dest = limit();
-		register Bits_chunk* src = dest - chunkoffset;
+		/*register*/ Bits_chunk* dest = limit();
+		/*register*/ Bits_chunk* src = dest - chunkoffset;
 
 		do *--dest = *--src;
 		while (src > lim);
@@ -319,10 +319,10 @@ Bits::operator<<= (int k)
 	}
 
 	// If needed, shift left by bits
-	register int bitoffset = k & Bits_mask_ATTLC;
+	/*register*/ int bitoffset = k & Bits_mask_ATTLC;
 	if (bitoffset) {
-		register Bits_chunk* p = limit();
-		register int compoffset = Bits_len_ATTLC - bitoffset;
+		/*register*/ Bits_chunk* p = limit();
+		/*register*/ int compoffset = Bits_len_ATTLC - bitoffset;
 
 		while (--p > lim)
 			*p = (*p << bitoffset) | (*(p-1) >> compoffset);
@@ -357,20 +357,20 @@ Bits::operator>>= (int k)
 	// garbage words that will be sized out later
 	int chunkoffset = k >> Bits_shift_ATTLC;
 	if (chunkoffset) {
-		register Bits_chunk* dest = b;
-		register Bits_chunk* src = dest + chunkoffset;
-		register const Bits_chunk* lim = limit();
+		/*register*/ Bits_chunk* dest = b;
+		/*register*/ Bits_chunk* src = dest + chunkoffset;
+		/*register*/ const Bits_chunk* lim = limit();
 
 		do *dest++ = *src++;
 		while (src < lim);
 	}
 
 	// If needed, shift right by bits
-	register int bitoffset = k & Bits_mask_ATTLC;
+	/*register*/ int bitoffset = k & Bits_mask_ATTLC;
 	if (bitoffset) {
-		register Bits_chunk* p = b;
-		register Bits_chunk* lim = p + chunk(newsize-1);
-		register int compoffset = Bits_len_ATTLC - bitoffset;
+		/*register*/ Bits_chunk* p = b;
+		/*register*/ Bits_chunk* lim = p + chunk(newsize-1);
+		/*register*/ int compoffset = Bits_len_ATTLC - bitoffset;
 
 		while (p < lim) {
 			*p = (*p >> bitoffset) | (*(p+1) << compoffset);
@@ -396,13 +396,13 @@ Bits::signif() const
 	if (size() == 0)
 		return 0;
 
-	register const Bits_chunk* p = limit();
-	register const Bits_chunk* lim = b;
+	/*register*/ const Bits_chunk* p = limit();
+	/*register*/ const Bits_chunk* lim = b;
 
 	while (--p >= lim) {
 		if (*p) {
-			register Bits_chunk x = *p;
-			register int k = Bits_len_ATTLC;
+			/*register*/ Bits_chunk x = *p;
+			/*register*/ int k = Bits_len_ATTLC;
 
 			while (--k >= 0) {
 				if (x & (Bits_chunk(1) << k))

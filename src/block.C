@@ -23,10 +23,12 @@ typedef Block(Pname) BlockPname;
 Blockdeclare(BlockPname)
 Blockdeclare(int)
 Blockdeclare(Pchar)
+Blockdeclare(CPchar)
 Blockdeclare(short)
 
 Blockimplement(Pname)
 Blockimplement(int)
 Blockimplement(BlockPname)
 Blockimplement(Pchar)
+Blockimplement(CPchar)
 Blockimplement(short)

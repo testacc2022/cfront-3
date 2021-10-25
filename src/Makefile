@@ -1,6 +1,6 @@
 CC  ?=  gcc
 CXX	?=	g++
-CCFLAGS	= -fpermissive -I../incl
+CCFLAGS	= -fpermissive -I../incl -D__HAVE_SIZE_T -g
 
 #MPMACRO = PATCH
 MPMACRO = MUNCH
@@ -140,6 +140,6 @@ _stdio.o: _stdio.c
 	cc -c _stdio.c
 
 clean:
-	-@rm szal.result szal/szal >& /dev/null
-	-@rm y.tab.C yystype.h >& /dev/null
-	-@rm *.o *..c cfront ../cfront >& /dev/null
+	rm -f szal.result szal/szal
+	rm -f y.tab.C yystype.h
+	rm -f *.o *..c cfront ../cfront

@@ -2,4 +2,4 @@ all:
 	./hello.sh
 
 clean:
-	-./hello.clean.sh
+	./hello.clean.sh

@@ -25,7 +25,7 @@ expr.c:
 int const_save;
 extern int no_const;
 extern Ptype Pfct_type;
-extern Pexpr make_dot(Pexpr, Ptable, char* c = "i");
+extern Pexpr make_dot(Pexpr, Ptable, const char* c = "i");
 
 int processing_sizeof = 0;
 
@@ -107,7 +107,7 @@ Pexpr expr::address()
 		break;
 	}
 
-	register Pexpr ee = new expr(G_ADDROF,0,this);
+	/*register*/ Pexpr ee = new expr(G_ADDROF,0,this);
 	if (tp) {					// tp==0 ???
 		ee->tp = tp->addrof();
 
@@ -128,7 +128,7 @@ Pexpr expr::address()
 	return ee;
 }
 
-Pexpr make_dot(Pexpr e, Ptable tbl, char* c)
+Pexpr make_dot(Pexpr e, Ptable tbl, const char* c)
 {
 	if(!e->tp->memptr())
 		return e;
@@ -165,7 +165,7 @@ Pexpr expr::contents()
 		return this;
 	};
 
-	register Pexpr ee = new expr(DEREF,this,0);
+	/*register*/ Pexpr ee = new expr(DEREF,this,0);
 	if (tp) {			// tp==0 ???
 		Ptype tt = tp->skiptypedefs();
 		ee->tp = Pptr(tt)->typ;
@@ -570,7 +570,7 @@ Pexpr expr::typ(Ptable tbl)
 			decimal larger than largest signed int
 			octal or hexadecimal larger than largest unsigned int
 		 */
-	{	int ll = strlen(string);
+	{	int ll = strlen(string); char *str_tmp;
 // long long logic added by rl 2014-09-06
 		switch (string[ll-1]) {
 		case 'l':
@@ -578,7 +578,10 @@ Pexpr expr::typ(Ptable tbl)
 			switch (string[ll-2]) {
 			case 'u':
 			case 'U':
-				string[ll-2] = 0;
+                                str_tmp = strdup(string);
+				str_tmp[ll-2] = 0;
+                                //free(string);
+				string = str_tmp;
 		ulng:
 				tp = ulong_type;
 				goto cast_n_save;
@@ -587,7 +590,10 @@ Pexpr expr::typ(Ptable tbl)
 				switch (string[ll-3]) {
 				case 'u':
 				case 'U':
-					string[ll-3] = 0;
+                                        str_tmp = strdup(string);
+					str_tmp[ll-3] = 0;
+                                        //free(string);
+					string = str_tmp;
 		ullng:
 					tp = ullong_type;
 					goto cast_n_save;
@@ -607,13 +613,22 @@ Pexpr expr::typ(Ptable tbl)
 				switch (string[ll-3]) {
 				case 'l':
 				case 'L':
-					string[ll-3] = 0;
+                                        str_tmp = strdup(string);
+					str_tmp[ll-3] = 0;
+                                        //free(string);
+					string = str_tmp;
 					goto ullng;
 				}
-				string[ll-2] = 0;
+                                str_tmp = strdup(string);
+				str_tmp[ll-2] = 0;
+                                //free(string);
+				string = str_tmp;
 				goto ulng;
 			default:
-				string[ll-1] = 0;
+                                str_tmp = strdup(string);
+				str_tmp[ll-1] = 0;
+                                //free(string);
+				string = str_tmp;
 		labuint:
 				tp = uint_type;
 				goto cast_n_save;
@@ -622,7 +637,7 @@ Pexpr expr::typ(Ptable tbl)
 
 		// no suffix - see if we can figure it out
 		if  (string[0] == '0') {	// assume 8 bits in byte
-			register int index = 1;
+			/*register*/ int index = 1;
 			switch (string[1]) {
 			case 'x':
 			case 'X':
@@ -650,9 +665,9 @@ Pexpr expr::typ(Ptable tbl)
 				}
 			default:   // OCTAL
 				{
-				register int IBITS = BI_IN_BYTE*SZ_INT;
+				/*register*/ int IBITS = BI_IN_BYTE*SZ_INT;
 				while(string[index]=='0') index++;
-				register char x = string[index];
+				/*register*/ char x = string[index];
 				int lbt = x=='1' ? 1 :
 					( x=='2' || x=='3' ? 2 : 3 );
 				int nbits = (ll-index-1)*3 + lbt;
@@ -672,8 +687,8 @@ Pexpr expr::typ(Ptable tbl)
 				goto save;
 			}
 			if (ll==chars_in_largest) {
-				char* p = string;
-				char* q = LARGEST_INT;
+				const char* p = string;
+				const char* q = LARGEST_INT;
 				do if (*p>*q) {
 					if(SZ_INT==SZ_LONG) goto ulng;
 					goto lng; 
@@ -684,8 +699,8 @@ Pexpr expr::typ(Ptable tbl)
 			if (ll<chars_in_largestl)
 				goto lng;
 			if (ll==chars_in_largestl) {
-				char* p = string;
-				char* q = LARGEST_LONG;
+				const char* p = string;
+				const char* q = LARGEST_LONG;
 				do if (*p>*q) {
 					if(SZ_LONG==SZ_LLONG) goto ullng;
 					goto llng; 
@@ -696,8 +711,8 @@ Pexpr expr::typ(Ptable tbl)
 			if (ll<chars_in_largestll)
 				goto llng;
 			// ll >= chars_in_largestll
-			char* p = string;
-			char* q = LARGEST_LLONG;
+			const char* p = string;
+			const char* q = LARGEST_LLONG;
 			do if (*p>*q) {
 				goto ullng;
 			} while (*p++==*q++ && *p);
@@ -711,18 +726,26 @@ Pexpr expr::typ(Ptable tbl)
 		goto save;
 
 	case FCON:
-	{	int ll = strlen(string);
+	{	int ll = strlen(string); char *str_tmp;
 		int last = string[ll-1];
 		tp = double_type;
 		if (last=='F' || last=='f') {
 			tp = float_type;
 			if (!ansi_opt) {
-				string[ll-1] = 0;
+                                str_tmp = strdup(string);
+				str_tmp[ll-1] = 0;
+                                //free(string);
+				string = str_tmp;
 				goto cast_n_save;
 			}
 		}
 		else if (last=='L' || last=='l') {
-			if (ansi_opt == 0) string[ll-1] = 0;
+			if (ansi_opt == 0) {
+                            str_tmp = strdup(string);
+                            str_tmp[ll-1] = 0;
+                            //free(string);
+                            string = str_tmp;
+                        }
 			tp = ldouble_type;
 		}
 		goto save;
@@ -938,7 +961,7 @@ Pexpr expr::typ(Ptable tbl)
 			Pexpr ee = e->e1;
 //error('d',"e %d %d ee %d %d",e,e?e->base:0,ee,ee?ee->base:0);
 			if (e->base != ELIST) error('i',"elist%k",e->base);
-			if (ex = e->e2) {	/* look ahead for end of list */
+			if ((ex = e->e2)) {	/* look ahead for end of list */
 				if (ee == dummy) error("EX in EL");
 				if (ex->e1 == dummy && ex->e2 == 0) {
 					/* { ... , } */
@@ -1227,12 +1250,14 @@ Pexpr expr::typ(Ptable tbl)
 // error('d',"pdlist: n: %n nn: %n",n,nn);
 				Pname nc = new name("");
 				*nc = *n;
-				nc->string = new char[strlen(n->string) + 1];
-				strcpy(nc->string, n->string);
+				char *str = new char[strlen(n->string) + 1];
+				strcpy(str, n->string);
+                                nc->string = str;
 				Pname nnc = new name("");
 				*nnc = *nn;
-				nnc->string = new char[strlen(nn->string) + 1];
-				strcpy(nnc->string, nn->string);
+				str = new char[strlen(nn->string) + 1];
+				strcpy(str, nn->string);
+                                nnc->string = str;
 				con_dtor *t = new con_dtor(nc, nnc);
                         	if (pdlist) t->next = pdlist;
                         	pdlist = t;
@@ -1359,12 +1384,14 @@ Pexpr expr::typ(Ptable tbl)
 // error('d',"pdlist: n: %n nn: %n",n,nn);
 				Pname nc = new name("");
 				*nc = *n;
-				nc->string = new char[strlen(n->string) + 1];
-				strcpy(nc->string, n->string);
+				char *str = new char[strlen(n->string) + 1];
+				strcpy(str, n->string);
+                                nc->string = str;
 				Pname nnc = new name("");
 				*nnc = *nn;
-				nnc->string = new char[strlen(nn->string) + 1];
-				strcpy(nnc->string, nn->string);
+				str = new char[strlen(nn->string) + 1];
+				strcpy(str, nn->string);
+                                nnc->string = str;
 				con_dtor *t = new con_dtor(nc, nnc);
                         	if (pdlist) t->next = pdlist;
                         	pdlist = t;
@@ -1529,7 +1556,7 @@ Pexpr expr::typ(Ptable tbl)
 		case G_CM:
 			if (base==ADDROF && e2->e2->base==NAME) {
 				// check for cfront generated result variable
-				char* s = e2->e2->string;
+				const char* s = e2->e2->string;
 				if (s[0]=='_' && s[1] && s[1]=='_') {
 					if (s[2] && (s[2]=='R' || s[2]=='V')) {
 						error("address of non-lvalue");
@@ -2048,7 +2075,7 @@ Pexpr expr::typ(Ptable tbl)
 			if (r1 == 'P') {
 				Ptype tt1 = t1;
 				Ptype tt2;
-				while (tt2 = tt1->is_ptr_or_ref())
+				while ((tt2 = tt1->is_ptr_or_ref()))
 					tt1 = Pptr(tt2)->typ;
 				if (tt1->base == FCT)
 					doit = 1;
@@ -2056,7 +2083,7 @@ Pexpr expr::typ(Ptable tbl)
 			if (!doit && r2 == 'P') {
 				Ptype tt1 = t2;
 				Ptype tt2;
-				while (tt2 = tt1->is_ptr_or_ref())
+				while ((tt2 = tt1->is_ptr_or_ref()))
 					tt1 = Pptr(tt2)->typ;
 				if (tt1->base == FCT)
 					doit = 1;
@@ -2174,7 +2201,7 @@ Pexpr expr::typ(Ptable tbl)
 					redo1=1;
 					goto caca;
 				}
-				else if (tt = common_base(cl1,cl2)) {
+				else if ((tt = common_base(cl1,cl2))) {
 					redo1 = redo2 = 1;
 					t = tt;
 					goto caca;
@@ -2200,7 +2227,7 @@ Pexpr expr::typ(Ptable tbl)
 						t = t2;
 						goto caca;
 					}
-					else if (tt = common_base(cl1,cl2)) {
+					else if ((tt = common_base(cl1,cl2))) {
 						t = tt->addrof();
 						goto caca;
 					}
@@ -2364,7 +2391,7 @@ Pexpr expr::typ(Ptable tbl)
 			if (r->e1->base==G_CM
 			&& r->e1->e2->base==G_ADDROF
 			&& r->e1->e2->e2->base==NAME) {
-				char* s = r->e1->e2->e2->string;
+				const char* s = r->e1->e2->e2->string;
 				if (s[0]=='_' && s[1]=='_')
 					error("left hand side not lvalue");
 			}

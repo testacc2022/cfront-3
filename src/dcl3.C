@@ -367,7 +367,7 @@ void fct::init_bases(Pclass cl, Pexpr)
 					nn->base = mmm->base;
 			}
 			if (nn->base == TNAME) {	// base class
-				char *bn;
+				const char *bn;
 				while ( nn->tp && nn->tp->base == TYPE )
 					nn->tp = Pbase(nn->tp)->b_name->tp;
 				if ( nn->tp && nn->tp->base == COBJ )
@@ -878,7 +878,7 @@ Pexpr fct::mem_init(Pname mn, Pexpr i, Ptable ftbl)
 	}
 
 	Pptr pt;
-	if (pt = member->tp->is_ref()) {
+	if ((pt = member->tp->is_ref())) {
 		switch (pt->typ->base) {
 		case FCT:
 		case OVERLOAD:
@@ -1217,8 +1217,8 @@ xx:
 
 int name::no_of_names()
 {
-	register int i = 0;
-	register Pname n;
+	/*register*/ int i = 0;
+	/*register*/ Pname n;
 	for (n=this; n; n=n->n_list)
 		i++;
 	return i;
@@ -1913,7 +1913,7 @@ Pname denum(Pname n, Ptable tbl)
 	return bnn;
 }
 
-int is_probably_temp( char *str ) 
+int is_probably_temp( const char *str ) 
 {
 // error( 'd', "is_probably_temp( %s )", str );
 
@@ -2144,7 +2144,7 @@ void dargs(Pname, Pfct f, Ptable tbl)
 					a->n_initializer = init;
 				}
 			}
-			else if (pt = a->tp->is_ref()) {
+			else if ((pt = a->tp->is_ref())) {
 				ref_initializer++;
 				init = init->typ(tbl);
 				ref_initializer--;
@@ -2274,7 +2274,7 @@ void merge_init(Pname nn, Pfct f, Pfct nf)
 	}
 }
 
-Pexpr try_to_coerce(Ptype rt, Pexpr e, char* s, Ptable tbl)
+Pexpr try_to_coerce(Ptype rt, Pexpr e, const char* s, Ptable tbl)
 /*
 	``e'' is of class ``cn'' coerce it to type ``rt''
 */
@@ -2518,7 +2518,7 @@ Pname name::dofct(Ptable tbl, TOK scope)
 					Pname a = f->argtype;
 					if (a->tp->check(Pvoid_type,0))
 						error("%n's 1stA must be a void*",this);
-					else if (a = a->n_list) {
+					else if ((a = a->n_list)) {
 						if (class_name == 0)
 							error("%n takes only oneA",this);
 						else if (a->tp->check(size_t_type,0)) {
@@ -2557,7 +2557,7 @@ Pname name::dofct(Ptable tbl, TOK scope)
 		else if (f->nargs == 2) {
 			Ptype t = f->argtype->tp;
 			Pname an1;
-			if (t=t->is_ref()) {			// operator=(X&,?) ?
+			if ((t=t->is_ref())) {			// operator=(X&,?) ?
 				t = Pptr(t)->typ;
 			rx2:
 				switch (t->base) {

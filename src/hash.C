@@ -49,7 +49,7 @@ void Hash::error(const char* msg)
   (*Hash_error_handler)(msg) ;
 }
 
-Hash::Hash(int sz= DEFAULT_INITIAL_HASH_SIZE)
+Hash::Hash(int sz)
 {
   tab = new HashTableEntry[size = sz] ;
   for (int i = 0; i < size; ++i) tab[i].status = EMPTY ;
@@ -141,7 +141,7 @@ int& Hash::operator [](int key)
    redundant probing of the hash table. */
 
 void Hash::action (int key, int val, insert_action what,
-		   int& found, int& old_val)
+		   size_t& found, size_t& old_val)
 {
   unsigned int hashval = key_hash(key) ;
   while (1)
@@ -318,7 +318,7 @@ main()
 
 */
 
-int pointer_hasheq (int a, int b)
+int pointer_hasheq (size_t a, size_t b)
 {
     return a == b;
 };
@@ -329,12 +329,12 @@ unsigned int pointer_hash_fcn (int x)
     return ((X << 16) | (X >> 16)) ^ x;
 }
 
-int string_hasheq (int a, int b)
+int string_hasheq (size_t a, size_t b)
 {
     return !strcmp((char *)a, (char *) b);
 };
 
-unsigned int string_hash_fcn (int x)
+unsigned int string_hash_fcn (size_t x)
 {
     char * str = (char *)x;
     int l = strlen(str);

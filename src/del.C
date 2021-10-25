@@ -193,7 +193,7 @@ void table::del()
 {
 // error('d',"\n*** %d::del() -- '%s'\n",this, t_name?t_name->string:"???");
 
-	for (register int i=1; i<free_slot; i++) {
+	for (/*register*/ int i=1; i<free_slot; i++) {
 		Pname n = entries[i];
 		if (n==0) error('i',"table.del(0)");
 		DB( if(Adebug>=2) { fprintf(stderr,"  name: '%s'",n->string);
@@ -208,7 +208,7 @@ void table::del()
 		case ARGT:
 			break;
 		default:
-		{	char* s = n->string;
+		{	const char* s = n->string;
 			if (s && (s[0]!='_' || s[1]!='_' || s[2]!='X')) delete s;
 			/* delete n; */
 			n->del();

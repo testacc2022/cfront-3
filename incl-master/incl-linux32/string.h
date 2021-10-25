@@ -22,6 +22,6 @@ extern  "C" {
 	*memccpy(char *, const char *, int, int),
 	*memchr(const char *, int, int),
 	*memcpy(char *, const char *, int),
-	*memset(void *, int, int);
+	*memset(void *, int, unsigned);
     int memcmp(const char *, const char *, int);
 }

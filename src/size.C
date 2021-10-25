@@ -51,7 +51,7 @@ int SZ_BPTR = DSZ_BPTR;
 int AL_BPTR = DAL_BPTR;
 //int SZ_TOP = DSZ_TOP;
 //int SZ_BOTTOM = DSZ_BOTTOM;
-char* LARGEST_INT = DLARGEST_INT,
+const char* LARGEST_INT = DLARGEST_INT,
     * LARGEST_LONG = DLARGEST_LONG,
     * LARGEST_LLONG = DLARGEST_LLONG;
 int F_SENSITIVE = DF_SENSITIVE;
@@ -109,8 +109,10 @@ int get_line(FILE* fp)
 	}
 
 	if (strcmp("DLARGEST_INT",s) == 0) {
-		LARGEST_INT = new char[strlen(s2)+1];
-		strcpy(LARGEST_INT,s2);
+		char *str_tmp = new char[strlen(s2)+1];
+		strcpy(str_tmp,s2);
+                //free(LARGEST_INT);
+                LARGEST_INT = str_tmp;
 		return 1;
 	}
 
@@ -233,9 +235,9 @@ int get_line(FILE* fp)
 	return 0;
 }
 
-int read_align(char* f)
+int read_align(const char* f)
 {
-	char* p = f;
+	const char* p = f;
 	if (*p == 0) {
 		fprintf(stderr,"size/align file missing\n");
 		ext(1);

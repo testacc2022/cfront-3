@@ -168,13 +168,13 @@ Pname merge_conv(Pname c1, Pname c2)
 
 static int Eppp;
 
-char* get_classname(char* s)
+const char* get_classname(const char* s)
 /*
 	retrieve the outermost class name in a vtable name
 */
 {
 // error('d',"get_classname(%s)",s);
-	char* s1 = 0;
+	const char* s1 = 0;
 
 	while (*s) {
 		s1 = s;
@@ -195,15 +195,15 @@ char* get_classname(char* s)
 	return s1;
 }
 
-char* drop_classname(char* s)
+char* drop_classname(const char* s0)
 /*
 	retrieve all but the outermost class name in a vtable name
 */
 {
-// error('d',"drop_classname(%s)",s);
-	char* r = new char[strlen(s)+1];
-	sprintf(r,s);
-	s = r;
+// error('d',"drop_classname(%s)",s0);
+	char* r = new char[strlen(s0)+1];
+	sprintf(r,"%s", s0);
+	char *s = r;
 
 	char* s1 = s;
 	while (*s) {
@@ -245,7 +245,7 @@ bit classdef::has_const_mem()
 	return 0;
 }
 
-Pbcl classdef::get_base( char *s )
+Pbcl classdef::get_base( const char *s )
 /*
 	Find the base class whose name matches the argument
 */
@@ -254,7 +254,7 @@ Pbcl classdef::get_base( char *s )
 	Pbcl b = baselist;
 	for (; b; b = b->next) {
 //error('d',"  b%t s %s",b->bclass,s);
-		char *s1 = s, *s2 = b->bclass->string;
+		const char *s1 = s, *s2 = b->bclass->string;
 		for (;*s1 && *s2 && *s1 == *s2;	s1++, s2++)
 			;
 
@@ -312,10 +312,10 @@ static int
 offset_magic_1(Pbcl b, Pbcl bl)
 {
 // error('d',"offset_magic_1( %t, %t )",b->bclass,bl->bclass);
-	char *str = b->bclass->string;
+	const char *str = b->bclass->string;
 	for (Pbcl bb=bl->bclass->baselist; bb; bb=bb->next) {
 		if (bb->base != VIRTUAL) continue;
-		char *s = bb->bclass->string;
+		const char *s = bb->bclass->string;
 		if (strcmp(s,str)==0) {
 			int offset = bb->obj_offset - bb->ptr_offset +1;
 // error('d',"str: %s offset: %d obj_offset: %d",str,offset,bl->obj_offset);
@@ -335,17 +335,17 @@ bit Vvtab;
 bit Vvbc_alloc;	
 bit Vvbc_inher;
 
-int classdef::get_offset(char* s, bit rechk)
+int classdef::get_offset(const char* s, bit rechk)
 /*  Get offset represented by string as viewed from "this" */
 {
 // error('d',"%s::get_offset(%s %d)",string,s,rechk);
 	if (!s) return 0;
 
-        char *str = get_classname(s);
+        const char *str = get_classname(s);
 	Pbcl b = get_base(str);
 
 	bit unalloc = 0; 
-	char *found_virtual = 0; 
+	const char *found_virtual = 0; 
 
         if (rechk) {
 		// unalloc = (b->promoted && (b->allocated == 0));
@@ -395,7 +395,7 @@ int classdef::get_offset(char* s, bit rechk)
 	return b->obj_offset + b->bclass->get_offset(drop_classname(s));
 }
 
-char* vtbl_str(char* s1, char* s2)
+const char* vtbl_str(const char* s1, const char* s2)
 /*
 	combine two pieces of a vtbl name
 */
@@ -414,7 +414,7 @@ char* vtbl_str(char* s1, char* s2)
 		return s2;
 }
 
-void classdef::add_vtbl(velem* v, char* s, bit virt_flag, int n_init)
+void classdef::add_vtbl(velem* v, const char* s, bit virt_flag, int n_init)
 /*
 	add vtbl to virt_list
 */
@@ -511,7 +511,7 @@ int vcounter;
 static int vmax;
 const int vpChunk = 32;
 
-int classdef::do_virtuals(Pvirt vtab, char* str, int leftmost, bit virt_flag)
+int classdef::do_virtuals(Pvirt vtab, const char* str, int leftmost, bit virt_flag)
 /*
 	make vtbl for b in "this"
 	match up virtuals and assign virtual indices for the base or delegate "bcl"
@@ -541,7 +541,7 @@ int classdef::do_virtuals(Pvirt vtab, char* str, int leftmost, bit virt_flag)
 			Voffset = Voffset + vtab->vclass->get_offset(vtab->string);
 		Pname vn;
 		int i=0;
-		for (; vn=ivec[i].n; i++) {
+		for (; (vn=ivec[i].n); i++) {
 		/*
 			go through virtual table's list of virtuals:
 			first see if the function is simply inherited
@@ -559,7 +559,7 @@ int classdef::do_virtuals(Pvirt vtab, char* str, int leftmost, bit virt_flag)
 				vpsz = tvpsz;
 			}
 
-			char* s = vn->n_gen_fct_name;
+			const char* s = vn->n_gen_fct_name;
 			Pname n = memtbl->look(s?s:vn->string, 0);
 
 //error('d',"vn %n %s n %n %d",vn,s,n,Voffset);
@@ -838,17 +838,17 @@ int classdef::do_virtuals(Pvirt vtab, char* str, int leftmost, bit virt_flag)
 			add_vtbl(v,0,0,0);
 		else
 			add_vtbl(v,vtbl_str(vtab->string,str),virt_flag||vtab->is_vbase,vc+1);
-		delete vp;
+		delete[] vp;
 		vcounter = 0;
 		return 1;
 	}
 
-	delete vp;
+	delete[] vp;
 	vcounter = 0;
 	return 0;
 }
 
-int classdef::all_virt(Pclass bcl, char* s, int leftmost, bit virt_flag)
+int classdef::all_virt(Pclass bcl, const char* s, int leftmost, bit virt_flag)
 {
 //error('d',"%t->all_virt( %t %s leftmost: %d",this,bcl,s,leftmost);
 	int i = 0;
@@ -1833,8 +1833,8 @@ void classdef::dcl(Pname cname, Ptable tbl)
 
 		case PR:	// visibility control:	C::M
 		{
-			char* qs = p->n_qualifier->string;
-			char* ms = p->string;
+			const char* qs = p->n_qualifier->string;
+			const char* ms = p->string;
 			TOK ppp = scope?PUBLIC:(protect?PROTECTED:PRIVATE);
 
 			p->base = NAME;
@@ -2314,7 +2314,7 @@ this breaks CC884232
 
 		// if necessary
 		link_compat_hack = 0;
-		if (b->obj_offset = has_allocated_base(bcl))
+		if ((b->obj_offset = has_allocated_base(bcl)))
 			continue;
 
 // error('d',"%t->dcl: allocating vbc %t link_compat_hack: %d",this,bcl,link_compat_hack);

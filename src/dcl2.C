@@ -17,7 +17,7 @@ any actual or intended publication of such source code.
 #include "cfront.h"
 #include "size.h"
 #include "overload.h"
-extern Pexpr make_dot(Pexpr, Ptable, char* s = "i");
+extern Pexpr make_dot(Pexpr, Ptable, const char* s = "i");
 extern Pblock top_block;
 
 struct for_info {
@@ -205,7 +205,7 @@ static Pblock block_since_case; // set to curr_block if it follows curr_case
 
 void stmt::reached()
 {
-	register Pstmt ss = s_list;
+	/*register*/ Pstmt ss = s_list;
 
 	if (ss == 0) return;
 
@@ -275,7 +275,7 @@ Pexpr check_cond(Pexpr e, TOK b, Ptable tbl)
 	int const_obj = 0;
 	const_obj = e->tp->tconst() ? 1 : e->is_const_obj();
 
-	if (cn = e->tp->is_cl_obj()) {	
+	if ((cn = e->tp->is_cl_obj())) {	
 		int no_const = 0;	// for better error reporting
 		Pclass cl = Pclass(cn->tp);
 		Pname found = 0;
@@ -1362,8 +1362,7 @@ void block::dcl(Ptable tbl)
 			    &&
 			    strcmp(f->nrv->string,n->string)==0
 			) {	// found nrv in declaration
-				n->string = new char[6];
-				strcpy(n->string,"__NRV");
+				n->string = "__NRV";
 			}
 			n->dcl(memtbl,FCT);
 			switch (n->tp->base) {
@@ -1486,7 +1485,7 @@ void name::field_align()
 		int b;
 		if (bit_offset)
 			nbits = BI_IN_WORD - bit_offset;
-		else if (b = byte_offset%SZ_WORD)
+		else if ((b = byte_offset%SZ_WORD))
 			nbits = b * BI_IN_BYTE;
 		if (max_align < SZ_WORD)
 			max_align = SZ_WORD;

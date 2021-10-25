@@ -53,5 +53,5 @@ clean:
 	$(MAKE) -C src clean
 	$(MAKE) -C lib/mk clean
 	$(MAKE) -C demo/hello clean
-	-@rm munch libC.a >& /dev/null
+	rm -f munch libC.a
 

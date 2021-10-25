@@ -460,7 +460,7 @@ Pfct type::memptr()
 Ptype type::skiptypedefs()
 // starting from ``this'', return first non-typedef
 {
-	register Ptype t = this;
+	/*register*/ Ptype t = this;
 	if(t==0) return t;
 	while (t->base == TYPE) {
 		t = t->bname_type();
@@ -471,7 +471,7 @@ Ptype type::skiptypedefs()
 Ptype type::skiptypedefs(bit &isconst)
 // starting from ``this'', return first non-typedef
 {
-	register Ptype t = this;
+	/*register*/ Ptype t = this;
 	isconst=0;
 	if(t==0) return t;
 	while (t->base == TYPE) {

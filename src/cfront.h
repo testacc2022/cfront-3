@@ -23,7 +23,7 @@ any actual or intended publication of such source code.
 #include "typedef.h"
 
 #ifndef GRAM
-extern char* prog_name;		// compiler name and version
+extern const char* prog_name;		// compiler name and version
 extern int inline_restr;	// inline expansion restrictions 
 #endif
 
@@ -35,7 +35,7 @@ extern void	ext(int);
 extern Ptype unconst_type(Ptype);
 
 extern char* 	make_name(TOK);
-extern char* 	make_nested_name(char*,Pclass); 
+extern char* 	make_nested_name(const char*,Pclass); 
 extern void 	make_dummy();
 extern Pname	dummy_fct;
 extern Pname    really_dominate(Pname, Pname, bit);
@@ -58,8 +58,8 @@ struct loc		// a source file location
 
 extern Loc curloc;
 extern int curr_file;
-extern char* curr_filename();
-extern char* src_file_name;
+extern const char* curr_filename();
+extern const char* src_file_name;
 extern loc noloc; // dummy null location
 extern bit binary_val;
 extern bit stmtno;
@@ -69,11 +69,11 @@ extern Ptable bound_expr_tbl;
 struct ea {	// fudge portable printf-like formatting for error()
 	union {
 		const void* p;
-		long i;
+		size_t i;
 	};
 
 	ea(const void* pp) {p = pp;} 
-	ea(long ii)   { i = ii; }
+	ea(size_t ii)   { i = ii; }
 	ea() {}
 };
 
@@ -109,16 +109,16 @@ extern Pktab Gtbl;	//SYM global parsing table
 extern Pktab Ctbl;	//SYM current parsing table
 	//SYM Ctbl is also set during dcl for accurate TNAME lookup.
 	//SYM This is ok since parsing and dcl are disjoint operations.
-extern Pname k_find_name( char*, Pktab, TOK );
-extern Pname k_find_member( char*, Pclass, TOK );
+extern Pname k_find_name( const char*, Pktab, TOK );
+extern Pname k_find_member( const char*, Pclass, TOK );
 extern Pname insert_type( Pname, Pktab, TOK );
 extern Pname insert_name( Pname, Pktab );
 
 extern Ptable gtbl;		// global names
 extern Ptable ptbl;		
-extern char* oper_name(TOK);
-extern char* name_oper(char *);
-extern int is_probably_temp(char*);
+extern const char* oper_name(TOK);
+extern const char* name_oper(const char *);
+extern int is_probably_temp(const char*);
 extern Pname def_name;
 extern Pname pdef_name;
 extern Pclass ccl;
@@ -183,6 +183,7 @@ struct node {
 	bit	allocated;	// set when not on free list
 	long	id;
 #endif
+        node():base(0){}
 };
 #ifdef DBG
 extern long node_id;
@@ -218,7 +219,7 @@ struct table : public node {
 	table(short, Ptable, Pname);
 	~table();
 
-	Pname	look(char*, TOK);
+	Pname	look(const char*, TOK);
 	Pname	insert(Pname, TOK);
 	inline Pname	insert_copy(Pname, TOK);
 	void	reinit();
@@ -255,14 +256,14 @@ struct ktable : public node { //SYM parsing table
 	void* operator new(size_t);
 	void operator delete(void*,size_t);
 
-	Pname	look(char*, TOK);
+	Pname	look(const char*, TOK);
 	Pname	insert(Pname, TOK);
-	Pname	find_cn(char*); // find name of this class table
+	Pname	find_cn(const char*); // find name of this class table
 	void	expand(int);// expand tiny table to hash table
 	void	hoist();    // hoist names in this table to enclosing table
 	Pname get_mem(int);
 	void	del();
-	char* whereami(); // return name or description of table
+	const char* whereami(); // return name or description of table
 };
 
 #ifndef GRAM
@@ -318,6 +319,7 @@ struct type : public node {
 
 	char	*signature(char*,int=0);
 	Ptype	tlist;
+        type(): b_const(0){}
 	bit	check(Ptype, TOK, bit=0);
 	Ptype	mkconst();
 
@@ -363,7 +365,7 @@ struct enumdef : public type {	/* ENUM */
 	bit	e_body;
 	short	no_of_enumerators;
 	unsigned short e_strlen;	// strlen(string) or strlen(local_sig)
-	char*	string;		// name of enum
+	const char*	string;		// name of enum
 	Pname	mem;
 	Pbase	e_type;		// type representing the enum
 		enumdef(Pname n)	{ base=ENUM; mem=n; };
@@ -385,10 +387,10 @@ struct virt : public node {
 	int     n_init;
 	velem*	virt_init;	// vector of vtbl initializers (zero-terminated)
 	Pclass	vclass;		// for class vclass
-	char*	string;
+	const char*	string;
 	bit	is_vbase;	// vtable for virtual base
 	bit	printed;
- 	virt(Pclass cl, velem* v, char* s, bit flag, int ni) {base = XVIRT; vclass=cl; virt_init=v; string=s; is_vbase=flag; next=0; n_init = ni;}
+ 	virt(Pclass cl, velem* v, const char* s, bit flag, int ni) {base = XVIRT; vclass=cl; virt_init=v; string=s; is_vbase=flag; next=0; n_init = ni;}
 };
 
 enum { C_VPTR=1, C_XREF=2, C_ASS=4, C_VBASE=8, C_REFM=16 };
@@ -415,7 +417,7 @@ struct classdef : public type {	/* CLASS */
 	bit	has_vvtab;	// set if class has vtable from virtual base
 	unsigned short c_strlen;// strlen(string) or strlen(local_sig)
 	Pbcl	baselist;	// list of base classes
-	char*	string;		/* name of class */
+	const char*	string;		/* name of class */
 	Pname	c_abstract;	// abstract class: don't instantiate: virt func name 
 	Pname	mem_list;
 	Ptable	memtbl;
@@ -455,7 +457,7 @@ struct classdef : public type {	/* CLASS */
 	bit	has_base(Pclass cl,int level=0,int ccflag=0);
 	bit	baseof(Pname);
 	bit	baseof(Pclass);
-	Pclass	is_base(char*,TOK* =0,int level=0);
+	Pclass	is_base(const char*,TOK* =0,int level=0);
 
 	Pname	has_oper(TOK);
 	Pname	has_ctor()	{ return c_ctor; }
@@ -465,21 +467,21 @@ struct classdef : public type {	/* CLASS */
 	Pname	has_ictor();
 	Pname	make_itor(int);
 
-	Pexpr	find_name(char*, Pclass, int=0, int=0);
-	int	do_virtuals(Pvirt, char*, int, bit);
-	int	all_virt(Pclass, char*, int, bit);
-	void	add_vtbl(velem*, char*, bit, int);
+	Pexpr	find_name(const char*, Pclass, int=0, int=0);
+	int	do_virtuals(Pvirt, const char*, int, bit);
+	int	all_virt(Pclass, const char*, int, bit);
+	void	add_vtbl(velem*, const char*, bit, int);
 	void	print_all_vtbls(Pclass);
 	void	print_vtbl(Pvirt);
 	void	really_print(Pvirt);
 	int	check_dup(Pclass, TOK);
 	int	has_allocated_base(Pclass,bit=0);
-	char 	*has_allocated_base(char*);
-	int	get_offset(char*,bit=0);
-	Pbcl	get_base(char*);
-	Pexpr	get_vptr_exp(char*);
-	Pexpr	find_in_base(char*, Pclass, int, int=0);
-        void    modify_inst_names(char *s); // Adjust ctor names for instantiation
+	const char 	*has_allocated_base(const char*);
+	int	get_offset(const char*,bit=0);
+	Pbcl	get_base(const char*);
+	Pexpr	get_vptr_exp(const char*);
+	Pexpr	find_in_base(const char*, Pclass, int, int=0);
+        void    modify_inst_names(const char *s); // Adjust ctor names for instantiation
         bit     parametrized_class();
 	bit	has_const_mem();
 #endif
@@ -523,7 +525,7 @@ extern TOK Nvis;
 extern TOK Nvirt;
 extern Pexpr Nptr;
 extern Pbcl Nvbc_alloc;
-extern char *Nalloc_base;
+extern const char *Nalloc_base;
 extern Pexpr rptr(Ptype,Pexpr,int);
 extern Pexpr vbase_args(Pfct, Pname);
 extern Pexpr cdvec(Pname,Pexpr,Pclass,Pname,int,Pexpr,Pexpr=0);
@@ -568,7 +570,7 @@ struct basetype : public type
 	Pname	b_xname;	/* extra name */
 	union {
 	Ptype	b_fieldtype;
-	char*	b_linkage;
+	const char*	b_linkage;
 	};
 
 	basetype(TOK, Pname);
@@ -588,7 +590,7 @@ struct basetype : public type
 
 enum Linkage { linkage_default, linkage_C, linkage_Cplusplus };
 extern Linkage linkage;
-void set_linkage(char*);
+void set_linkage(const char*);
 
 struct fct : public type {		// FCT
 	Templ_type fct_base;  	// recognize template function
@@ -619,7 +621,7 @@ struct fct : public type {		// FCT
 	Pname	f_result;	// extra second argument of type X&
 	Pname	f_args;		// argument list including args added by cfront
 	Linkage	f_linkage;
-	char*	f_signature;	// character encoding of function type
+	const char*	f_signature;	// character encoding of function type
 	Plist local_class;	// list of local classes //SYM -- preserve for use in del.c
 	static Pfct fct_free;
 	void*	operator new(size_t);
@@ -739,9 +741,9 @@ extern int ref_initializer;
 extern int ntok;
 
 extern void ptbl_init(int);
-extern void ptbl_add_pair(char*,char*);
-extern char *ptbl_lookup(char*);
-extern char *st_name(char*);
+extern void ptbl_add_pair(const char*,const char*);
+extern char *ptbl_lookup(const char*);
+extern char *st_name(const char*);
 #endif
 
 struct expr : public node	/* PLUS, MINUS, etc. */
@@ -762,12 +764,12 @@ struct expr : public node	/* PLUS, MINUS, etc. */
 	union {
 		Pexpr	e1;
 		long long	i1;
-		char*	string;
+		const char*	string;
 	};
 	union {
 		Pexpr	e2;
 		int	i2;
-		char*	string2;
+		const char*	string2;
 		Pexpr	n_initializer;
 		Ptype	tpdef;  // local and nested typedef info
 	};
@@ -840,14 +842,14 @@ struct ref : public expr {		// REF DOT	e1->mem OR e1.mem
 };
 
 struct mdot : public expr {		// MDOT		a.b
-	mdot(char* a, Pexpr b) : expr (MDOT,0,0) { string2=a; mem=b; }
+	mdot(const char* a, Pexpr b) : expr (MDOT,0,0) { string2=a; mem=b; }
 };
 
 struct text_expr : public expr	{	// TEXT (vtbl_name)
-	text_expr(char* a, char* b) : expr (TEXT,0,0)
+	text_expr(const char* a, const char* b) : expr (TEXT,0,0)
 	{ string=a; string2=b; }
 };
-extern char* vtbl_name(char*,char*);
+extern char* vtbl_name(const char*,const char*);
 /************************* names (are expressions) ****************************/
 
 struct basecl : public node {	// NAME		=> base class
@@ -896,14 +898,14 @@ struct name : public expr {	// NAME TNAME DTOR and the lexical keywords
 	short	n_assigned_to;
 	Loc where;
 	int	n_offset;	// byte offset in frame or struct
-	char*	n_anon;	// 0, or anon union object name 
+	const char*	n_anon;	// 0, or anon union object name 
 	union {//SYM ???
 	Pname	n_list;   // next name in arg or other list 
 	Pname	n_hidden; //SYM type name hidden by this name in parse table
 	Pname	n_dtag;   // base==DTOR -- name after ~ or 0 for basic type dtor
 	};
 	Pname	n_tbl_list;
-	char    *n_gen_fct_name; // used to be punned with n_tbl_list.
+	const char    *n_gen_fct_name; // used to be punned with n_tbl_list.
         char    *n_template_arg_string ; // the mangled string name
 	Pktab	n_ktable;//SYM parsing table in which name is entered
 	union {
@@ -925,7 +927,7 @@ struct name : public expr {	// NAME TNAME DTOR and the lexical keywords
 	static Pname name_free;
 	void* operator new(size_t);
 	void operator delete(void*,size_t);
-	name(char* =0);
+	name(const char* =0);
 
 	Pname	normalize(Pbase, Pblock, bit);
 	Pname	tdef();
@@ -1020,7 +1022,7 @@ struct stmt : public node {	/* BREAK CONTINUE DEFAULT */
 };
 
 #ifndef GRAM
-extern char* Neval;
+extern const char* Neval;
 extern Ptable scope;
 extern Ptable expand_tbl;
 extern Pname expand_fn;
@@ -1137,7 +1139,7 @@ extern void yyerror(const char*);
 
 
 #ifndef GRAM
-extern char* line_format;
+extern const char* line_format;
 
 extern Plist stat_mem_list;
 extern Plist isf_list;
@@ -1146,7 +1148,7 @@ extern Pstmt st_dlist;
 extern Ptable sti_tbl;
 extern Ptable std_tbl;
 extern int need_sti( Pexpr e, Ptable tbl = 0, bit is_static_ok = 0 ); 
-Pexpr try_to_coerce(Ptype, Pexpr, char*, Ptable);
+Pexpr try_to_coerce(Ptype, Pexpr, const char*, Ptable);
 extern bit can_coerce(Ptype, Ptype);
 extern Ptype np_promote(TOK, TOK, TOK, Ptype, Ptype, TOK, bit=1);
 extern bit enum_promote;
@@ -1233,10 +1235,10 @@ extern Pname Ntmp_refd;
 extern Pname Ntmp_flag;
 extern Pexpr Ntmp_dtor;
 
-extern int is_unique_base(Pclass, char*, int, int = 0, Pclass priSeen = 0);
+extern int is_unique_base(Pclass, const char*, int, int = 0, Pclass priSeen = 0);
 extern Pexpr rptr(Ptype, Pexpr, int);
 
-extern int read_align(char*);
+extern int read_align(const char*);
 extern void new_init();
 
 extern void Eprint(Pexpr);

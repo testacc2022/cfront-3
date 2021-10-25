@@ -64,7 +64,7 @@ extern int AL_BPTR;
 //extern SZ_TOP;
 //extern SZ_BOTTOM;
 
-extern char* LARGEST_INT, * LARGEST_LONG, * LARGEST_LLONG;
+extern const char* LARGEST_INT, * LARGEST_LONG, * LARGEST_LLONG;
 extern int F_SENSITIVE;	// is field alignment sensitive to the type of the field?
 extern int F_OPTIMIZED;	// can the compiler fit a small int field into a char?
 #endif

@@ -99,7 +99,7 @@ showQ( char* where )
 */
 {
 	fprintf(stderr,"TOKEN Q (%s):\n",where);
-	for (register toknode* t = front; t; t = t->next) printok(t);
+	for (/*register*/ toknode* t = front; t; t = t->next) printok(t);
 	putc('\n',stderr);
 	fflush(stderr);
 }
@@ -131,10 +131,10 @@ const int TQCHUNK = 16;
 void*
 toknode::operator new(size_t)
 {
-	register toknode* p;
+	/*register*/ toknode* p;
 
 	if ((p=free_toks) == 0) {
-		register toknode* q;
+		/*register*/ toknode* q;
 		free_toks = q = (toknode*)new char[TQCHUNK * sizeof(toknode)];
 		p = free_toks;
 		for (; q != &p[TQCHUNK-1]; q->next = q+1, ++q);
@@ -156,7 +156,7 @@ toknode::toknode(TOK t, YYSTYPE r, loc tloc)
 void
 toknode::operator delete(void* vp,size_t)
 {
-	register toknode* p = (toknode*)vp;
+	/*register*/ toknode* p = (toknode*)vp;
 	p->next = free_toks;
 	free_toks = p;
 	vp = 0;
@@ -360,12 +360,12 @@ static Pname idname;
 extern TOK
 deltok( int noset = 0 )
 {
-	register toknode* T = front;
+	/*register*/ toknode* T = front;
 	USE_TOKEN(T,"deltok");
-	register TOK tk = T->tok;
+	/*register*/ TOK tk = T->tok;
 	if ( !noset ) { yylval = T->retval; curloc = T->place; }
 	curr_file = curloc.file;
-	if (front = front->next)
+	if ((front = front->next))
 		front->last = 0;
 	else
 		latok = rear = 0;
@@ -385,12 +385,12 @@ del_tokens( toknode* marker )
 
     LDB(2,fprintf(stderr,"del_tokens: %s..%s\n",image(marker->tok),image(latok->tok)));
 
-    register toknode* tt = marker->next;
+    /*register*/ toknode* tt = marker->next;
     if ( tt == latok ) return;
     marker->next = latok;
     latok->last->next = 0;
     latok->last = marker;
-    register toknode* tx = tt;
+    /*register*/ toknode* tx = tt;
     do {
 	LDB(3,fprintf(stderr,"	deleting %s\n",image(tt->tok)));
 	tx = tx->next;
@@ -783,7 +783,7 @@ extern TOK
 lalex()
 /*  return next token to grammar  */
 {
-    register TOK tk;
+    /*register*/ TOK tk;
     if ( front == 0 )
 	add_tokens();		// extend lookahead queue
     LDB(1,fprintf(stderr,"\n*** lalex()\n");showQ("before"));
@@ -988,7 +988,7 @@ DB(if(Ldebug>=2)error('d',"lalex -- end of if tname --%k%n",tk,yylval.pn););
 	}
 	else 
 	{ // tk == ID 
-    		char *s = yylval.s;
+    		const char *s = yylval.s;
 		if ( n ) n = n->n_hidden;
 		//SYM Pname nstd = ktbl->look( s, NESTED );
 
@@ -1125,7 +1125,7 @@ DB(if(Ldebug>=2)error('d',"lalex -- end of if tname --%k%n",tk,yylval.pn););
 			//SYM removed nstd stuff...
 			n = k_find_name( s, Ctbl, HIDDEN );
 			if ( n ) {
-				char* x = (tk2==ID||tk2==TNAME) ? front->retval.s : keys[tk2];
+				const char* x = (tk2==ID||tk2==TNAME) ? front->retval.s : keys[tk2];
 				// if n->n_key != HIDDEN, then lasttk
 				//    was probably TSCOPE (C::)
 				// Otherwise n would have been found.
@@ -1243,7 +1243,7 @@ la_backup( TOK t, YYSTYPE r )
     case LC: --bl_level; break;
     case RC: ++bl_level; break;
     }
-    register toknode* T = new toknode(t,r,curloc);
+    /*register*/ toknode* T = new toknode(t,r,curloc);
     if (front) {
 	front->last = T;
 	T->next = front;

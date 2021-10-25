@@ -58,7 +58,7 @@ extern void otbl_init();
 			/* token numbers for C parser	*/
 
 #define MAXTOK 255
-extern char* keys[MAXTOK+1];
+extern const char* keys[MAXTOK+1];
 
 #define EOFTOK	0	/* 	EOF	*/
 			/* keywords in alphabetical order */

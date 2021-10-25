@@ -200,7 +200,7 @@ int exact3(Pname nn, Ptype at)
 		case OVERLOAD:
 			// the actual argument is an overloaded function
 			// we'll try each instance until one matches
-			register Plist gl;
+			/*register*/ Plist gl;
 			int no_match = 1;
 
 			for (gl = Pgen(at)->fct_list; gl; gl=gl->l) {
@@ -235,7 +235,7 @@ int exact1(Pname nn, Ptype at)
 	// if the actual argument is an overloaded function
 	// we'll see if any instance matches exactly
 	if (at->base == OVERLOAD) {
-		register Plist gl;
+		/*register*/ Plist gl;
 
 		for (gl = Pgen(at)->fct_list; gl; gl=gl->l) {
 			if (nt->check(gl->f->tp,0)==0) {
@@ -367,7 +367,7 @@ bit can_coerce(Ptype t1, Ptype t2)
 		   acceptable type */
 
 		Pname ctor = cl->has_ctor();
-		register Pfct f = ctor ? Pfct(ctor->tp) : 0;
+		/*register*/ Pfct f = ctor ? Pfct(ctor->tp) : 0;
 
 		if(f && f->base == FCT) {
 			if (f->nargs==1 
@@ -380,7 +380,7 @@ bit can_coerce(Ptype t1, Ptype t2)
 			}
 		}
 		else if (f && f->base == OVERLOAD) {
-			register Plist gl;
+			/*register*/ Plist gl;
 
 			for (gl=Pgen(f)->fct_list; gl; gl=gl->l) {
 				Pname nn = gl->f;
@@ -463,8 +463,8 @@ int matchable(Pname n, Pexpr arg, int constObj)
 */
 {
 	Pfct f = n->fct_type();
-	register Pexpr e;
-	register Pname nn;
+	/*register*/ Pexpr e;
+	/*register*/ Pname nn;
 	int worst = EXACT; 	//for compatibilty
 
 	if (n->is_template_fct()) return 0;
@@ -825,7 +825,7 @@ lll:
 	for (nn=f->argtype, argno=1; e||nn; nn=nn->n_list, e=etail->e2, argno++) {
 		Pexpr a;
 		int save_base = 0;
-		char* save_name = 0;
+		const char* save_name = 0;
 		bit mpt = (nn && nn->tp && nn->tp->skiptypedefs()->memptr());
 
 		if (e) {
@@ -1117,7 +1117,7 @@ Pexpr ref_init(Pptr p, Pexpr init, Ptable tbl)
 	are handled correctly.
 */
 {
-	register Ptype it = init->tp->skiptypedefs();
+	/*register*/ Ptype it = init->tp->skiptypedefs();
 	Pptr px = Pptr(p->skiptypedefs());
 	Ptype p1 = px->typ;
 	Pname c1 = p1->is_cl_obj();
@@ -1747,8 +1747,8 @@ Pexpr expr::docast(Ptable tbl)
 	{	Ptype er = etp;
 		Ptype cr = tt;
 		do {
-			if (er = er->is_ptr_or_ref()) er = Pptr(er)->typ;
-			if (cr = cr->is_ptr_or_ref()) cr = Pptr(cr)->typ;
+			if ((er = er->is_ptr_or_ref())) er = Pptr(er)->typ;
+			if ((cr = cr->is_ptr_or_ref())) cr = Pptr(cr)->typ;
 		} while (er && cr);
 		int pp = er!=0;	//	if `e' is a suitable pointer cast it:
 				// 	(x&)e => (x*)e, otherwise
@@ -2034,7 +2034,7 @@ mk_ctor_call: // beats duplicating the code
 
 	if (e2 == 0) {		// x(a) => x temp; (temp.x(a),temp)
 		if (e1 && e1->e1 && !e1->e2) {
-			char* s = e1->e1->string;
+			const char* s = e1->e1->string;
 			if (s && s[0] == '_' && s[1] == '_' && s[2] == 'V' &&
 			    e1->e1->tp && tp2 && !e1->e1->tp->check(tp2, 0))
 				return e1;
@@ -2094,16 +2094,16 @@ gen::exactMatch(Pexpr arg, int constObj)
 */
 {
 	if (pure_templ()) return 0; // only holds templates
-	register Plist gl;
-	register int ok;
+	/*register*/ Plist gl;
+	/*register*/ int ok;
 	Block(Pname) funVec;
 
-	register int numEx = 0;
+	/*register*/ int numEx = 0;
 	for (gl=fct_list; gl; gl=gl->l) {
-		register Pname nn = gl->f;
+		/*register*/ Pname nn = gl->f;
 		if (nn->is_template_fct()) continue;
 		Pfct f = nn->fct_type();
-		register Pname n = f->argtype;
+		/*register*/ Pname n = f->argtype;
 		if(constObj && nn->n_oper!=CTOR && !f->f_const && !f->f_static){
 			non_const++;
 			continue;
@@ -2146,7 +2146,7 @@ gen::oneArgMatch(Pexpr aarg, int constObj)
 */
 {
 	if (pure_templ()) return 0;
-	register Plist gl;
+	/*register*/ Plist gl;
 	int numFunc = 0;
 	Block(Pname) ArgVec;
 	Block(Pname) funVec;
@@ -2203,11 +2203,11 @@ gen::multArgMatch(Pexpr arg, int constObj)
 	Block(BlockPname) intFun(numargs);
 
 	miFlag = 0;
-	register int numFunc = 0;
+	/*register*/ int numFunc = 0;
 	Block(Pname) funVec;
 
 	for (Plist gl=fct_list; gl; gl=gl->l) {
-		register Pname nn = gl->f;
+		/*register*/ Pname nn = gl->f;
 
 		if (nn->is_template_fct()) continue;
 
@@ -2215,7 +2215,7 @@ gen::multArgMatch(Pexpr arg, int constObj)
 		if (!matchable(nn,arg,constObj)) continue;
 
 		// store types in ``matrix'' for bestMatching
-		register int ai = 0;
+		/*register*/ int ai = 0;
 		Pfct tf = nn->fct_type();
 
 		funVec.reserve(numFunc+1);
@@ -2248,7 +2248,7 @@ gen::multArgMatch(Pexpr arg, int constObj)
 		Bits bestFuncs = intersectRule(intFun,numFunc,arg);
 
 		Pname best = 0;
-		register int sigbit = bestFuncs.signif() - 1;
+		/*register*/ int sigbit = bestFuncs.signif() - 1;
 
 		switch(bestFuncs.count()) {
 		    case 0:	// null intersection
@@ -2494,7 +2494,7 @@ Pname breakTie(const Block(Pname)& FV,Bits& bestOnes,Pexpr arg,int cO)
 	if not, issue ambiguity error and return any function
 */
 {
-	register int numFunc = bestOnes.size();
+	/*register*/ int numFunc = bestOnes.size();
 	Bits zeroBits(0,numFunc);
 	Bits result = ~zeroBits;
 

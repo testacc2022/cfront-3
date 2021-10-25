@@ -39,10 +39,10 @@ main.c:
 #endif
 
 
-char* prog_name = "<<AT&T C++ Language System <3.0.3> 05/05/94>>";
-static char* prog_vers = "__cfront_version_303_xxxxxxxx";
-char* src_file_name = "";
-char* line_format = "\n# %d \"%s\"\n";
+const char* prog_name = "<<AT&T C++ Language System <3.0.3> 05/05/94>>";
+static const char* prog_vers = "__cfront_version_303_xxxxxxxx";
+const char* src_file_name = "";
+const char* line_format = "\n# %d \"%s\"\n";
 
 Block(Pchar) instfct;
 Block(Pchar) instdata;
@@ -118,7 +118,7 @@ void run()
 	Pname n;
 	templp = new templ_compilation;		// canonical instance
 
-	while (n=syn()) {
+	while ((n=syn())) {
 		int oerror_count=error_count;
 		if (n == Pname(1))
 			continue;
@@ -264,7 +264,7 @@ void run()
 				Pfct f = Pfct(nn->tp);
 				DB( if(Rdebug>=1) error('d', "function nn:%n local_class: %d %d", nn, local_class, f->local_class ););
 				if (f->body && f->f_inline==0 && f->f_imeasure==0) {
-					if ( local_class = f->local_class ) { 
+					if ( (local_class = f->local_class) ) { 
 						delete_local();
 						local_class = 0;
 					}
@@ -295,7 +295,7 @@ void run()
 						{
 							Pfct f = (Pfct)p->tp;
 							if (f->body && f->f_inline==0 && f->f_imeasure==0) {
-								if ( local_class = f->local_class ) {
+								if ( (local_class = f->local_class) ) {
 									delete_local();
 									local_class = 0;
 								}
@@ -562,7 +562,7 @@ void run()
 			ps[2] = 'v';
 			fprintf(out_file,"extern struct __mptr %s[];\n",ps);
 			ptbl_add_pair(nm->string2,ps);
-			delete ps;
+			delete[] ps;
 		}
 	}
 
@@ -655,13 +655,13 @@ process_debug_flags( char* p )
 }
 #endif /*DBG*/
 
-main(int argc, char* argv[])
+int main(int argc, char* argv[])
 /*
 	read options, initialize, and run
 */
 {
-	register char * cp;
-	char* afile = "";
+	/*register*/ char * cp;
+	const char* afile = "";
 #ifdef unix
 
 #ifdef COMPLETE_SIG_PF
@@ -856,7 +856,7 @@ main(int argc, char* argv[])
 	exit( (0<=error_count && error_count<127) ? error_count : 127);
 }
 
-char* st_name(char* pref)
+char* st_name(const char* pref)
 /*
 	make name "pref|source_file_name|_" or "pref|source_file_name|_"
 	where non alphanumeric characters are replaced with '_'
@@ -867,7 +867,7 @@ char* st_name(char* pref)
 	int strl = prefl + 2;	// trailing '_' and 0
 	if (*src_file_name)
 		strl += strlen(src_file_name);
-	char* defs;
+	const char* defs;
 	int defl;
 	if (def_name) {
 		defs = def_name->string;

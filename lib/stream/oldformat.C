@@ -18,6 +18,7 @@ any actual or intended publication of such source code.
 #include <stream.h>
 #include "streamdefs.h"
 #include <string.h>
+#include <stddef.h>
 #include <strstream.h>
 #include <fstream.h>
 #include <libc.h>
@@ -38,9 +39,9 @@ static char	formbuf[cb_size];	// some slob for form overflow
 static char*	bfree=formbuf;
 static char*	max = &formbuf[cb_size-1];
 
-char* chr(register int i, register int w)	/* note: chr(0) is "" */
+char* chr(/*register*/ int i, /*register*/ int w)	/* note: chr(0) is "" */
 {
-	register char* buf = bfree;
+	/*register*/ char* buf = bfree;
 
 	if (w<=0 || fld_size<w) w = 1;
 	w++;				/* space for trailing 0 */
@@ -56,9 +57,9 @@ char* chr(register int i, register int w)	/* note: chr(0) is "" */
 	return res;
 }
 
-char* str(const char* s, register int w)
+char* str(const char* s, /*register*/ int w)
 {
-	register char* buf = bfree;
+	/*register*/ char* buf = bfree;
 	int ll = strlen(s);
 	if (w<=0 || fld_size<w) w = ll;
 	if (w < ll) ll = w;
@@ -76,7 +77,7 @@ char* str(const char* s, register int w)
 
 char* form(const char* format ...)
 {
-	register char* buf = bfree;
+	/*register*/ char* buf = bfree;
 	if (max < buf+fld_size) buf = formbuf;
 
 #	ifdef VSPRINTF
@@ -86,11 +87,11 @@ char* form(const char* format ...)
 		va_end(args) ;
 #	else
 		// not very portable
-		register int* ap = (int*)((char*)&format+sizeof(char*));
+		/*register*/ int* ap = (int*)((char*)&format+sizeof(char*));
 		sprintf(buf,format,ap[0],ap[1],ap[2],ap[3],ap[4],ap[5],ap[6],ap[7],ap[8],ap[9]);	
 #	endif
 
-	register int ll = strlen(buf);			// not all sprintf's return length
+	/*register*/ int ll = strlen(buf);			// not all sprintf's return length
 
 	// If we have scribbled beyond the end of the buffer then
 	// who knows what data we've destroyed.  Better to abort here
@@ -109,28 +110,28 @@ char* form(const char* format ...)
 
 const char a10 = 'a'-10;
 
-char* hex(long ii, register int w)
+char* hex(long ii, /*register*/ int w)
 {
-	int m = sizeof(long)*2;		// maximum hex digits for a long
+	size_t m = sizeof(long)*2;		// maximum hex digits for a long
 	if (w<0 || fld_size<w) w = 0;
-	int sz = (w?w:m)+1;
-	register char* buf = bfree;
+	size_t sz = (w?w:m)+1;
+	/*register*/ char* buf = bfree;
 	if (max < buf+sz) buf = formbuf;
-	register char* p = buf+sz;
+	/*register*/ char* p = buf+sz;
 	bfree = p+1;
 	*p-- = 0;			// trailing 0
-	register unsigned long i = ii;
+	/*register*/ unsigned long i = ii;
 
 	if (w) {
 		do {
-			register int h = (int)(i&0xf);
+			/*register*/ int h = (int)(i&0xf);
 			*p-- = (h < 10) ? h+'0' : h+a10;
 		} while (--w && (i>>=4));
 		while (0<w--) *p-- = ' ';
 	}
 	else {
 		do {
-			register int h = (int)(i&0xf);
+			/*register*/ int h = (int)(i&0xf);
 			*p-- = (h < 10) ? h+'0' : h+a10;
 		} while (i>>=4);
 	}
@@ -139,26 +140,26 @@ char* hex(long ii, register int w)
 
 char* oct(long ii, int w)
 {
-	int m = sizeof(long)*3;		// maximum oct digits for a long
+	size_t m = sizeof(long)*3;		// maximum oct digits for a long
 	if (w<0 || fld_size<w) w = 0;
-	int sz = (w?w:m)+1;
-	register char* buf = bfree;
+	size_t sz = (w?w:m)+1;
+	/*register*/ char* buf = bfree;
 	if (max < buf+sz) buf = formbuf;
-	register char* p = buf+sz;
+	/*register*/ char* p = buf+sz;
 	bfree = p+1;
 	*p-- = 0;			// trailing 0
-	register unsigned long i = ii;
+	/*register*/ unsigned long i = ii;
 
 	if (w) {
 		do {
-			register int h = (int)(i&07);
+			/*register*/ int h = (int)(i&07);
 			*p-- = h + '0';
 		} while (--w && (i>>=3));
 		while (0<w--) *p-- = ' ';
 	}
 	else {
 		do {
-			register int h = (int)(i&07);
+			/*register*/ int h = (int)(i&07);
 			*p-- = h+'0';
 		} while (i>>=3);
 	}
@@ -173,18 +174,18 @@ char* dec(long i, int w)
 		sign = 1;
 		i = -i;
 	}	
-	int m = sizeof(long)*3;		/* maximum dec digits for a long */
+	size_t m = sizeof(long)*3;		/* maximum dec digits for a long */
 	if (w<0 || fld_size<w) w = 0;
-	int sz = (w?w:m)+1;
-	register char* buf = bfree;
+	size_t sz = (w?w:m)+1;
+	/*register*/ char* buf = bfree;
 	if (max < buf+sz) buf = formbuf;
-	register char* p = buf+sz;
+	/*register*/ char* p = buf+sz;
 	bfree = p+1;
 	*p-- = 0;			/* trailing 0 */
 
 	if (w) {
 		do {
-			register int h = (int)(i%10);
+			/*register*/ int h = (int)(i%10);
 			*p-- = h + '0';
 		} while (--w && (i/=10));
 		if (sign && 0<w) {
@@ -195,7 +196,7 @@ char* dec(long i, int w)
 	}
 	else {
 		do {
-			register int h = (int)(i%10);
+			/*register*/ int h = (int)(i%10);
 			*p-- = h + '0';
 		} while (i/=10);
 		if (sign) *p-- = '-';

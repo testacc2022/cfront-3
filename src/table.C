@@ -45,6 +45,7 @@ table::table(short sz, Ptable nx, Pname n)
 	entries = new Pname[sz];
 	hashsize = sz = (sz*3)/2;
 	hashtbl = new short[sz];
+        memset(hashtbl, 0, sizeof(short)*sz);
 	next = nx;
 	free_slot = 1;
 	DBID();
@@ -56,16 +57,16 @@ table::~table()
 	delete hashtbl;
 }
 
-Pname table::look(char* s, TOK k)
+Pname table::look(const char* s, TOK k)
 /*
 	look for "s" in table, ignore entries which are not of "k" type
 	look and insert MUST be the same lookup algorithm
 */
 {
 	Ptable t;
-	register char * p;
-	register char * q;
-	register int i;
+	/*register*/ const char * p;
+	/*register*/ const char * q;
+	/*register*/ int i;
 	Pname n;
 	int rr;
 
@@ -130,15 +131,15 @@ Pname table::insert(Pname nx, TOK k)
 	Nold = (nx found) ? 1 : 0;
 */
 {
-	register char * p;
-	register int i;
+	/*register*/ const char * p;
+	/*register*/ int i;
 	Pname n;
 	Pname* np = entries;
 	Pname* link;
 	int firsti;
 	int mx = hashsize;
 	short* hash = hashtbl;
-	char* s = nx->string;
+	const char* s = nx->string;
 
 	DB( if(Bdebug>=1 && (Bdebarg==0 || strcmp(Bdebarg,nx->string)==0)) {
 		error('d',"%d->table::insert( nx%n%t, k%k )",this,nx,nx?nx->tp:0,k);
@@ -219,9 +220,9 @@ re_allocate:
 void table::grow(int g)
 {
 	short* hash;
-	register int j;
+	/*register*/ int j;
 	int mx; 
-	register Pname* np;
+	/*register*/ Pname* np;
 	Pname n;
 
 	if (g <= free_slot) error('i',"table.grow(%d,%d)",g,free_slot);
@@ -239,10 +240,10 @@ void table::grow(int g)
 	hash = hashtbl = new short[mx];
 
 	for (j=1; j<free_slot; j++) {	/* rehash(np[j]); */
-		char * s = np[j]->string;
-		register char * p;
-		char * q;
-		register int i;
+		const char * s = np[j]->string;
+		/*register*/ const char * p;
+		const char * q;
+		/*register*/ int i;
 		int firsti;
 
 		p = s;
@@ -329,7 +330,7 @@ ktable::~ktable()
 	k_n = 0;
     } else delete k_t;
 }
-Pname ktable::look(char* s, TOK k)
+Pname ktable::look(const char* s, TOK k)
 {
     if ( k_tiny ) {
 	for ( Pname n = k_n;  n;  n = n->n_tbl_list )
@@ -338,7 +339,7 @@ Pname ktable::look(char* s, TOK k)
     } else return k_t->look(s,k);
 }
 Pname
-ktable::find_cn( char* s )
+ktable::find_cn( const char* s )
 {
 	if ( k_id != CLASS ) error('i',"find_cn( %s) on nonC table",s);
 	Pclass cl = k_name->tp->classtype();

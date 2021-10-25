@@ -1,6 +1,6 @@
 /*ident	"@(#)cls4:src/lex.c	1.14" */
 /*******************************************************************************
- 
+
 C++ source for the C++ Language System, Release 3.0.  This product
 is a new release of the original cfront developed in the computer
 science research center of AT&T Bell Laboratories.
@@ -43,19 +43,19 @@ Blockdeclare(short)
 // static data members definition
 bool templ_compilation::in_progress=false;
 
-char* strdup(const char* s1) 
+char* strdup(const char* s1)
 /* string duplication
     returns pointer to a new string which is the duplicate of string
     pointed to by s1
     return 0 if new string can't be created
 */
-{  
+{
    char * s2;
- 
+
    s2 = new char[strlen(s1) + 1];
    return(s2==0 ? 0 : strcpy(s2,s1) );
 }
- 
+
 #define copy_if_need_be(s)  ((templp->in_progress || templp->parameters_in_progress) ? strdup(s) : (s))
 
 	/* lexical actions */
@@ -130,7 +130,7 @@ int new_buf(char c)
 		freebuf = freebuf->next;
 	}
 	else
-		pbuf = new buf;	// allocate and register new chunk
+		pbuf = new buf;	// allocate and /*register*/ new chunk
 	pbuf->next = bufhead;
 	bufhead = pbuf;
 
@@ -151,17 +151,17 @@ int new_buf(char c)
 #define del_txt()	txtfree = txtstart
 
 static int Nfile;// = 1;
-static Block(Pchar) file_name;	// source file names
+static Block(CPchar) file_name;	// source file names
 				// file_name[0] == src_file_name
 				// file_name[0] == 0 means stdin
 static int tcurr_file;		// current index in file_name
 
-Linkage linkage = linkage_default; // linkage is default C++	
+Linkage linkage = linkage_default; // linkage is default C++
 const int LINKMAX = 10;
 static Linkage lvec[LINKMAX] = { linkage_default };
 static int lcount = 0;
 
-void set_linkage(char* p)
+void set_linkage(const char* p)
 {
 	if (p==0 || *p == 0) {	// resume previous linkage
 		if (lcount>0) linkage = lvec[--lcount];
@@ -230,12 +230,12 @@ inline YYSTYPE rt(loc   x) { YYSTYPE y; y.l  = x;        return y; }
 #define rets(a,b)	{ addtok(a, rt(b), tloc);          return a; }
 #define retl(a)		{ addtok(a, rt(tloc), tloc);       return a; }
 
-// keys[] holds the external form for tokens with fixed representation 
+// keys[] holds the external form for tokens with fixed representation
 // illegal tokens and those with variable representation have 0 entries
-char* keys[MAXTOK+1];
+const char* keys[MAXTOK+1];
 
-static void 
-new_key(char* s, TOK toknum, TOK yyclass)
+static void
+new_key(const char* s, TOK toknum, TOK yyclass)
 /*
   make "s" a new keyword with the representation (token) "toknum"
   "yyclass" is the yacc token (for example new_key("int",INT,TYPE); )
@@ -254,7 +254,7 @@ new_key(char* s, TOK toknum, TOK yyclass)
 }
 
 const int keyword_count = 67;
-static void 
+static void
 ktbl_init()
 /*
 	enter keywords into keyword table for use by lex()
@@ -326,7 +326,7 @@ void loc::putline()
 {
 	if (file==0 && line==0) return;
 	if ( 0<=file && file <= Nfile ) {
-		char* f = file_name[file];
+		const char* f = file_name[file];
 		if (f==0) f = src_file_name;
 		fprintf(out_file,line_format,line,f);
 		last_line = *this;
@@ -336,28 +336,28 @@ void loc::putline()
 void loc::put(FILE* p)
 {
 	if ( 0<=file && file <= Nfile ) {
-		char* f = file_name[file];
+		const char* f = file_name[file];
 		if (f==0) f = src_file_name;
 		fprintf(p,"\"%s\", line %d: ",f,line);
 	}
 }
 
-char* curr_filename()
+const char* curr_filename()
 {
 	return (file_name[curloc.file]);
 }
 
-void lxenter(register char* s, short m)
+void lxenter(/*register*/ const char* s, short m)
 /* enter a mask into lxmask */
 {
-	register int c;
+	/*register*/ int c;
 
-	while( c= *s++ ) lxmask[c+1] |= m;
+	while( (c= *s++) ) lxmask[c+1] |= m;
 
 }
 
 
-void lxget(register int c, register int m)
+void lxget(/*register*/ int c, /*register*/ int m)
 /*
 	put 'c' back then scan for members of character class 'm'
 	terminate the string read with \0
@@ -422,12 +422,12 @@ static struct LXDOPE {
 
 static struct LXDOPE *lxcp[CSSZ+1];
 
-void 
+void
 lex_init()
 {
-	register struct LXDOPE *p;
-	register int i;
-	register char *cp;
+	/*register*/ struct LXDOPE *p;
+	/*register*/ int i;
+	/*register*/ const char *cp;
 	/* set up character classes */
 
 	/* first clear lexmask */
@@ -481,7 +481,7 @@ lex_init()
 void lex_clear()
 {
 	// delete extra buffers:
-	buf* p = bufhead;	
+	buf* p = bufhead;
 	bufhead = 0;
 //if (p) {
 //fprintf(stderr,"lex_clear\n");
@@ -556,7 +556,7 @@ char * chconst()
 	read a character constant into inbuf
 */
 {
-	register int c;
+	/*register*/ int c;
 	int nch = 0;
 
 	pch('\'');
@@ -623,7 +623,7 @@ ex:
 void lxcom()
 /* process a "block comment" */
 {
-	register int c;
+	/*register*/ int c;
 	get1(c);
 	for(;;get(c)) {
 	xx: switch (c) {
@@ -651,7 +651,7 @@ void lxcom()
 void linecom()
 // process a "line comment"
 {
-	register int c;
+	/*register*/ int c;
 
 	get1(c);
 #ifdef DBG
@@ -677,7 +677,7 @@ void linecom()
 
 char eat_whitespace()
 {
-	register int c;
+	/*register*/ int c;
 	get1(c);
 	for(;;) {
 	lx:
@@ -713,10 +713,10 @@ char eat_whitespace()
 		case '\t':
 			break;
 		default:
-			return c;		
+			return c;
 		}
 		get(c);
-	}	
+	}
 }
 
 void get_string()
@@ -776,8 +776,8 @@ TOK tlex()
 //	Ntoken++;
 
 	for(;;) {
-		register int lxchar;
-		register struct LXDOPE *p;
+		/*register*/ int lxchar;
+		/*register*/ struct LXDOPE *p;
 
 		start_txt();
 
@@ -788,13 +788,13 @@ TOK tlex()
 
 		switch( (p=lxcp[lxchar+1])->lxact ){
 
-		case A_1C:	// eat up a single character, and return an opcode 
+		case A_1C:	// eat up a single character, and return an opcode
 			reti(p->lxtok,p->lxtok);
 
 		case A_EOF:
 			if (p_level || b_level+lcount)
 				error(&tloc,"'%s' missing at end of input",(b_level+lcount) ? "}" : ")");
-		
+
 			reti(EOFTOK,0);
 
 		case A_SHARP:
@@ -818,14 +818,14 @@ TOK tlex()
                         // lxget( lxchar, LEXLET|LEXDIG ) ;
 
                         // if (!templp->in_progress ||  !txtstart[1]) {
-                        // no name string immediately follows, treat it                                  
+                        // no name string immediately follows, treat it
                           // like an illegal character
-                          error(&tloc,"illegal character%o (ignored)",lxchar);                               
+                          error(&tloc,"illegal character%o (ignored)",lxchar);
                           continue;
-                        // }  
+                        // }
 /* SBL: remove
                         txtstart++ ;
-                        if(fn=templ_compilation::tree_parameter(txtstart)) {                              
+                        if(fn=templ_compilation::tree_parameter(txtstart)) {
                         	switch (fn->n_template_arg) {
                           		case template_expr_tree_formal:
                             		// retain the $ in the name
@@ -833,8 +833,8 @@ TOK tlex()
 
                           		case template_stmt_tree_formal:
                             			retn(SM_PARAM, fn) ;
-                          	}  
-                        }  
+                          	}
+                        }
                         error(&tloc,"%s wasn't a statement or expression formal", txtstart);
                         rets(ID, copy_if_need_be(txtstart));
 */
@@ -863,7 +863,7 @@ TOK tlex()
 
 			lxget( lxchar, LEXLET|LEXDIG );
                         /* look for a keyword or a global type */
-			if ( n = keyword_table->look(txtstart,0) ) /* keyword */
+			if ( (n = keyword_table->look(txtstart,0)) ) /* keyword */
 			{
 				TOK x;
 				switch (x=n->base) {
@@ -979,7 +979,7 @@ TOK tlex()
 				ret = FCON;
 				get1(lxchar);
 			};
-		
+
 			if (lxchar=='e' || lxchar=='E') {
 				pch(lxchar);
 				get(lxchar);
@@ -1111,11 +1111,11 @@ TOK tlex()
 
 		case A_BCD:
 			{
-				register int i;
+				/*register*/ int i;
 				int j;
-	
+
 				pch('`');
-	
+
 				for (i=0; i<7; ++i) {
 					pch(get(j));
 					if (j == '`' ) break;
@@ -1323,7 +1323,7 @@ int lxtitle()
 	called after a newline; set linenumber and file name
 */
 {
-    register int c;
+    /*register*/ int c;
 
     for(;;) {
 	get1(c);
@@ -1338,7 +1338,7 @@ int lxtitle()
 	case '#': 	/* # lineno "filename" */
 	{	int cl = tloc.line;
 		tloc.line = 0;
-		for(;;) 
+		for(;;)
 		switch (get(c)) {
 		case '"':
 			start_txt();
@@ -1350,7 +1350,7 @@ int lxtitle()
 				while (get(c) != '\n') ;  // skip to eol.. ignore anything more
 
 				if (*txtstart) {	// stack file name
-					char* fn;
+					const char* fn;
 					if ( (fn=file_name[tcurr_file])
 					&& (strcmp(txtstart,fn)==0) ) {
 						//new line, same file: ignore
@@ -1408,7 +1408,7 @@ int lxtitle()
 		case '7':
 		case '8':
 		case '9':
-			tloc.line = tloc.line*10+c-'0'; 
+			tloc.line = tloc.line*10+c-'0';
 			break;
 
 		case 'l':	// look for "#line ..." and then ignore "line"

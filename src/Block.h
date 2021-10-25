@@ -64,8 +64,8 @@ static T name2(Block(T),_def);						\
 void									\
 Block(T)::clear(T* v, unsigned k)					\
 {									\
-	register T* p = v;						\
-	register T* lim = v + k;					\
+	/*register*/ T* p = v;						\
+	/*register*/ T* lim = v + k;					\
 	while (p < lim)							\
 		*p++ = name2(Block(T),_def);				\
 }									\
@@ -104,9 +104,9 @@ Block(T)::grow(unsigned k)						\
 void									\
 Block(T)::transfer(T* source, unsigned len)				\
 {									\
-	register T* plim;						\
-	register T* pp = p;						\
-	register T* q = source;						\
+	/*register*/ T* plim;						\
+	/*register*/ T* pp = p;						\
+	/*register*/ T* q = source;						\
 									\
 	if (n > len) {							\
 		plim = p + len;						\

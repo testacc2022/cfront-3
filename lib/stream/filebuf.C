@@ -245,7 +245,7 @@ int filebuf::overflow(int c)
 		if ( sync()==EOF ) return restore_errno(errno_orig) ;
 	}
 
-	register char* p = base() ;
+	/*register*/ char* p = base() ;
 	// pptr()==NULL does not imply p < pptr(),  so we need separate
 	// test.
 	while ( pptr() && p < pptr() )  {
@@ -256,7 +256,7 @@ int filebuf::overflow(int c)
 			}
 		/* Partial writes are sometimes possible in peculiar
 		 * circumstances */
-		register int count = write(xfd,p,pptr()-p) ;
+		/*register*/ int count = write(xfd,p,pptr()-p) ;
 		if ( count < 0 ) {
 			last_seek = EOF ;
 			return restore_errno(errno_orig) ;
@@ -320,7 +320,7 @@ int filebuf::underflow()
 		if ( count <= 0 ) return EOF ;
 		} 
 	else {
-		register int	rdsize ;
+		/*register*/ size_t	rdsize ;
 		if ( blen() > 2*sizeof(long) ) {
 			/* gptr must be set greater than base to
 			 * guarantee at least 1 char of pushback.
