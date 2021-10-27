@@ -1,7 +1,9 @@
 /* @(#) stdio.h 1.8 1/31/86 13:40:51 */
 /*ident	"@(#)cfront:incl/stdio.h	1.8"*/
 
+#ifdef __cplusplus
 extern "C" {
+#endif
 
 #ifndef __STDDEF_H
 #include <stddef.h>
@@ -74,12 +76,12 @@ extern char* fgets(char*, int, FILE*);
 extern char* gets(char*);
 extern int puts(const char *s);
 extern int fputs(const char *s, FILE *stream);
-extern int printf(const char* ...);
-extern int fprintf(FILE*, const char* ...);
-extern int sprintf(char*, const char* ...);
-extern int scanf(const char* ...);
-extern int fscanf(FILE*, const char* ...);
-extern int sscanf(const char*, const char* ...);
+extern int printf(const char*, ...);
+extern int fprintf(FILE*, const char*, ...);
+extern int sprintf(char*, const char*, ...);
+extern int scanf(const char*, ...);
+extern int fscanf(FILE*, const char*, ...);
+extern int sscanf(const char*, const char*, ...);
 extern int fread(char*, int, int, FILE*);
 extern size_t fwrite(const void*, size_t, size_t, FILE*);
 extern int fclose(FILE*);
@@ -146,4 +148,6 @@ extern FILE* _get_stderr();
 
 void _main();
 
-}
+#ifdef __cplusplus
+} /*extern "C"*/
+#endif

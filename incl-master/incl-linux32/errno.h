@@ -5,5 +5,8 @@
  */
 
 #include <sys/errno.h>
-extern "C" int* _get_errno();
+#ifdef __cplusplus
+extern "C"
+#endif
+int* _get_errno();
 #define errno (*_get_errno())
