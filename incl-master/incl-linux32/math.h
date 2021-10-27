@@ -8,7 +8,7 @@ extern "C" {
 extern int abs (int);
 extern double atof(const char*), frexp(double, int*);
 extern double ldexp(double, int), modf(double, double*);
-extern double j0(double), j1(double), jn(double);
+extern double j0(double), j1(double), jn(int, double);
 extern double y0(double), y1(double), yn(int, double);
 extern double erf(double), erfc(double);
 extern double exp(double), log(double), log10(double); 

@@ -886,10 +886,10 @@ void name::dcl_print(TOK list)
 						Cast = 1;
 						n->tp->print();
 						Cast = oc;
-						fprintf(out_file,")%d)",n->n_val);
+						fprintf(out_file,")%lld)",n->n_val);
 					}
 					else
-						fprintf(out_file,"%d",n->n_val);
+						fprintf(out_file,"%lld",n->n_val);
 				}
 			}
 
@@ -937,13 +937,13 @@ void enumdef::dcl_print(Pname cln)
 		px = p->n_list;
 		if (s) {
 			if (p->n_evaluated)
-				fprintf(out_file,"%s__%s = %d",p->string,s,p->n_val);
+				fprintf(out_file,"%s__%s = %lld",p->string,s,p->n_val);
 			else
 				fprintf(out_file,"%s__%s",p->string,s);
 		}
 		else {
 			if (p->n_evaluated)
-				fprintf(out_file,"%s = %d",p->string,p->n_val);
+				fprintf(out_file,"%s = %lld",p->string,p->n_val);
 			else
 				fprintf(out_file,"%s",p->string);
 		}
@@ -2112,7 +2112,7 @@ void classdef::print_members()
 
 vl* vlist;
 
-void really_really_print(Pclass cl, Pvirt vtab, char* s, char* ss);
+void really_really_print(Pclass cl, Pvirt vtab, const char* s, char* ss);
 
 int p2(Pname nn, Ptype t, Pclass cl, Pvirt vtab, char* s)
 {
@@ -2228,7 +2228,7 @@ xyzzy:
 	delete s;
 }
 
-void really_really_print(Pclass cl, Pvirt vtab, char* s, char* ss)
+void really_really_print(Pclass cl, Pvirt vtab, const char* s, char* ss)
 {
 	// make sure function is declared before using
 	// it in vtbl initializer
@@ -2285,8 +2285,10 @@ void really_really_print(Pclass cl, Pvirt vtab, char* s, char* ss)
 	putstring("0,0,0};\n");
 
 	ss[2] = 'p';
-	s[2] = 'v';
-	ptbl_add_pair(ss,s);
+        char *bs = strdup(s);
+	bs[2] = 'v';
+	ptbl_add_pair(ss,bs);
+        free(bs);
 
 	Pname nm;
 	char *cstr = 0;
@@ -2423,7 +2425,7 @@ void classdef::dcl_print(Pname n)
 		putstring( " __" );
 	putst(str?str:(nested_sig?nested_sig:string));
 
-	int sz = tsizeof();
+	//int sz = tsizeof();
 	int dvirt = 0;
 
 	if ( nested_sig )

@@ -1879,7 +1879,7 @@ Pstmt stmt::simpl()
 
 		if (e->base == ILIST) {
 			extern Pbase mptr_type;
-			extern Ptype Pvptr_type;
+			//extern Ptype Pvptr_type;
 			// memptr constant
 			// return({1,2,f}) ==> memptr t; return((t={1,2,f},&t))
 

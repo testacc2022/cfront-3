@@ -39,8 +39,8 @@ sqrt(complex z)
 	Check for possible overflow, and fixup if necessary.
 */
 
-	double x = abs(z.re);
-	double y = abs(z.im);
+	double x = fabs(z.re);
+	double y = fabs(z.im);
 
 	if (x > y && PERIL(x)) {
      		z.im /= x;

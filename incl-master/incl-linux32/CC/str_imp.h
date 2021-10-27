@@ -56,7 +56,7 @@ struct string_char_traits_LUCENT {
 	static size_t length(const char *s) { return (strlen(s)); }
 	static char *copy(char *s1, const char *s2, size_t n) {
 		return (strncpy(s1, s2, n)); }
-	static char *move(char *s1, const char *s2, int n) {
+	static char *move(char *s1, const char *s2, size_t n) {
 		return (strncpy(s1, s2, n)); }
 };
 
@@ -226,7 +226,7 @@ private:
 	Srep_LUCENT *d;
 	string(Srep_LUCENT* r) { d = r; }
 	string& newcopy(char);
-	void reserve_grow(int);
+	void reserve_grow(size_t);
 	inline void uniq();
 public:
 	/* ADDITION */
@@ -298,7 +298,7 @@ string::operator=(char c) {
 }
 inline bool
 operator==(const string& t, const string& s) {
-	register int dlen = t.d->len;
+	register size_t dlen = t.d->len;
 	register bool retval;
 	if ((dlen != s.d->len) || (dlen && t.d->str[0] != s.d->str[0]) || (dlen>1 && t.d->str[1] != s.d->str[1]))
 		retval = 0;
@@ -308,7 +308,7 @@ operator==(const string& t, const string& s) {
 }
 inline bool
 operator==(const string& t, const char* s) {
-	register int dlen = t.d->len;
+	register size_t dlen = t.d->len;
 	register bool retval;
 	if (!s || (dlen && t.d->str[0]!=s[0]) || (dlen>1 && s[0]!='\0' && t.d->str[1]!=s[1]))
 		retval = 0;
@@ -322,7 +322,7 @@ operator==(const char* s, const string& t) { return t==s; }
 
 inline int
 operator!=(const string& t, const string& s) {
-	register int dlen = t.d->len;
+	register size_t dlen = t.d->len;
 	register bool retval;
 	if ((dlen != s.d->len) || (dlen && t.d->str[0] != s.d->str[0]) || (dlen>1 && t.d->str[1] != s.d->str[1]))
 		retval = 1;
@@ -332,7 +332,7 @@ operator!=(const string& t, const string& s) {
 }
 inline bool
 operator!=(const string& t, const char* s) {
-	register int dlen = t.d->len;
+	register size_t dlen = t.d->len;
 	register bool retval;
 	if (!s || (dlen && t.d->str[0]!=s[0]) || (dlen>1 && s[0]!='\0' && t.d->str[1]!=s[1]))
 		retval = 1;

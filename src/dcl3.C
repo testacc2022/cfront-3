@@ -1801,7 +1801,7 @@ Pname dclass(Pname n, Ptable tbl)
 	Pbase bt;
 	Pname bn;
 	Pname ntbl = tbl->t_name;
-	Ptype ntp = 0; 
+	//Ptype ntp = 0; 
 
 	if ( n->tp==0 || n->tp->base != CLASS )
 		error('i',&n->where,"dclass%n: non-class",n);
@@ -1809,8 +1809,8 @@ Pname dclass(Pname n, Ptable tbl)
 	if ( nx==0 || nx->base!=TNAME )
 		error('i',&n->where,"dclass%n: missingTN",n);
 
-	if (ntbl && ntbl->tp)
-		ntp = ntbl->tp;
+	//if (ntbl && ntbl->tp)
+	//	ntp = ntbl->tp;
 
 	DB( if(Ddebug>=1) error( 'd', &n->where, "dclass n%n %d nx %d", n,n->lex_level, nx); );
 // error( 'd', &n->where, "dclass(%n%n ) nx%n" , n,tbl->t_name, nx); 
@@ -1871,12 +1871,12 @@ Pname denum(Pname n, Ptable tbl)
 	Pbase bt;
 	Pname bn;
 	Pname ntbl = tbl->t_name;
-	Ptype ntp = 0; 
+	//Ptype ntp = 0; 
 
 	Pktab tb = n->tp->in_class && n->tp->nested_sig ? n->tp->in_class->k_tbl : 0;
 	Pname nx = k_find_name(n->string,tb?tb:Ctbl,HIDDEN);//SYM		
-	if (ntbl && ntbl->tp)
-		ntp = ntbl->tp;
+	//if (ntbl && ntbl->tp)
+	//	ntp = ntbl->tp;
 
 // error( 'd', &n->where, "denum n%n ll %d nx%n tbl:%n", n,n->lex_level, nx, tbl->t_name); 
 

@@ -322,11 +322,11 @@ iostream_withassign& iostream_withassign::operator=(streambuf* sb)
 	return *this ;
 	}
 
-void ios::uresize(int n)
+void ios::uresize(size_t n)
 {
 	if ( n < nuser ) return ;
 	ios_user_union* newu = new ios_user_union[n+1] ;
-	for ( int x = 0 ; x < nuser ; ++x ) {
+	for ( size_t x = 0 ; x < nuser ; ++x ) {
 		newu[x] = x_user[x] ;
 		} ;
 	delete [] x_user ;
@@ -334,14 +334,14 @@ void ios::uresize(int n)
 	x_user = newu ;
 	}
 
-long & ios::iword(int x)
+long & ios::iword(size_t x)
 {
 	if ( x < 0 ) x = 0 ;
 	if ( x >= nuser ) uresize(x) ;
 	return x_user[x].i ;
 	}
 
-void* & ios::pword(int x)
+void* & ios::pword(size_t x)
 {
 	if ( x < 0 ) x = 0 ;
 	if ( x >= nuser ) uresize(x) ;

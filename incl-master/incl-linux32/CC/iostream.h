@@ -141,8 +141,8 @@ public:
 	streambuf*	rdbuf() { return bp ;} 
 
 public: /* Members related to user allocated bits and words */
-	long &		iword(int) ;
-	void* &		pword(int) ;
+	long &		iword(size_t) ;
+	void* &		pword(size_t) ;
 	static long	bitalloc() ;
 	static int	xalloc() ;
 
@@ -150,10 +150,10 @@ private: /*** privates for implemting allocated bits and words */
 	static long	nextbit ;
 	static long	nextword ;
 	
-	int		nuser ;
+	size_t		nuser ;
 	union ios_user_union*
 			x_user ;
-	void	uresize(int) ;
+	void	uresize(size_t) ;
 public: /* static member functions */
 	static void	sync_with_stdio() ;
 protected:
@@ -202,7 +202,7 @@ class streambuf {
 	char* 		x_gptr;
 	char*		x_egptr;
 	char*		x_eback;
-	int		x_blen;	
+	size_t		x_blen;	
     private:
 			streambuf(streambuf&); /* Declared but not defined */
 	void		operator=(streambuf&); /* Declared but not defined */
@@ -217,7 +217,7 @@ class streambuf {
 	char*		egptr() 	{ return x_egptr ; }
 	char*		eback() 	{ return x_eback ; }
 	char* 		ebuf()		{ return x_base+x_blen ; }
-	int		blen() const	{ return x_blen; }
+	size_t		blen() const	{ return x_blen; }
 	void		setp(char*  p, char*  ep)
 	{
 		x_pbase=x_pptr=p ; x_epptr=ep ;
@@ -226,12 +226,12 @@ class streambuf {
 	{
 		x_eback=eb; x_gptr=g ; x_egptr=eg ;
 	}
-	void		pbump(int n) 
+	void		pbump(size_t n) 
 	{ 
 		x_pptr+=n ;
 	}
 
-	void		gbump(int n) 
+	void		gbump(size_t n) 
 	{ 
 		x_gptr+=n ;
 		}

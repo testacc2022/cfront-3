@@ -315,7 +315,7 @@ static char map_initialized;
 
 node_class classify_node (Pnode node, int& error)
 {
-    int ncx;
+    size_t ncx;
     node_class nclass;
 
     error = 0;

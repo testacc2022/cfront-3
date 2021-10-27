@@ -2225,7 +2225,7 @@ stradd(char *&p, Pname n) {
   	if (!emode){
     		char s[1024];
     
-    		sprintf(s,"%d", strlen(n->string));
+    		sprintf(s,"%d", (int)strlen(n->string));
     		stradd(p,s);
   	}
   	stradd(p, n->string);
@@ -2276,8 +2276,8 @@ mangled_expr(char *p, Pexpr e, bool mangle_for_address = false)
 					}
 					else
 					{
-						sprintf(xx,"%s__%d%s",n->string,strlen(st),st);
-						sprintf(s,"%d",strlen(xx));
+						sprintf(xx,"%s__%d%s",n->string,(int)strlen(st),st);
+						sprintf(s,"%d",(int)strlen(xx));
 						strcat(s,xx);
 					}
 //error('d',"mangled_expr: %s", s );
@@ -2796,7 +2796,7 @@ templ_inst::mangled_name(char *ip)
       }
     
     *p = 0 ;
-    sprintf(ip, "%d_", strlen(a)+1) ;
+    sprintf(ip, "%d_", (int)strlen(a)+1) ;
     ip = start + strlen(start) ;
     strcpy(ip,a) ;
   }
@@ -2847,7 +2847,7 @@ funct_inst::mangled_name(char *ip)
 
 	if (actuals) --p;
 	*p = 0;
-    	sprintf(ip, "F%d_", strlen(buf)+1);
+    	sprintf(ip, "F%d_", (int)(strlen(buf)+1));
     	ip = start + strlen(start);
     	strcpy(ip,buf);
 
@@ -2868,9 +2868,9 @@ basic_inst::print_error_loc(int newline)
 
   	extern void print_loc();
   	state current_state;
-  	char buffer[max_string_size];
+  	//char buffer[max_string_size];
 
-  	for (int i = 0; i<max_string_size; i++) buffer[i] = 0;
+  	//for (int i = 0; i<max_string_size; i++) buffer[i] = 0;
 
 	if (newline) putch('\n');
   	current_state.save();
@@ -3102,7 +3102,7 @@ make_formal_name(const char *fns, const char *ins)
     char s[1024];
     char t[6];
     strcpy(s,fns); // formal name string
-    sprintf(t,"__%d",strlen(ins)); // instantiation name string
+    sprintf(t,"__%d",(int)strlen(ins)); // instantiation name string
     strcat(s,t);
     strcat(s,ins);
 // error('d',"make_formal_name: %s",s);

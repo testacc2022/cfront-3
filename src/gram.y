@@ -287,7 +287,7 @@ get_classname(const char* s)
 
 	const char* s1 = s;
 	while (*s) {
-		for ( ; s[0] && (s[0] != '_' || s[1] && s[1] != '_'); s++) s1++;;
+		for ( ; s[0] && (s[0] != '_' || (s[1] && s[1] != '_')); s++) s1++;;
 		if (*s) {
 			if (strncmp(s,"___pt__",7)==0) {
 				*s2 = 0;

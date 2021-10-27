@@ -140,10 +140,10 @@ int& Hash::operator [](int key)
 /* This seems convoluted, but it does whatever you want without
    redundant probing of the hash table. */
 
-void Hash::action (int key, int val, insert_action what,
+void Hash::action (size_t key, size_t val, insert_action what,
 		   size_t& found, size_t& old_val)
 {
-  unsigned int hashval = key_hash(key) ;
+  size_t hashval = key_hash(key) ;
   while (1)
     {
       int bestspot = -1 ;
@@ -323,9 +323,9 @@ int pointer_hasheq (size_t a, size_t b)
     return a == b;
 };
 
-unsigned int pointer_hash_fcn (int x)
+size_t pointer_hash_fcn (size_t x)
 {
-    unsigned X = (unsigned) x;
+    size_t X = (size_t) x;
     return ((X << 16) | (X >> 16)) ^ x;
 }
 
@@ -334,10 +334,10 @@ int string_hasheq (size_t a, size_t b)
     return !strcmp((char *)a, (char *) b);
 };
 
-unsigned int string_hash_fcn (size_t x)
+size_t string_hash_fcn (size_t x)
 {
     char * str = (char *)x;
-    int l = strlen(str);
+    size_t l = strlen(str);
 	
     if(x <= 4) return str[0];
     else {

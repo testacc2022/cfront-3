@@ -24,8 +24,8 @@ class strstreambuf : public streambuf
 {
 public: 
 			strstreambuf() ;
-			strstreambuf(int) ;
-			strstreambuf(void* (*a)(long), void (*f)(void*)) ;
+			strstreambuf(size_t) ;
+			strstreambuf(void* (*a)(size_t), void (*f)(void*)) ;
 			strstreambuf(char* b, int size, char* pstart = 0 ) ;
 			strstreambuf(unsigned char* b, int size, unsigned char* pstart = 0 ) ;
 	int		pcount();
@@ -45,11 +45,11 @@ public: /* virtuals  */
 private:
 	void		init(char*,int,char*) ;
 
-	void*		(*afct)(long) ;
+	void*		(*afct)(size_t) ;
 	void		(*ffct)(void*) ;
 	int		ignore_oflow ;
 	int		froozen ;
-	int		auto_extend ;
+	size_t		auto_extend ;
 
 public:
 	int		isfrozen() { return froozen; }

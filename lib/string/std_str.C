@@ -28,13 +28,13 @@ namespace std {
 string
 operator+(const string& s, const string& r)
 {
-    register int slen = s.d->len;
-    register int rlen = r.d->len;
+    register size_t slen = s.d->len;
+    register size_t rlen = r.d->len;
 
     if(rlen == 0) return string(s);
     if(slen == 0) return string(r);
 
-    register int newln = rlen + slen;
+    register size_t newln = rlen + slen;
     register string::Srep_LUCENT* rd =
 	string::Srep_LUCENT::new_srep(newln);
 
@@ -47,12 +47,12 @@ operator+(const string& s, const string& r)
 string
 operator+(const string& s, const char *st)
 {
-    register int slen = s.d->len;
-    register int ln = st ? STRING::length(st) : 0;
+    register size_t slen = s.d->len;
+    register size_t ln = st ? STRING::length(st) : 0;
 
     if(ln==0) return string(s);
 
-    register int newln = ln + slen;
+    register size_t newln = ln + slen;
     register string::Srep_LUCENT* rd =
 	string::Srep_LUCENT::new_srep(newln);
 
@@ -65,12 +65,12 @@ operator+(const string& s, const char *st)
 string
 operator+(const char *st, const string& s)
 {
-    register int ln = st ? STRING::length(st) : 0;
-    register int slen = s.d->len;
+    register size_t ln = st ? STRING::length(st) : 0;
+    register size_t slen = s.d->len;
 
     if(ln==0) return string(s);
 
-    register int newln = ln + slen;
+    register size_t newln = ln + slen;
     register string::Srep_LUCENT* rd = string::Srep_LUCENT::new_srep(newln);
 
     STRING::copy(rd->str, st, ln);
@@ -82,9 +82,9 @@ operator+(const char *st, const string& s)
 string
 operator+(const string& s, char c)
 {
-    register int slen = s.d->len;
+    register size_t slen = s.d->len;
 
-    register int newln = 1 + slen;
+    register size_t newln = 1 + slen;
     register string::Srep_LUCENT* rd = string::Srep_LUCENT::new_srep(newln);
 
     STRING::copy(rd->str, s.d->str, slen);
@@ -96,9 +96,9 @@ operator+(const string& s, char c)
 string
 operator+(char c, const string& s)
 {
-    register int slen = s.d->len;
+    register size_t slen = s.d->len;
 
-    register int newln = 1 + slen;
+    register size_t newln = 1 + slen;
     register string::Srep_LUCENT* rd = string::Srep_LUCENT::new_srep(newln);
 
     STRING::copy(rd->str+1, s.d->str, slen);
@@ -112,7 +112,7 @@ operator+(char c, const string& s)
 string&
 string::newcopy(char c)
 {
-    register int oldlen = d->len;
+    register size_t oldlen = d->len;
     register string::Srep_LUCENT *x = string::Srep_LUCENT::new_srep((oldlen+1));
     if (oldlen > 0) string::traits_type::copy(x->str, d->str, oldlen);
     x->str[oldlen] = c;
@@ -131,8 +131,8 @@ string::append(const string &s, size_t pos, size_t n) {
     if (n == npos)
 	n = s.d->len;
 
-    register int oldlen = d->len;
-    register int newln = n + oldlen;
+    register size_t oldlen = d->len;
+    register size_t newln = n + oldlen;
 
     if (d->refc > 1 || newln >= d->max_size) {
 	register string::Srep_LUCENT *x = string::Srep_LUCENT::new_srep(newln);
@@ -161,8 +161,8 @@ string::append(const char *s, size_t ln)
 	return (*this);
     }
 
-    register int oldlen = d->len;
-    register int newln = ln + oldlen;
+    register size_t oldlen = d->len;
+    register size_t newln = ln + oldlen;
 
     if (d->refc > 1 || newln >= d->max_size) {
 	register string::Srep_LUCENT *x = string::Srep_LUCENT::new_srep(newln);
@@ -185,8 +185,8 @@ string::append(size_t n, char c) {
     if (n == 0) 
 	return (*this);
 
-    register int oldlen = d->len;
-    register int newln = n + oldlen;
+    register size_t oldlen = d->len;
+    register size_t newln = n + oldlen;
 
     if (d->refc > 1 || newln >= d->max_size) {
 	register string::Srep_LUCENT *x = string::Srep_LUCENT::new_srep(newln);
@@ -204,7 +204,7 @@ string::append(size_t n, char c) {
 string&
 string::operator+=(const char * s)
 {
-    register int ln = s ? string::traits_type::length(s) : 0;
+    register size_t ln = s ? string::traits_type::length(s) : 0;
     append(s, ln);
     return *this;
 }
@@ -228,7 +228,7 @@ string::assign(const string &s, size_t pos, size_t n) {
     if (n == npos)
 	n = s.d->len - pos;
     else {
-	int maxlen = s.d->len - pos;
+	size_t maxlen = s.d->len - pos;
 	if (n > maxlen) n = maxlen;
     }
     if (d->refc > 1 || n >= d->max_size) {
@@ -275,7 +275,7 @@ string::assign(size_t n, char c) {
 string&
 string::operator=(const char *s)
 {
-    register int ln = s ? string::traits_type::length(s) : 0;
+    register size_t ln = s ? string::traits_type::length(s) : 0;
     assign(s, ln);
     return *this;
 }
@@ -296,13 +296,13 @@ size_t
 string::find(const string& pattern, size_t pos) const
 {
     if (pos == npos) pos = d->len;
-    register int plen = pattern.d->len;
-    register int slen = d->len;
+    register size_t plen = pattern.d->len;
+    register size_t slen = d->len;
     register const char *pp = pattern.d->str;
     register const char *sbp = d->str + pos;
     register const char *sep = d->str + slen;
 
-    int i;
+    size_t i;
     for (i=pos; sbp<sep-plen+1; i++) {
         if (string::traits_type::compare(sbp++, pp, plen) == 0) return i;
     }
@@ -311,13 +311,13 @@ string::find(const string& pattern, size_t pos) const
 size_t
 string::find(const char *s, size_t pos, size_t n) const
 {
-    register int plen = n;
-    register int slen = d->len;
+    register size_t plen = n;
+    register size_t slen = d->len;
     register const char *pp = s;
     register const char *sbp = d->str + pos;
     register const char *sep = d->str + slen;
 
-    int i;
+    size_t i;
     for (i=pos; sbp<sep-plen+1; i++) {
         if (string::traits_type::compare(sbp++, pp, plen) == 0) return i;
     }
@@ -326,13 +326,13 @@ string::find(const char *s, size_t pos, size_t n) const
 size_t
 string::find(const char *s, size_t pos) const
 {
-    register int plen = string::traits_type::length(s);
-    register int slen = d->len;
+    register size_t plen = string::traits_type::length(s);
+    register size_t slen = d->len;
     register const char *pp = s;
     register const char *sbp = d->str + pos;
     register const char *sep = d->str + slen;
 
-    int i;
+    size_t i;
     for (i=pos; sbp<sep-plen+1; i++) {
         if (string::traits_type::compare(sbp++, pp, plen) == 0) return i;
     }
@@ -358,13 +358,13 @@ size_t
 string::rfind(const string& pattern, size_t pos) const
 {
     if (pos == npos) pos = d->len;
-    register int plen = pattern.d->len;
-    register int slen = d->len;
+    register size_t plen = pattern.d->len;
+    register size_t slen = d->len;
     register const char *pp = pattern.d->str;
     register const char *sep = d->str + pos;
     register const char *sbp = d->str + slen - plen;
 
-    int i;
+    size_t i;
     for(i=slen-plen; sbp>=sep; i--) {
         if (string::traits_type::compare(sbp--, pp, plen) == 0) return i;
     }
@@ -373,13 +373,13 @@ string::rfind(const string& pattern, size_t pos) const
 size_t
 string::rfind(const char *s, size_t pos, size_t n) const
 {
-    register int plen = n;
-    register int slen = d->len;
+    register size_t plen = n;
+    register size_t slen = d->len;
     register const char *pp = s;
     register const char *sep = d->str + pos;
     register const char *sbp = d->str + slen - plen;
 
-    int i;
+    size_t i;
     for (i=slen-plen; sbp>=sep; i--) {
         if(string::traits_type::compare(sbp--, pp, plen) == 0) return i;
     }
@@ -388,13 +388,13 @@ string::rfind(const char *s, size_t pos, size_t n) const
 size_t
 string::rfind(const char *s, size_t pos) const
 {
-    register int plen = string::traits_type::length(s);
-    register int slen = d->len;
+    register size_t plen = string::traits_type::length(s);
+    register size_t slen = d->len;
     register const char *pp = s;
     register const char *sep = d->str + pos;
     register const char *sbp = d->str + slen - plen;
 
-    int i;
+    size_t i;
     for (i=slen-plen; sbp>=sep; i--) {
         if (string::traits_type::compare(sbp--, pp, plen) == 0) return i;
     }
@@ -420,14 +420,14 @@ string::insert(size_t pos1, const string &str, size_t pos2, size_t n) {
     if (n == npos)
 	n = str.d->len - pos2;
     else {
-	int maxlen = str.d->len - pos2;
+	size_t maxlen = str.d->len - pos2;
 	if (n > maxlen) n = maxlen;
     }
     if (n == 0)
 	return (*this);
 
-    register int oldlen = d->len;
-    register int newln = n + oldlen;
+    register size_t oldlen = d->len;
+    register size_t newln = n + oldlen;
 
     if (d->refc > 1 || newln >= d->max_size) {
 	register string::Srep_LUCENT *x = string::Srep_LUCENT::new_srep(newln);
@@ -438,7 +438,7 @@ string::insert(size_t pos1, const string &str, size_t pos2, size_t n) {
 	d = x;
 	return (*this);
     }
-    int diff = oldlen - pos1;
+    size_t diff = oldlen - pos1;
     char *tmp;
     if (diff > 0) {
 	tmp = new char[diff];
@@ -464,8 +464,8 @@ string::insert(size_t pos, const char *s, size_t n)
     if (n == 0) 
 	return (*this);
 
-    register int oldlen = d->len;
-    register int newln = n + oldlen;
+    register size_t oldlen = d->len;
+    register size_t newln = n + oldlen;
 
     if (d->refc > 1 || newln >= d->max_size) {
 	register string::Srep_LUCENT *x = string::Srep_LUCENT::new_srep(newln);
@@ -476,7 +476,7 @@ string::insert(size_t pos, const char *s, size_t n)
 	d = x;
 	return (*this);
     }
-    int diff = oldlen - pos;
+    size_t diff = oldlen - pos;
     char *tmp;
     if (diff > 0) {
 	tmp = new char[diff];
@@ -505,8 +505,8 @@ string::insert(size_t pos, size_t n, char c) {
     if (n == 0) 
 	return (*this);
 
-    register int oldlen = d->len;
-    register int newln = n + oldlen;
+    register size_t oldlen = d->len;
+    register size_t newln = n + oldlen;
 
     if (d->refc > 1 || newln >= d->max_size) {
 	register string::Srep_LUCENT *x = string::Srep_LUCENT::new_srep(newln);
@@ -517,7 +517,7 @@ string::insert(size_t pos, size_t n, char c) {
 	d = x;
 	return (*this);
     }
-    int diff = oldlen - pos;
+    size_t diff = oldlen - pos;
     char *tmp;
     if (diff > 0) {
 	tmp = new char[diff];
@@ -547,9 +547,9 @@ string::insert(iterator p, size_t n, char c) {
     if (n == 0) 
 	return (retval);
 
-    register int oldlen = d->len;
-    register int newln = n + oldlen;
-    int pos = p - d->str;
+    register size_t oldlen = d->len;
+    register size_t newln = n + oldlen;
+    size_t pos = p - d->str;
 
     if (d->refc > 1 || newln >= d->max_size) {
 	register string::Srep_LUCENT *x = string::Srep_LUCENT::new_srep(newln);
@@ -561,7 +561,7 @@ string::insert(iterator p, size_t n, char c) {
 	retval = x->str + pos;
 	return (retval);
     }
-    int diff = oldlen - pos;
+    size_t diff = oldlen - pos;
     char *tmp;
     if (diff > 0) {
 	tmp = new char[diff];
@@ -589,7 +589,7 @@ string::copy(char *s, size_t n, size_t pos) {
     if (n == npos)
 	n = d->len - pos;
     else {
-	int max_len = d->len - pos;
+	size_t max_len = d->len - pos;
 	if (n > max_len) n = max_len;
     }
     string::traits_type::copy(s, d->str+pos, n); 
@@ -656,7 +656,7 @@ string::resize(size_t n, char c) {
     }
     if (d->len == n) return;
 
-    int copycount = d->len;
+    size_t copycount = d->len;
     if (copycount > n) copycount = n;
 
     if (d->refc > 1 || n >= d->max_size) {
@@ -682,7 +682,7 @@ string::remove(size_t pos, size_t n) {
     if (n == npos)
 	n = d->len - pos;
     else {
-	int max_diff = d->len - pos;
+	size_t max_diff = d->len - pos;
 	if (n > max_diff) n = max_diff;
     }
     if (n == 0)  // do nothing
@@ -690,7 +690,7 @@ string::remove(size_t pos, size_t n) {
     if (pos == 0 && n == d->len)  // clear the entire string
 	return (assign(d->str, 0));
 	
-    register int newln = d->len - n;
+    register size_t newln = d->len - n;
 
     if (d->refc > 1) {
 	register string::Srep_LUCENT *x = string::Srep_LUCENT::new_srep(newln);
@@ -732,19 +732,19 @@ string::replace(size_t pos1, size_t n1, const string &str, size_t pos2, size_t n
     if (n1 == npos)
 	n1 = d->len - pos1;
     else {
-	int max_len = d->len - pos1;
+	size_t max_len = d->len - pos1;
 	if (n1 > max_len) n1 = max_len;
     }
     if (n2 == npos)
 	n2 = str.d->len - pos2;
     else {
-	int max_len = str.d->len - pos2;
+	size_t max_len = str.d->len - pos2;
 	if (n2 > max_len) n2 = max_len;
     }
 	
-    register int oldlen = d->len;
-    register int newln = oldlen - n1 + n2;
-    int taillen = oldlen - pos1 - n1;
+    register size_t oldlen = d->len;
+    register size_t newln = oldlen - n1 + n2;
+    size_t taillen = oldlen - pos1 - n1;
 
     if (d->refc > 1 || newln >= d->max_size) {
 	register string::Srep_LUCENT *x = string::Srep_LUCENT::new_srep(newln);
@@ -779,13 +779,13 @@ string::replace(size_t pos, size_t n1, const char *s, size_t n2) {
     if (n1 == npos)
 	n1 = d->len - pos;
     else {
-	int max_len = d->len - pos;
+	size_t max_len = d->len - pos;
 	if (n1 > max_len) n1 = max_len;
     }
 	
-    register int oldlen = d->len;
-    register int newln = oldlen - n1 + n2;
-    int taillen = oldlen - pos - n1;
+    register size_t oldlen = d->len;
+    register size_t newln = oldlen - n1 + n2;
+    size_t taillen = oldlen - pos - n1;
 
     if (d->refc > 1 || newln >= d->max_size) {
 	register string::Srep_LUCENT *x = string::Srep_LUCENT::new_srep(newln);
@@ -824,14 +824,14 @@ string::replace(size_t pos, size_t n, char c) {
     if (n == npos)
 	n = d->len - pos;
     else {
-	int max_len = d->len - pos;
+	size_t max_len = d->len - pos;
 	if (n > max_len) n = max_len;
     }
     if (n == 0)  // do nothing
 	return (*this);
 	
-    register int oldlen = d->len;
-    int taillen = oldlen - pos - n;
+    register size_t oldlen = d->len;
+    size_t taillen = oldlen - pos - n;
 
     if (d->refc > 1) {
 	register string::Srep_LUCENT *x = string::Srep_LUCENT::new_srep(oldlen);
@@ -847,12 +847,12 @@ string::replace(size_t pos, size_t n, char c) {
 }
 string&
 string::replace(iterator first, iterator last, const string &str) {
-    int n2 = str.d->len;
+    size_t n2 = str.d->len;
 	
-    register int oldlen = d->len;
-    register int newln = oldlen - (last - first) + n2;
-    int taillen = oldlen - (last - d->str);
-    int pos = first - d->str;
+    register size_t oldlen = d->len;
+    register size_t newln = oldlen - (last - first) + n2;
+    size_t taillen = oldlen - (last - d->str);
+    size_t pos = first - d->str;
 
     if (d->refc > 1 || newln >= d->max_size) {
 	register string::Srep_LUCENT *x =
@@ -879,10 +879,10 @@ string::replace(iterator first, iterator last, const string &str) {
 }
 string&
 string::replace(iterator first, iterator last, const char *s, size_t n) {
-    register int oldlen = d->len;
-    register int newln = oldlen - (last - first) + n;
-    int taillen = oldlen - (last - d->str);
-    int pos = first - d->str;
+    register size_t oldlen = d->len;
+    register size_t newln = oldlen - (last - first) + n;
+    size_t taillen = oldlen - (last - d->str);
+    size_t pos = first - d->str;
 
     if (d->refc > 1 || newln >= d->max_size) {
 	register string::Srep_LUCENT *x =
@@ -913,13 +913,13 @@ string::replace(iterator first, iterator last, const char *s) {
 }
 string&
 string::replace(iterator first, iterator last, char c) {
-    int n = last - first;
+    size_t n = last - first;
     if (n == 0)  // do nothing
 	return (*this);
 	
-    register int oldlen = d->len;
-    int taillen = oldlen - (last - d->str);
-    int pos = first - d->str;
+    register size_t oldlen = d->len;
+    size_t taillen = oldlen - (last - d->str);
+    size_t pos = first - d->str;
 
     if (d->refc > 1) {
 	register string::Srep_LUCENT *x = string::Srep_LUCENT::new_srep(oldlen);
@@ -935,7 +935,7 @@ string::replace(iterator first, iterator last, char c) {
 }
 
 void
-string::reserve_grow(int target)
+string::reserve_grow(size_t target)
 {
     string::Srep_LUCENT *x = string::Srep_LUCENT::new_srep(target);
     x->len = d->len;
@@ -970,9 +970,9 @@ string::basic_string(const string& s, size_t pos, size_t n) {
 }
 
 #if 1
-string::string(const char *st, unsigned length)
+string::string(const char *st, size_t length)
 #else
-string::basic_string(const char *st, unsigned length)
+string::basic_string(const char *st, size_t length)
 #endif
 {
     if (!st) length=0;
@@ -986,7 +986,7 @@ string::string(const char *st)
 string::basic_string(const char *st)
 #endif
 {
-    register int ln = st ? string::traits_type::length(st) : 0;
+    register size_t ln = st ? string::traits_type::length(st) : 0;
     d = string::Srep_LUCENT::new_srep(ln);
     if (ln) string::traits_type::copy(d->str, st, ln);
 }
@@ -1050,6 +1050,8 @@ Pool_std* string::Srep_LUCENT::Reelp = 0;
 Pool_std* string::Srep_LUCENT::SPoolp = 0;
 string::Srep_LUCENT* string::Srep_LUCENT::nullrep_ = 0;
 
+typedef int wchar_t;
+
 void
 string::Srep_LUCENT::doinitialize() 
 {
@@ -1082,7 +1084,7 @@ string::Srep_LUCENT::new_srep(size_t length)
 string::Srep_LUCENT *
 string::Srep_LUCENT::get_long(size_t length) 
 { 
-    register int m = 128;
+    register size_t m = 128;
     while (m <= length) m <<= 1;
 
     register string::Srep_LUCENT *x =

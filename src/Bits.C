@@ -41,7 +41,7 @@ Bits::Bits(/*register*/ Bits_chunk val, /*register*/ unsigned ct)
 unsigned
 Bits::size(unsigned x)
 {
-	int newsize = bound(x);
+	unsigned newsize = bound(x);
 	if (b.size() != newsize)
 		b.size(newsize);
 	n = b.size()? x: 0;

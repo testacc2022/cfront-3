@@ -58,11 +58,11 @@ class Hash
   int                   entry_count ;
 
 public:
-  unsigned int		(*key_hash_function)(int)  ;
+  size_t		(*key_hash_function)(size_t)  ;
    int            	(*key_key_equality_function) (size_t, size_t) ;
 
-  unsigned int          key_hash(int  a) ;
-  int                   key_key_eq(int a, int  b);
+  size_t          key_hash(size_t  a) ;
+  int                   key_key_eq(size_t a, size_t  b);
 
                         Hash(int sz = DEFAULT_INITIAL_HASH_SIZE) ;
                         Hash(Hash& a) ;
@@ -79,7 +79,7 @@ public:
   void                  resize(int newsize) ;
 
   enum insert_action	{ probe, insert, replace };
-  void			action (int key, int val, insert_action what,
+  void			action (size_t key, size_t val, insert_action what,
 				size_t& found, size_t& old_val);
   int&                  operator [] (int  k) ;
   int                   contains(int  key) ;
@@ -109,7 +109,7 @@ public:
   int&                  get() ;
 } ;
 
-inline unsigned int Hash::key_hash(int a)
+inline size_t Hash::key_hash(size_t a)
 {
 #ifdef HASHFUNCTION
   return HASHFUNCTION(a) ;
@@ -118,7 +118,7 @@ inline unsigned int Hash::key_hash(int a)
 #endif
 }
 
-inline int Hash::key_key_eq(int a, int b)
+inline int Hash::key_key_eq(size_t a, size_t b)
 {
 #ifdef EQUALITYFUNCTION
   return EQUALITYFUNCTION(a, b) ;
@@ -203,11 +203,11 @@ inline int& HashWalker::get()
 }
 
 int pointer_hasheq(size_t, size_t);
-unsigned int pointer_hash_fcn(int);
+size_t pointer_hash_fcn(size_t);
 
 class pointer_hash : public Hash {
   public:
-    pointer_hash (int sz = 0) : Hash (sz) {
+    pointer_hash (size_t sz = 0) : Hash (sz) {
 	key_hash_function = pointer_hash_fcn;
 	key_key_equality_function = pointer_hasheq;
     }
@@ -215,8 +215,8 @@ class pointer_hash : public Hash {
     pointer_hash (pointer_hash& h) : Hash (h) {};
 };
 
-int string_hasheq(int, int);
-unsigned int string_hash_fcn(int);
+int string_hasheq(size_t, size_t);
+size_t string_hash_fcn(size_t);
 
 class string_hash : public Hash {
     public:

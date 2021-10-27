@@ -148,7 +148,7 @@ ostream& OSTREAM::operator<<(const char* s)
 	// tests get set the right way at compile time 
 
 #       if BREAKEVEN > 0
-		static int	avglen = BREAKEVEN ;
+		static size_t	avglen = BREAKEVEN ;
 					// running average of the lengths
 					// of strings ;
 #	else

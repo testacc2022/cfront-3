@@ -177,10 +177,10 @@ void expr::print()
 				Cast = 1;
 				t->print();
 				Cast = oc;
-				fprintf(out_file,")%d)",n->n_val);
+				fprintf(out_file,")%lld)",n->n_val);
 			}
 			else
-				fprintf(out_file,"%d",n->n_val);
+				fprintf(out_file,"%lld",n->n_val);
 		}
 		else
 			n->print();
@@ -357,7 +357,7 @@ void expr::print()
 		break;
 
 	case IVAL:
-		fprintf(out_file,"%d",i1);
+		fprintf(out_file,"%lld",i1);
 		break;
 
 	case TEXT:

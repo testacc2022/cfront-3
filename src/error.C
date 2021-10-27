@@ -357,11 +357,11 @@ int error(int t, loc* lc, const char* s, const ea& a0, const ea& a1, const ea& a
 				break;
 
 			case 'd':	// int
-				fprintf(out_file," %d",a->i);
+				fprintf(out_file," %d",(int)a->i);
 				break;
 
 			case 'o':	// int
-				fprintf(out_file," 0%o",a->i);
+				fprintf(out_file," 0%o",(unsigned int)a->i);
 				break;
 
 			case 's':	// char*

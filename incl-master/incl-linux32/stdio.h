@@ -3,6 +3,10 @@
 
 extern "C" {
 
+#ifndef __STDDEF_H
+#include <stddef.h>
+#endif
+
 #define	BUFSIZ 1024
 #define	_NFILE 20
 
@@ -37,7 +41,7 @@ extern	struct	_iobuf {
 #define	NULL 0
 #endif
 
-#define	FILE struct _iobuf
+#define	FILE void //struct _iobuf
 #define	EOF (-1)
 
 extern int _flsbuf(unsigned,FILE*);
@@ -77,7 +81,7 @@ extern int scanf(const char* ...);
 extern int fscanf(FILE*, const char* ...);
 extern int sscanf(const char*, const char* ...);
 extern int fread(char*, int, int, FILE*);
-extern int fwrite(const char*, int, int, FILE*);
+extern size_t fwrite(const void*, size_t, size_t, FILE*);
 extern int fclose(FILE*);
 extern int fflush(FILE *stream);
 extern void clearerr (FILE *__stream);
@@ -107,10 +111,12 @@ extern char	*ctermid(char*),
                 *cuserid(char*),
                 *tempnam(char*, char*),
                 *tmpnam(char*);
+#ifndef __GNUC__ //builtins
 extern int      vprintf(const char*, va_list),
                 vfprintf(FILE*, const char*, va_list), 
                 vsprintf(char*, const char*, va_list),
-		setvbuf(FILE*, char*, int, int); 
+		setvbuf(FILE*, char*, int, int);
+#endif
 
 extern void perror (const char*);
 

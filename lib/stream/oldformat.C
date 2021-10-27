@@ -60,7 +60,7 @@ char* chr(/*register*/ int i, /*register*/ int w)	/* note: chr(0) is "" */
 char* str(const char* s, /*register*/ int w)
 {
 	/*register*/ char* buf = bfree;
-	int ll = strlen(s);
+	size_t ll = strlen(s);
 	if (w<=0 || fld_size<w) w = ll;
 	if (w < ll) ll = w;
 	w++;				/* space for trailing 0 */
@@ -91,7 +91,7 @@ char* form(const char* format ...)
 		sprintf(buf,format,ap[0],ap[1],ap[2],ap[3],ap[4],ap[5],ap[6],ap[7],ap[8],ap[9]);	
 #	endif
 
-	/*register*/ int ll = strlen(buf);			// not all sprintf's return length
+	/*register*/ size_t ll = strlen(buf);			// not all sprintf's return length
 
 	// If we have scribbled beyond the end of the buffer then
 	// who knows what data we've destroyed.  Better to abort here

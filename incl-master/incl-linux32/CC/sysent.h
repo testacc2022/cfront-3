@@ -36,8 +36,8 @@ extern "C" {
 #endif
 
 typedef int mode_t;
-typedef int off_t;
-typedef int ptrdiff_t;
+typedef long off_t;
+typedef long ptrdiff_t;
 
 	void _exit(int);
 	int access(const char*, int);

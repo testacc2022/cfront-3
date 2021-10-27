@@ -20,7 +20,7 @@ any actual or intended publication of such source code.
 #include <strstream.h>
 #include <memory.h>
 
-typedef unsigned int Size_t ;	
+typedef size_t Size_t ;	
 			// Some day <memory.h> will be ANSIfied and
 			// this will be declared there.
 			// Until then make it compatible with declaration
@@ -39,7 +39,7 @@ static const int seek_cur = ios::cur ;
 static const int seek_end = ios::end ;
 static const int seek_beg = ios::beg ;
 
-strstreambuf::strstreambuf(void* (*a)(long), void (*f)(void*)) :
+strstreambuf::strstreambuf(void* (*a)(size_t), void (*f)(void*)) :
 	afct(a),
 	ffct(f),
 	froozen(1),
@@ -107,7 +107,7 @@ strstreambuf::strstreambuf(unsigned char* b, int size, unsigned char* pstart) :
 	}
 
 
-strstreambuf::strstreambuf(int ae) :
+strstreambuf::strstreambuf(size_t ae) :
 	afct(0),
 	ffct(0),
 	froozen(1),
