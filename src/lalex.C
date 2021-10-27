@@ -1715,7 +1715,7 @@ restore_text()
 	LDB(2,fprintf(stderr,"restore_text()"));
 	if (ccl->c_funqf == 0)	// no inlines on Q
 		return;
-	LDB(3,fprintf(stderr,"	Q present: %d,%d",ccl->c_funqf,ccl->c_funqr));
+	LDB(3,fprintf(stderr,"	Q present: %p,%p",ccl->c_funqf,ccl->c_funqr));
 	LDB(3,fprintf(stderr,"	front==%s",image(ccl->c_funqf->tok)));
 	LDB(3,fprintf(stderr,"	rear ==%s",image(ccl->c_funqr->tok)));
 	ccl->c_funqr->next = front;

@@ -24,12 +24,12 @@ any actual or intended publication of such source code.
 void streambuf::dbp()
 {
 	char msg[256] ;
-	sprintf(msg,"buf at %#x, base=%#x, ebuf=%#x, ",
+	sprintf(msg,"buf at %p, base=%p, ebuf=%p, ",
 				this, base(), ebuf());
 	write(1,msg,strlen(msg)) ;
-	sprintf(msg,"pptr=%#x, epptr=%#x, ", pptr(),epptr() );
+	sprintf(msg,"pptr=%p, epptr=%p, ", pptr(),epptr() );
 	write(1,msg,strlen(msg)) ;
-	sprintf(msg,"eback=%#x, gptr=%#x, egptr=%#x\n",
+	sprintf(msg,"eback=%p, gptr=%p, egptr=%p\n",
 			eback(), gptr(), egptr() ) ;
 	write(1,msg,strlen(msg)) ;
 

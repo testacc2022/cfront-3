@@ -83,7 +83,7 @@ int vtbl_opt = -1;	// how to deal with vtbls:
 			// 1 external and defined
 int debug_opt;
 static int gplus_opt;	// -g to cc, overrides print optimization 
-int ansi_opt;
+int ansi_opt=0;
 int strict_opt;		// disallow features from the anachronism section
 			// of the manual
 int warning_opt;	// produce more warnings if set

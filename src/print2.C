@@ -26,7 +26,7 @@ bit TCast;
 bit Cast;
 int last_ll = 1;
 Pin curr_icall;
-char emode;
+char emode = 0;
 int ntok;
 bit mk_zero_init_flag=0;
 
@@ -1211,7 +1211,7 @@ void name::print(bit fullprint)
 					if (lex_level == 0)
 						putstring("__S");
 					else if (!dem_opt_local || gtbl->look(string, 0))
-						fprintf(out_file,"__%d",lex_level);
+						fprintf(out_file,"__%d",(int)lex_level);
 				}
 				break;
 			default:
@@ -1220,11 +1220,11 @@ void name::print(bit fullprint)
 				if (string[0]!='_' || string[1]!='_' || string[2] != 'C' ) {
 					if (asig) {
 						if (!dem_opt_local || gtbl->look(asig, 0))
-							fprintf(out_file, "__%d", lex_level);
+							fprintf(out_file, "__%d", (int)lex_level);
 						fprintf(out_file,"%s.", asig);
 					}
 					else if (!dem_opt_local || gtbl->look(string, 0)) {
-						fprintf(out_file,"__%d",lex_level);
+						fprintf(out_file,"__%d",(int)lex_level);
 					}
 				}
 			}
@@ -1307,9 +1307,9 @@ void name::print(bit fullprint)
 				if ( cl->nested_sig )
 					fprintf(out_file,"__%s",cl->nested_sig);
 				else if ( cl->lex_level )
-					fprintf(out_file,"__%d%s",cl->c_strlen,cl->local_sig);
+					fprintf(out_file,"__%d%s",(int)cl->c_strlen,cl->local_sig);
 				else
-					fprintf(out_file,"__%d%s",cl->c_strlen,cl->string);
+					fprintf(out_file,"__%d%s",(int)cl->c_strlen,cl->string);
 			}
 		}
 
@@ -2161,11 +2161,11 @@ int p2(Pname nn, Ptype t, Pclass cl, Pvirt vtab, char* s)
 			ptbl_add_pair(s, ss);
 			nn->n_key=HIDDEN;
 		}
-		delete vstr;
+		delete[] vstr;
 	}
 	vtbl_opt = oo;
 
-	delete ss;
+	delete[] ss;
 
 	return 1;
 }
@@ -2220,12 +2220,12 @@ void classdef::really_print(Pvirt vtab)
 			ptbl_add_pair(s, ss);
 			nn->n_key=HIDDEN;
 		}
-		delete vstr;
+		delete[] vstr;
 	}
-	delete ss;
+	delete[] ss;
 	}
 xyzzy:
-	delete s;
+	delete[] s;
 }
 
 void really_really_print(Pclass cl, Pvirt vtab, const char* s, char* ss)
@@ -2288,7 +2288,7 @@ void really_really_print(Pclass cl, Pvirt vtab, const char* s, char* ss)
         char *bs = strdup(s);
 	bs[2] = 'v';
 	ptbl_add_pair(ss,bs);
-        free(bs);
+        delete[] bs;
 
 	Pname nm;
 	char *cstr = 0;
@@ -2307,11 +2307,11 @@ void really_really_print(Pclass cl, Pvirt vtab, const char* s, char* ss)
 		vstr = cstr?cstr:(cs?cs:cl->string);
 	if ( (nm = ptbl->look(vstr,0)) )  {
 		nm->n_key = HIDDEN;
-		if ( vstr != cstr && vstr != cs && vstr != cl->string ) delete vstr;
+		if ( vstr != cstr && vstr != cs && vstr != cl->string ) delete[] vstr;
 	} else if ( ptbl->look(vstr,HIDDEN) == 0 )
 		ptbl->insert(new name(vstr),HIDDEN);
 	else
-		if ( vstr != cstr && vstr != cl->string && vstr != cs ) delete vstr;
+		if ( vstr != cstr && vstr != cl->string && vstr != cs ) delete[] vstr;
 }
 
 #include <ctype.h>

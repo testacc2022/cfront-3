@@ -38,6 +38,7 @@ fct::fct(Ptype t, Pname arg, TOK known)
 	nargs_known = known;
 	returns = t;
 	argtype = arg; 
+        f_virtual = 0;
 	DBID();
 
 	if (arg==0 || arg->base==ELIST) return;
@@ -83,6 +84,8 @@ expr::expr(TOK ba, Pexpr a, Pexpr b)
 	base = ba;
 	e1 = a;
 	e2 = b;
+        mem = NULL;
+        tp = NULL;
 	DBID();
 }
 
@@ -104,6 +107,25 @@ classdef::classdef(TOK b)
 	csu = b;
 	memtbl = new table(CTBLSIZE,0,0);
 	k_tbl = 0;//SYM
+        class_base = VANILLA;
+        c_xref = 0;
+        c_body = 0;
+        has_vvtab = 0;
+        obj_align = 0;
+        virt_merge = 0;
+        virt_count = 0;
+        c_context = NULL;
+        mem_list = NULL;
+        baselist = NULL;
+        friend_list = NULL;
+        c_funqf = c_funqr = NULL;
+        c_ctor = NULL;
+        c_itor = NULL;
+        c_dtor = NULL;
+        c_vtor = NULL;
+        virt_list = NULL;
+        c_abstract = NULL;
+        conv = NULL;
 	DBID();
 }
 
@@ -115,6 +137,8 @@ classdef::~classdef()
 basetype::basetype(TOK b, Pname n)
 {
         b_xname = 0;
+        b_sto = 0;
+        b_name = NULL;
         b_unsigned = b_signed = b_volatile = b_typedef =
             b_inline = b_virtual = b_short = b_long =
             b_bits = b_offset = 0;

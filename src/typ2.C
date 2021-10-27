@@ -462,7 +462,7 @@ Ptype type::skiptypedefs()
 {
 	/*register*/ Ptype t = this;
 	if(t==0) return t;
-	while (t->base == TYPE) {
+	while (t && (t->base == TYPE)) {
 		t = t->bname_type();
 	}
 	return t;

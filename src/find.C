@@ -759,7 +759,7 @@ int is_unique_base(Pclass cl, const char* s, int offset, int in_base,
 		}
 		else {
 			if (b->base==VIRTUAL) {
-				if (vcllist->onlist(b->bclass) )continue;
+				if (vcllist && vcllist->onlist(b->bclass) )continue;
 				vcllist = new clist(b->bclass,vcllist);
 			}
 

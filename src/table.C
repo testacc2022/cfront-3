@@ -53,8 +53,8 @@ table::table(short sz, Ptable nx, Pname n)
 
 table::~table()
 {
-	delete entries;
-	delete hashtbl;
+	delete[] entries;
+	delete[] hashtbl;
 }
 
 Pname table::look(const char* s, TOK k)
@@ -232,12 +232,13 @@ void table::grow(int g)
 
 	np = new Pname[mx];
 	for (j=0; j<free_slot; j++) np[j] = entries[j];
-	delete entries;
+	delete[] entries;
 	entries = np;
 
-	delete hashtbl;
+	delete[] hashtbl;
 	hashsize = mx = (g*3)/2;
 	hash = hashtbl = new short[mx];
+        memset(hash, 0, mx*sizeof(short));
 
 	for (j=1; j<free_slot; j++) {	/* rehash(np[j]); */
 		const char * s = np[j]->string;

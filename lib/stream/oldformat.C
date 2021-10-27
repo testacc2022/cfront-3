@@ -100,7 +100,7 @@ char* form(const char* format ...)
 	// a mysterious death later.
 //	if (fld_size < ll) abort();
 	if (buf+ll >= formbuf+cb_size-1) {
-	    fprintf(stderr, fmsg1);
+	    fprintf(stderr, "%s", fmsg1);
 	    abort();
 	}
 	

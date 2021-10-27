@@ -15,7 +15,7 @@ any actual or intended publication of such source code.
 
 *******************************************************************************/
 
-
+#include <new.h>
 
 typedef void* PV;
 typedef void (*PF)(PV,int,int,int,int,int,int,int,int);
@@ -25,7 +25,7 @@ typedef void (*PFI)(PV,int ...);
 */
 
 // functions that manage the map from arrays to their element counts
-extern int	__insert_new_array(PV key, int count);
+extern int	__insert_new_array(PV key, size_t count);
 	// key is a pointer to a new array.  It must
 	//	be non-zero
 	//	not already be in the table

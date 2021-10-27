@@ -121,7 +121,7 @@ void expr::del()
 		DEL(cond);
 		break;
 	case ICALL:
-		delete il->i_args;
+		delete[] il->i_args;
 		delete il;
 		goto dd;
 	case ELIST: { // limit recursion
@@ -209,7 +209,7 @@ void table::del()
 			break;
 		default:
 		{	const char* s = n->string;
-			if (s && (s[0]!='_' || s[1]!='_' || s[2]!='X')) delete s;
+			if (s && (s[0]!='_' || s[1]!='_' || s[2]!='X')) delete[] s;
 			/* delete n; */
 			n->del();
 		}

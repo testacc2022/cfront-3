@@ -183,7 +183,7 @@ struct node {
 	bit	allocated;	// set when not on free list
 	long	id;
 #endif
-        node():base(0){}
+        node():base(0), permanent(0), baseclass(0) {}
 };
 #ifdef DBG
 extern long node_id;
@@ -319,7 +319,7 @@ struct type : public node {
 
 	char	*signature(char*,int=0);
 	Ptype	tlist;
-        type(): b_const(0){}
+        type(): node(), defined(0), lex_level(0), templ_base(VANILLA), in_class(NULL), nested_sig(NULL), local_sig(NULL), b_const(0), ansi_const(0) {}
 	bit	check(Ptype, TOK, bit=0);
 	Ptype	mkconst();
 
@@ -390,7 +390,9 @@ struct virt : public node {
 	const char*	string;
 	bit	is_vbase;	// vtable for virtual base
 	bit	printed;
- 	virt(Pclass cl, velem* v, const char* s, bit flag, int ni) {base = XVIRT; vclass=cl; virt_init=v; string=s; is_vbase=flag; next=0; n_init = ni;}
+ 	virt(Pclass cl, velem* v, const char* s, bit flag, int ni) {
+            base = XVIRT; vclass=cl; virt_init=v; string=s; 
+            is_vbase=flag; next=0; n_init = ni; printed=0;}
 };
 
 enum { C_VPTR=1, C_XREF=2, C_ASS=4, C_VBASE=8, C_REFM=16 };
@@ -492,7 +494,7 @@ inline int same_class (Pclass c1, Pclass c2, int dummy=0) {
   // templatized scenerio, so, any usage of comparing two classes should
   // call this function, instead of doing " c1 == c2 " .
 
-  return (c1==c2 ? 1 : c1->same_class(c2, dummy) );
+  return (c1==c2 ? 1 : ((c1 && c2) ? c1->same_class(c2, dummy) : 0) );
 }
 
 #ifndef GRAM
@@ -661,7 +663,7 @@ struct gen : public type {		// OVERLOAD
 	Plist	fct_list;
         gen_types holds_templ;    // does fct_list hold a template?
 
-	gen() { base = OVERLOAD; }
+	gen(): fct_list(NULL), holds_templ(no_templ) { base = OVERLOAD; }
 	Pname	add(Pname);
 	Pname  	find(Pfct, bit);
 	Pname	match(Pname, Pfct, bit);
@@ -864,7 +866,7 @@ struct basecl : public node {	// NAME		=> base class
 	Pname*	virt_init;	// vector of vtbl table initializers
 	basecl*	next;
 
-        basecl(Pclass cl, basecl* n) { baseclass=1; bclass=cl; next=n; promoted=0; init=0;}
+        basecl(Pclass cl, basecl* n):node() { baseclass=1; bclass=cl; next=n; promoted=0; init=0; obj_offset=ptr_offset=0;allocated=0;}
 };
 
 enum template_formal_types { 

@@ -2231,8 +2231,10 @@ Pexpr cast_cptr(Pclass ccl, Pexpr ee, Ptable tbl, int real_cast)
 		Nptr = 0;
 		Nvis = 0; 
 		Nalloc_base = 0;
-		vcllist->clear();
-		vcllist=0;
+		if(vcllist) {
+                    vcllist->clear();
+                    vcllist=0;
+                }
 		int x = is_unique_base(ocl,ccl->string,0);
 		if (Nvis) {
                 	if (real_cast==0)
@@ -2295,8 +2297,10 @@ Pexpr cast_cptr(Pclass ccl, Pexpr ee, Ptable tbl, int real_cast)
 	&& (!same_class(ccl->baselist->bclass,ocl) || ccl->baselist->base!=NAME)) {
 		// casting second or virtual base to derived?
 		Nptr = 0;
-		vcllist->clear();
-		vcllist=0;
+		if(vcllist) {
+                    vcllist->clear();
+                    vcllist=0;
+                }
 		int x = is_unique_base(ccl,ocl->string,0);
 		switch (x) {
 		default:

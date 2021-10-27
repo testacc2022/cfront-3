@@ -23,7 +23,7 @@ any actual or intended publication of such source code.
 // !!!!  only works if sizeof(long) >= sizeof(void*)  !!!!
 
 typedef void*	KEYTYP;	// generic array address
-int	__insert_new_array(KEYTYP key, int count);
+int	__insert_new_array(KEYTYP key, size_t count);
 	// key is a pointer to a new array.  It must
 	//	be non-zero
 	//	not already be in the table
@@ -63,13 +63,13 @@ class pnd_internal_node;
 
 class RECORD {
 friend class pnd;
-friend int	__insert_new_array(KEYTYP addr, int count);
+friend int	__insert_new_array(KEYTYP addr, size_t count);
 	inline void*	operator new(size_t);
 	inline void	operator delete(void* p, size_t s);
-		inline RECORD(unsigned long k, int cnt);
+		inline RECORD(unsigned long k, size_t cnt);
 		inline ~RECORD();
 	unsigned long	key;	// rotated address of array
-	int	count;  // number of elements of array
+	size_t	count;  // number of elements of array
 };
 
 class Record_Pool;
@@ -114,7 +114,7 @@ RECORD::operator delete(void* p, size_t)
 }
 
 inline
-RECORD::RECORD(unsigned long k, int cnt)
+RECORD::RECORD(unsigned long k, size_t cnt)
 : key(k), count(cnt)
 {}
 
@@ -128,6 +128,7 @@ friend class pnd_internal_node;
 		pnd_internal_node*	nodep;
 	};
 	int	this_is_leaf;
+        pnd_internal_item(): nodep(NULL), this_is_leaf(0) {}
 	int	is_node() { return !this_is_leaf && nodep; }
 	int	is_leaf() { return this_is_leaf; }
 	int	is_null() { return !nodep; }
@@ -142,7 +143,7 @@ class Node_Pool;
 
 class pnd_internal_node {
 friend class pnd;
-friend int	__insert_new_array(KEYTYP key, int count);
+friend int	__insert_new_array(KEYTYP key, size_t count);
 	inline void*	operator new(size_t i);
 	inline void	operator delete(void* p, size_t i);
 	pnd_internal_node();
@@ -193,20 +194,20 @@ pnd_internal_node::operator delete(void* p, size_t)
 inline pnd_internal_node::~pnd_internal_node() {}
 
 class pnd  {
-friend int	__insert_new_array(KEYTYP key, int count);
+friend int	__insert_new_array(KEYTYP key, size_t count);
 friend int	__remove_old_array(KEYTYP key);
 	static pnd*	the_table;
 	pnd_internal_item	contents;
 	// int	sze;
 		pnd();
 	static void	initialize();
-	int	insert(KEYTYP, int);
+	int	insert(KEYTYP, size_t);
 	int	remove(KEYTYP);	// returns count or -1 if not found
 };
 pnd*	pnd::the_table = 0;  // definition of static member
 
 int
-__insert_new_array(KEYTYP key, int count)
+__insert_new_array(KEYTYP key, size_t count)
 {
 	if (pnd::the_table == 0)
 		pnd::initialize();
@@ -234,7 +235,7 @@ pnd_internal_node::pnd_internal_node()
 }
 
 int
-pnd::insert(KEYTYP addr, int cnt)
+pnd::insert(KEYTYP addr, size_t cnt)
 {
 	register unsigned long	mask = MASK_BITS;
 	register unsigned long	key = (unsigned long)addr & LOW_MASK;
@@ -324,7 +325,7 @@ pnd::remove(KEYTYP addr)
 	// assert(itemp->external_leaf()->key == key);
 	RECORD*	old_p = itemp->external_leaf();
 	// sze--;
-	int	ans = old_p->count;
+	size_t	ans = old_p->count;
 	delete old_p;
 	itemp->make_null();
 	if (curr_depth == -1 ||	// it was a singleton set

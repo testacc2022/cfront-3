@@ -57,7 +57,7 @@ void for_check_delete()
 	p = for_info_head;
 	while (p) {
 		r = p;
-		delete p->s;
+		delete[] p->s;
 		p = p->next;
 		delete r;
 	}

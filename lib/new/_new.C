@@ -18,11 +18,11 @@ any actual or intended publication of such source code.
 typedef void (*PFVV)();
 extern PFVV _new_handler;
 
-extern "C" {
-    extern char* malloc(unsigned);
-}
-
 #include <new.h>
+
+extern "C" {
+    extern char* malloc(size_t);
+}
 
 extern void* operator new(size_t size)
 {
@@ -30,7 +30,7 @@ extern void* operator new(size_t size)
 
 	void* _last_allocation;
 
-	while ( (_last_allocation=malloc(unsigned(size)))==0 ) {
+	while ( (_last_allocation=malloc(size))==0 ) {
 		if(_new_handler && size)
 			(*_new_handler)();
 		else

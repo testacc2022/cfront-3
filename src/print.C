@@ -369,7 +369,7 @@ void expr::print()
 		s[2] = 'p';	// pointer, not tbl itself
 		char* t = ptbl_lookup(s);
 		fprintf(out_file, " %s",t);
-		delete t;
+		delete[] t;
 
 		char *str = 0;
 		if ( string ) { 
@@ -390,8 +390,8 @@ void expr::print()
                         nn->string2 = str;
 		}
 
-		delete str;
-		delete s;
+		delete[] str;
+		delete[] s;
 	}
 		break;
 
@@ -609,7 +609,7 @@ void expr::print()
 			case RPTR:
 			case VEC:
 			{
-				Ptype t2 = e2->tp->skiptypedefs();
+				Ptype t2 = e2->tp ? e2->tp->skiptypedefs() : NULL;
 
 				if (
 					e2->tp==0

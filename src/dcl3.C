@@ -2280,11 +2280,11 @@ Pexpr try_to_coerce(Ptype rt, Pexpr e, const char* s, Ptable tbl)
 */
 {
 	int i;
-	Pname cn;
+	Pname cn = NULL;
 //error('d',"try_to_coerce(%t, %t, %s, %d)",rt,e->tp,s,tbl);
 
 	if (
-		(cn=e->tp->is_cl_obj())
+		(e->tp && (cn=e->tp->is_cl_obj()))
 		&&
 		(i=can_coerce(rt,e->tp))
 		&&

@@ -403,7 +403,7 @@ DB(if(Edebug>=2){error('d',"stmt::expand() -- block");display_stmt(this);});
 			ret_seen = 0;
 			ee = Pexpr(s->expand());
 			if(
-			    ee->tp->memptr() 
+			    (ee->tp && ee->tp->memptr())
 			    ||
 			    ee->base==ASSIGN && 
 			    ee->e1->tp && ee->e1->tp->base != PTR
@@ -934,7 +934,7 @@ Pexpr fct::expand(Pname fn, Ptable scope, Pexpr ll)
 				if (warning_opt)
 					error('w',"%a not inlined, called twice in an expression",fn);
 				f_inline--;
-				delete il->i_args;
+				delete[] il->i_args;
 				delete il;
 				// *** SBL: move to cfront.h from template.h
 				extern Pfct current_fct_instantiation; 
@@ -979,7 +979,7 @@ Pexpr fct::expand(Pname fn, Ptable scope, Pexpr ll)
 if (last_expanded && last_expanded==curr_expr && last_stmt == stmtno) {
 	if (warning_opt) error('w',"cannot inline%n in thisE",fn);
 	f_inline--;
-	delete il->i_args;
+	delete[] il->i_args;
 	delete il;
 	extern Pfct current_fct_instantiation;
 	if (fct_base == INSTANTIATED)
