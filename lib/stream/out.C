@@ -207,9 +207,9 @@ ostream& OSTREAM::operator<<(const char* s)
 
 static int dofield(
 	ostream* ios,
-	register char* pfx,
+	register const char* pfx,
 	int pwidth,
-	register char* sfx,
+	register const char* sfx,
 	int swidth) 
 {
 	register streambuf* b = ios->rdbuf() ;
@@ -254,7 +254,7 @@ ostream& OSTREAM::operator<<(long i)
 	char buf[dbufsize];
 
 	register char *p ;
-	register char* pfx = "" ;
+	register const char* pfx = "" ;
 	register int pfxsize = 0 ;
 
 	buf[dbufsize-1] = 0 ;
@@ -305,7 +305,7 @@ ostream& OSTREAM::operator<<(unsigned long i)
 		}
 	char buf[dbufsize];
 	register char *p ;
-	register char* pfx = "" ;
+	register const char* pfx = "" ;
 	register int pfxsize = 0 ;
 
 

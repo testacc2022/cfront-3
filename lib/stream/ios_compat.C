@@ -35,11 +35,11 @@ extern "C" {
 	streambuf *, long, ios::seek_dir, int);
   streampos seekoff__7filebufFl8seek_diri(
 	filebuf *, long, ios::seek_dir, int);
+}
   ostream& seekp__7ostreamFl8seek_dir(
 	ostream *, long, ios::seek_dir);
   istream& seekg__7istreamFl8seek_dir(
 	istream *, long, ios::seek_dir);
-}
 
 streampos
 seekoff__12strstreambufFl8seek_diri(

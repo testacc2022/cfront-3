@@ -1,6 +1,6 @@
 /*ident	"@(#)cls4:incl-master/const-headers/iostream.h	1.6" */
 /*******************************************************************************
- 
+
 C++ source for the C++ Language System, Release 3.0.  This product
 is a new release of the original cfront developed in the computer
 science research center of AT&T Bell Laboratories.
@@ -28,7 +28,7 @@ any actual or intended publication of such source code.
 
 #ifdef EOF
 #	if EOF!=-1
-#		define EOF (-1) 
+#		define EOF (-1)
 #	endif
 #else
 #	define EOF (-1)
@@ -57,7 +57,7 @@ class ios {
 public: /* Some enums are declared in ios to avoid pollution of
 	 * global namespace
 	 */
-	enum io_state	{ goodbit=0, eofbit=1, failbit=2, badbit=4, 
+	enum io_state	{ goodbit=0, eofbit=1, failbit=2, badbit=4,
 				hardfail=0200};
 				/* hard fail can be set and reset internally,
 				 * but not via public function */
@@ -66,21 +66,21 @@ public: /* Some enums are declared in ios to avoid pollution of
 	enum seek_dir	{ beg=0, cur=1, end=2 } ;
 
 	/* flags for controlling format */
-	enum		{ skipws=01,	
+	enum		{ skipws=01,
 					/* skip whitespace on input */
 			  left=02,  right=04, internal=010,
 					/* padding location */
-			  dec=020, oct=040, hex=0100, 
+			  dec=020, oct=040, hex=0100,
 					/* conversion base */
 			  showbase=0200, showpoint=0400, uppercase=01000,
-			  showpos=02000, 
+			  showpos=02000,
 					/* modifiers */
 			  scientific=04000, fixed=010000,
 					/* floating point notation */
 			  unitbuf=020000, stdio=040000
 					/* stuff to control flushing */
 			  } ;
-	static const long 
+	static const long
 			basefield ; /* dec|oct|hex */
 	static const long
 			adjustfield ; /* left|right|internal */
@@ -102,8 +102,8 @@ public:
 	{
 			int i = x_width ; x_width = w ; return i ;
 	}
-		
-	ostream*	tie(ostream* s); 
+
+	ostream*	tie(ostream* s);
 	ostream*	tie()		{ return x_tie ; }
 	char		fill(char) ;
 	char		fill() const	{ return x_fill ; }
@@ -127,18 +127,18 @@ public:
 				}
 
 	int		operator!() const
-				{ return state&(failbit|badbit|hardfail); } 
+				{ return state&(failbit|badbit|hardfail); }
 	int		eof() const	{ return state&eofbit; }
 	int		fail() const	{ return state&(failbit|badbit|hardfail); }
 	int		bad() const	{ return state&badbit ; }
 	int		good() const	{ return state==0 ; }
-	void		clear(int i =0) 
-				{	
+	void		clear(int i =0)
+				{
 				state =  (i&0377) | (state&hardfail) ;
-				ispecial = (ispecial&~0377) | state ; 
-				ospecial = (ospecial&~0377) | state ; 
+				ispecial = (ispecial&~0377) | state ;
+				ospecial = (ospecial&~0377) | state ;
 				}
-	streambuf*	rdbuf() { return bp ;} 
+	streambuf*	rdbuf() { return bp ;}
 
 public: /* Members related to user allocated bits and words */
 	long &		iword(size_t) ;
@@ -146,10 +146,10 @@ public: /* Members related to user allocated bits and words */
 	static long	bitalloc() ;
 	static int	xalloc() ;
 
-private: /*** privates for implemting allocated bits and words */ 
+private: /*** privates for implemting allocated bits and words */
 	static long	nextbit ;
 	static long	nextword ;
-	
+
 	size_t		nuser ;
 	union ios_user_union*
 			x_user ;
@@ -165,11 +165,11 @@ protected:
 				ispecial |= b&~skipping ;
 				ispecial |= b ;
 			}
-	int		state;	
-	int		ispecial;		
+	int		state;
+	int		ispecial;
 	int		ospecial;
 	int		isfx_special;
-	int		osfx_special;		
+	int		osfx_special;
 	int		delbuf;
 	ostream*	x_tie;
 	long 		x_flags;
@@ -185,24 +185,24 @@ protected:
 				 * multiple inheritance versions */
 	int		assign_private ;
 				/* needed by with_assgn classes */
-private:		
+public:
 			ios(ios&) ; /* Declared but not defined */
 	void		operator=(ios&) ; /* Declared but not defined */
 public:   /* old stream package compatibility */
-	int		skip(int i) ; 
+	int		skip(int i) ;
 };
 
 class streambuf {
-	short		alloc;	
+	short		alloc;
 	short		x_unbuf;
-	char* 		x_base;	
+	char* 		x_base;
 	char*		x_pbase;
-	char*		x_pptr;	
+	char*		x_pptr;
 	char* 		x_epptr;
 	char* 		x_gptr;
 	char*		x_egptr;
 	char*		x_eback;
-	size_t		x_blen;	
+	size_t		x_blen;
     private:
 			streambuf(streambuf&); /* Declared but not defined */
 	void		operator=(streambuf&); /* Declared but not defined */
@@ -226,13 +226,13 @@ class streambuf {
 	{
 		x_eback=eb; x_gptr=g ; x_egptr=eg ;
 	}
-	void		pbump(size_t n) 
-	{ 
+	void		pbump(size_t n)
+	{
 		x_pptr+=n ;
 	}
 
-	void		gbump(size_t n) 
-	{ 
+	void		gbump(size_t n)
+	{
 		x_gptr+=n ;
 		}
 
@@ -253,7 +253,7 @@ class streambuf {
 		return retval;
 	}
 	virtual int 	doallocate();
-    public : 
+    public :
 	virtual int	overflow(int c=EOF);
 	virtual int	underflow();
 	virtual int	pbackfail(int c);
@@ -270,11 +270,11 @@ class streambuf {
 		return x_gptr<x_egptr ? x_egptr-x_gptr : 0 ;
 	}
 
-	int		out_waiting() 
-	{	
+	int		out_waiting()
+	{
 		int retval;
 		if ( x_pptr ) retval = x_pptr-x_pbase ;
-		else	      retval = 0 ; 
+		else	      retval = 0 ;
 		return retval;
 	}
 
@@ -291,8 +291,8 @@ class streambuf {
 	}
 	int		sbumpc()
 	{
-		return  ( x_gptr>=x_egptr && underflow()==EOF ) 
-				? EOF 
+		return  ( x_gptr>=x_egptr && underflow()==EOF )
+				? EOF
 				: zapeof(*x_gptr++) ;
 	}
 	int		optim_in_avail()
@@ -301,7 +301,7 @@ class streambuf {
 	}
 	int		optim_sbumpc()
 	{
-		return  zapeof(*x_gptr++) ; 
+		return  zapeof(*x_gptr++) ;
 	}
 	void		stossc()
 	{
@@ -373,7 +373,7 @@ class istream : virtual public ios {
 public: /* Constructor */
 			istream(streambuf*) ;
 	virtual		~istream() ;
-public:	
+public:
 	int		ipfx(int noskipws=0)
 			{
 				int retval;
@@ -382,17 +382,17 @@ public:
 				} else retval = 1 ;
 				return retval;
 			}
-	void		isfx() { }  
+	void		isfx() { }
 	istream&	seekg(streampos p) ;
 	istream&	seekg(streamoff o, ios::seek_dir d) ;
-   	streampos	tellg() ; 
+   	streampos	tellg() ;
 	istream&	operator>> (istream& (*f)(istream&))
 			{	return (*f)(*this) ; }
 	istream&	operator>> (ios& (*f)(ios&) ) ;
 	istream&	operator>>(char*);
 	istream&	operator>>(unsigned char*);
 	istream&	operator>>(unsigned char& c)
-			{	
+			{
 				istream* retval;
 				if ( !ispecial && bp->optim_in_avail() ) {
 					c = bp->optim_sbumpc() ;
@@ -469,7 +469,7 @@ public:
 					}
 				return retval;
 			}
-	int		peek() 
+	int		peek()
 			{
 				int retval;
 				if ( ipfx(-1) ) retval = bp->sgetc() ;
@@ -478,18 +478,18 @@ public:
 			}
 	istream&	ignore(int n=1,int delim=EOF) ;
 	istream&	read(char*  s,int n);
-	istream&	read(unsigned char* s,int n) 
+	istream&	read(unsigned char* s,int n)
 			{
 				return read((char*)s,n) ;
 			}
 	int		gcount() ;
 	istream&	putback(char c);
 	int		sync()	{ return bp->sync() ; }
-protected:  
+protected:
 	int		do_ipfx(int noskipws) ;
 	void		eatwhite() ;
 			istream() ;
-private: 
+private:
 	int		x_gcount ;
 	void 		xget(char*  c) ;
 public: /*** Obsolete constructors, carried over from stream package ***/
@@ -506,7 +506,7 @@ class ostream : virtual public ios {
 public: /* Constructor */
 			ostream(streambuf*) ;
 	virtual		~ostream();
-public:	
+public:
 	int		opfx()	/* Output prefix */
 			{
 				int retval;
@@ -514,13 +514,13 @@ public:
 				else		retval = 1 ;
 				return retval;
 			}
-	void		osfx() 
+	void		osfx()
 			{	if ( osfx_special ) do_osfx() ; }
 
 	ostream&	flush() ;
 	ostream&	seekp(streampos p) ;
 	ostream&	seekp(streamoff o, ios::seek_dir d) ;
- 	streampos	tellp() ; 
+ 	streampos	tellp() ;
 	ostream&	put(char c)
 	{
 		ostream* retval;
@@ -551,7 +551,7 @@ public:
 		return *retval;
 	}
 
-	ostream&	operator<<(unsigned char c) 
+	ostream&	operator<<(unsigned char c)
 	{
 		ostream* retval;
 		if (ospecial || osfx_special) {
@@ -569,8 +569,8 @@ public:
 	ostream& 	ls_complicated(unsigned char);
 
 	ostream&	operator<<(const char*);
-	ostream&	operator<<(int a); 
-	ostream&	operator<<(long);	
+	ostream&	operator<<(int a);
+	ostream&	operator<<(long);
 	ostream&	operator<<(double);
 	ostream&	operator<<(float);
 	ostream&	operator<<(unsigned int a);
@@ -579,14 +579,14 @@ public:
 /*	ostream&	operator<<(const void*);   add this later */
 	ostream&	operator<<(streambuf*);
 	ostream&	operator<<(short i) { return *this << (int)i ; }
-	ostream&	operator<<(unsigned short i) 
+	ostream&	operator<<(unsigned short i)
 			{ return *this << (int)i  ; }
 
 	ostream&	operator<< (ostream& (*f)(ostream&))
 			{ return (*f)(*this) ; }
 	ostream&	operator<< (ios& (*f)(ios&) ) ;
 
-	ostream&	write(const char*  s,int n)	
+	ostream&	write(const char*  s,int n)
 	{
 		if ( !state ) {
 			if ( bp->sputn(s,n) != n ) setstate(eofbit|failbit);
@@ -646,12 +646,12 @@ extern ostream_withassign cout ;
 extern ostream_withassign cerr ;
 extern ostream_withassign clog ;
 
-ios&		dec(ios&) ; 
+ios&		dec(ios&) ;
 ostream&	endl(ostream& i) ;
 ostream&	ends(ostream& i) ;
 ostream&	flush(ostream&) ;
 ios&		hex(ios&) ;
-ios&		oct(ios&) ; 
+ios&		oct(ios&) ;
 istream&	ws(istream&) ;
 
 static class Iostream_init {
@@ -659,8 +659,8 @@ static class Iostream_init {
 	static int	initcount ;
 	friend class	ios ;
 public:
-	Iostream_init() ; 
-	~Iostream_init() ; 
-} iostream_init ;	
+	Iostream_init() ;
+	~Iostream_init() ;
+} iostream_init ;
 
 #endif
