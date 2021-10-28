@@ -17,8 +17,9 @@ FILE* _get_stderr()
 {
     return stderr;
 }
-
+#ifndef _WIN32
 int* _get_errno()
 {
     return &errno;
 }
+#endif

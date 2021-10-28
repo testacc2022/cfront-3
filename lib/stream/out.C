@@ -112,7 +112,7 @@ static char* uconv10(unsigned long i, char* bufend)
 }
 
 
-static char* conv8(register unsigned long i, register char* p) 
+static char* conv8(register size_t i, register char* p) 
 {
 	do {
 		*p-- = (char)('0' + i%8) ;
@@ -120,7 +120,7 @@ static char* conv8(register unsigned long i, register char* p)
 	return p+1 ;
 }
 
-static char* conv16(register unsigned long i, register char* p) 
+static char* conv16(register size_t i, register char* p) 
 {
 	do {
 		register int dig = (int)(i%16) ;

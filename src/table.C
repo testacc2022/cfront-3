@@ -1,6 +1,6 @@
 /*ident	"@(#)cls4:src/table.c	1.3" */
 /*******************************************************************************
- 
+
 C++ source for the C++ Language System, Release 3.0.  This product
 is a new release of the original cfront developed in the computer
 science research center of AT&T Bell Laboratories.
@@ -19,7 +19,7 @@ any actual or intended publication of such source code.
 #include "size.h"
 
 #ifdef DBG
-extern long node_id;
+extern ssize_t node_id;
 #define DBCHECK() if(node::allocated) error('i',"allocated node (id %d, base%k) on free list! (src: \"%s\", %d",node::id,node::base,__FILE__,__LINE__);
 #else
 #define DBCHECK() /**/
@@ -32,7 +32,7 @@ table::table(short sz, Ptable nx, Pname n)
 
 	both the vector of class name pointers and the hash table
 	are initialized containing all zeroes
-	
+
 	to simplify hashed lookup entries[0] is never used
 	so the size of "entries" must be "size+1" to hold "size" entries
 */
@@ -85,14 +85,14 @@ Pname table::look(const char* s, TOK k)
 	while (*p) i += (i + *p++); /* i<<1 ^ *p++ better?*/
 	rr = (0<=i) ? i : -i;
 
-	for (t=this; t; t=t->next) {	
+	for (t=this; t; t=t->next) {
 		/* in this and all enclosing scopes look for name "s" */
 		Pname* np = t->entries;
 		int mx = t->hashsize;
 		short* hash = t->hashtbl;
 		int firsti = i = rr%mx;
 
-		do {			
+		do {
 			if (hash[i] == 0) goto not_found;
 			n = np[hash[i]];
 			if (n == 0) error('i',"hashed lookup");
@@ -178,7 +178,7 @@ Pname table::insert(Pname nx, TOK k)
 
 	error("N table full");
 
-found:	
+found:
 
 
 	for(;;) {
@@ -202,7 +202,7 @@ add_np:
 	link = &(np[free_slot++]);
 
 re_allocate:
-	{	
+	{
 		Pname nw = new name;
 		*nw = *nx;
 		char* ps = new char[strlen(s)+1]; // copy string to safer store
@@ -221,7 +221,7 @@ void table::grow(int g)
 {
 	short* hash;
 	/*register*/ int j;
-	int mx; 
+	int mx;
 	/*register*/ Pname* np;
 	Pname n;
 
@@ -277,7 +277,7 @@ void table::grow(int g)
 	}
 }
 
-void table::reinit() 
+void table::reinit()
 { // reuse table for stmt::simpl
 	int i = 1;
 	for (; i<free_slot; i++) entries[i] = 0;
@@ -303,7 +303,7 @@ table::dump( int v )
 		return;
 	}
 	fprintf(stderr,"table %d '%s'  free_slot %d  size %d  hashsz %d\n",this,t_name?t_name->string:"", free_slot, size, hashsize);
-	for ( long i = 1;  i <= free_slot;  ++i )
+	for ( ssize_t i = 1;  i <= free_slot;  ++i )
 		display_expr(entries[i],"",v==0);
 }
 #endif

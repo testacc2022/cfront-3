@@ -1,6 +1,6 @@
 /*ident	"@(#)cls4:src/tree_walk.c	1.14" */
 /*******************************************************************************
- 
+
 C++ source for the C++ Language System, Release 3.0.  This product
 is a new release of the original cfront developed in the computer
 science research center of AT&T Bell Laboratories.
@@ -18,9 +18,9 @@ any actual or intended publication of such source code.
 *    Copyright (c) 1989 by Object Design, Inc., Burlington, Mass.
 *    All rights reserved.
 *******************************************************************************/
-/* 
+/*
 	tree_walk.c
-	Utilities for tree-walking 
+	Utilities for tree-walking
 */
 
 #include "cfront.h"
@@ -42,56 +42,56 @@ class walker {
     tree_walk_tree * cur_tree;
   public:
     walker(const tree_walk_control& c) ;
- 
+
     ~walker () {
 	if(made_ht) delete nodes_seen_hash;
     }
     tree_node_action walk (Pnode&);
     tree_node_action walk_ (Pnode&);
 
-    tree_node_action walk(Pgen& n) 
+    tree_node_action walk(Pgen& n)
     { return walk_ ((struct node * &)n); };
-    tree_node_action walk(Pvec& n) 
+    tree_node_action walk(Pvec& n)
     { return walk_ ((struct node * &)n); };
-    tree_node_action walk(Pptr& n) 
+    tree_node_action walk(Pptr& n)
     { return walk_ ((struct node * &)n); };
-    tree_node_action walk(Ptype& n) 
+    tree_node_action walk(Ptype& n)
     { return walk_ ((struct node * &)n); };
-    tree_node_action walk(Pfct& n) 
+    tree_node_action walk(Pfct& n)
     { return walk_ ((struct node * &)n); };
-    tree_node_action walk(Ptable& n) 
+    tree_node_action walk(Ptable& n)
     { return walk_ ((struct node * &)n); };
-    tree_node_action walk(Pktab& n) 
+    tree_node_action walk(Pktab& n)
     { return walk_ ((struct node * &)n); };
-    tree_node_action walk(Pbase& n) 
+    tree_node_action walk(Pbase& n)
     { return walk_ ((struct node * &)n); };
-    tree_node_action walk(Pname& n) 
+    tree_node_action walk(Pname& n)
     { return walk_ ((struct node * &)n); };
-     tree_node_action walk(Pexpr& n) 
+     tree_node_action walk(Pexpr& n)
     { return walk_ ((struct node * &)n); };
-    tree_node_action walk(Pstmt& n) 
+    tree_node_action walk(Pstmt& n)
     { return walk_ ((struct node * &)n); };
-    tree_node_action walk(Pblock& n) 
+    tree_node_action walk(Pblock& n)
     { return walk_ ((struct node * &)n); };
-    tree_node_action walk(Penum& n) 
+    tree_node_action walk(Penum& n)
     { return walk_ ((struct node * &)n); };
-    tree_node_action walk(Pclass& n) 
+    tree_node_action walk(Pclass& n)
     { return walk_ ((struct node * &)n); };
-    tree_node_action walk(Pvirt& n) 
+    tree_node_action walk(Pvirt& n)
     { return walk_ ((struct node * &)n); };
-    tree_node_action walk(Plist& n) 
+    tree_node_action walk(Plist& n)
     { return walk_ ((struct node * &)n); };
-    tree_node_action walk(Pin& n) 
+    tree_node_action walk(Pin& n)
     { return walk_ ((struct node * &)n); };
-    tree_node_action walk(Pia& n) 
+    tree_node_action walk(Pia& n)
     { return walk_ ((struct node * &)n); };
-    tree_node_action walk(Pbcl& n) 
+    tree_node_action walk(Pbcl& n)
     { return walk_ ((struct node * &)n); };
   private:
     int fetching () {  return (control.fetcher != null_tfp); } ;
     void free_fetched (void *);
-    int fetch (void *, unsigned long, void *&);
-    int fetch (void * a, unsigned long l, Pnode& p) 
+    int fetch (void *, size_t, void *&);
+    int fetch (void * a, size_t l, Pnode& p)
     {
 	int ret;
 	void * t;		/* this is an output argument */
@@ -101,10 +101,10 @@ class walker {
 	}
 	return ret;
     };
-    void error ( const char *, unsigned long=0 );
+    void error ( const char *, size_t=0 );
     tree_node_action pre_act_on_node (Pnode node, node_class nc,
 				      Pnode node_copy, Pnode& replacement);
-				       
+
     tree_node_action a_gen (Pnode, Pgen, Pnode&);
     tree_node_action a_tpdef (Pnode, Ptype, Pnode&);
     tree_node_action a_vec (Pnode, Pvec, Pnode&);
@@ -126,7 +126,7 @@ class walker {
     tree_node_action a_expr_guts (Pexpr);
 };
 
-tree_node_action walker::walk_ (Pnode& n) 
+tree_node_action walker::walk_ (Pnode& n)
 {
 	if(n) {
 	    int save_depth = depth;
@@ -145,7 +145,7 @@ tree_node_action walker::walk_ (Pnode& n)
 	} else return tna_continue;
 }
 
-walker::walker(const tree_walk_control& c) 
+walker::walker(const tree_walk_control& c)
 { control = c;
   made_ht = 0;
   if (c.nodes_seen_hash)
@@ -229,7 +229,7 @@ walk_tree (tree_walk_control& c, Pnode& n)
 /* error messages are of finite length, so no need to run
    around mallocing strings */
 
-void walker::error (const char *format, unsigned long v)
+void walker::error (const char *format, size_t v)
 {
     if(control.call_i_error) {
 	char buf[1000];
@@ -248,14 +248,14 @@ walker::free_fetched (void * addr)
     if (control.fetcher != null_tfp)	/* null indicates no cross-address-space */
         // delete addr;
     	free(addr);
-}    
+}
 
 int
-walker::fetch (void * addr, unsigned long length, void*& taddr)
+walker::fetch (void * addr, size_t length, void*& taddr)
 {
     int err;
 
-    if (control.fetcher == null_tfp) { 
+    if (control.fetcher == null_tfp) {
 	taddr = addr;
 	return 0;
     } else {
@@ -279,23 +279,23 @@ walker::fetch (void * addr, unsigned long length, void*& taddr)
    a replacement node pointer. When it returns,
    replacement will be set if the action procedure
    called on the node decided to copy it or replace it.
-   There are two possible modularities. 
+   There are two possible modularities.
    In case there is cross-address-space action,
    ::walk can't call the action procedure until it has
    entered the case on node bases. Once it has,
    it calls the per-structure-type procedure,
-   which calls the action proc. If the action 
+   which calls the action proc. If the action
    proc supplies a replacement, then that replacement
-   will be returned up via the reference parameters to 
+   will be returned up via the reference parameters to
    the per-structure procedures.
 
    It the action procedure returns tna_continue,
    then the walk continues against the new copy of the node
    so that further replacements are reflected in the new copies.
    This prevents replacement from being meaningful cross-address-space,
-   since the new copy will presumably be in the current 
+   since the new copy will presumably be in the current
    (and not the cross) address space. That is, if the node
-   is replaced by the action proc, the pointers in the new 
+   is replaced by the action proc, the pointers in the new
    node will drive the subsequent tree walk. Usually one
    would just bitcopy, and then they would be replaced in turn.
 */
@@ -320,7 +320,7 @@ walker::walk (Pnode& top)
 /* This has a complete catalog of bases, rather than just a list
    of those associated with data structures. Its important
    to detect the errs.
-*/   
+*/
 
     nclass = classify_node (node, class_err);
 
@@ -330,7 +330,7 @@ walker::walk (Pnode& top)
 	err = tna_error;
 	goto Return;
     }
-    
+
     switch(nclass)
     {
       default:
@@ -439,10 +439,10 @@ walker::walk (Pnode& top)
 	    error
 		("walker::walk: Attempt to replace tree in cross-address space mode.");
 	    err = tna_error;
-	} 
+	}
 	else top = replacement;
     }
-	
+
     if (control.post_action_proc && err != tna_error) {
 	tree_node_action post_err;
 	Pnode& post_repl = node;
@@ -455,7 +455,7 @@ walker::walk (Pnode& top)
 		error
 		    ("walker::walk: Attempt to replace tree in cross-address space mode.");
 		err = tna_error;
-	    } 
+	    }
 	    else top = post_repl;
 	}
     }
@@ -469,14 +469,14 @@ Return:
 /* This is called in pre-order for each node. Then
    post_act_on_node is called after whatever recursive
    processing ensues.
-   
+
    This is called from each of the structure-specific procedures
    to give the action procedure an opportunity to act.
    It can return a replacement pointer and control
    whether to examine the insides of the node.
    */
 
-tree_node_action 
+tree_node_action
 walker::pre_act_on_node (Pnode node, node_class nc,
 		       Pnode node_copy, Pnode& replacement)
 {
@@ -501,7 +501,7 @@ walker::pre_act_on_node (Pnode node, node_class nc,
 
     new_node = fetching () && node_copy ? node_copy : node;
 
-    (*control.action_proc)(new_node, nc, control.callback_info, action, 
+    (*control.action_proc)(new_node, nc, control.callback_info, action,
 			   depth, orig_addr, *cur_tree,
 			   register_in_hash);
 
@@ -509,8 +509,8 @@ walker::pre_act_on_node (Pnode node, node_class nc,
     if(action != tna_error && !fetching () && new_node != node) {
 	replacement = new_node;
 	if(register_in_hash)
-	    nodes_seen_hash->action((size_t)node, 
-				    (size_t)new_node, 
+	    nodes_seen_hash->action((size_t)node,
+				    (size_t)new_node,
 				    Hash::insert, zero1, zero2);
     }
     else {
@@ -518,9 +518,9 @@ walker::pre_act_on_node (Pnode node, node_class nc,
 	    nodes_seen_hash->action((size_t)node, (size_t) node, Hash::insert, zero1, zero2);
     }
     return action;
-}			   
+}
 
-tree_node_action walker::a_ktable(Pnode ta, Pktab t, Pnode& replacement) 
+tree_node_action walker::a_ktable(Pnode ta, Pktab t, Pnode& replacement)
 {
     tree_node_action action;
     action = pre_act_on_node(ta, nc_ktable, Pnode(t), replacement);
@@ -541,7 +541,7 @@ tree_node_action walker::a_ktable(Pnode ta, Pktab t, Pnode& replacement)
 }
 
 
-tree_node_action walker::a_table(Pnode ta, Ptable t, Pnode& replacement) 
+tree_node_action walker::a_table(Pnode ta, Ptable t, Pnode& replacement)
 {
     /* no unions */
 
@@ -563,7 +563,7 @@ tree_node_action walker::a_table(Pnode ta, Ptable t, Pnode& replacement)
 
     action = walk(t->real_block);
     if(action == tna_error) return action;
-    
+
     action = walk(t->t_name);
     if(action == tna_error) return action;
 
@@ -572,7 +572,7 @@ tree_node_action walker::a_table(Pnode ta, Ptable t, Pnode& replacement)
     return tna_continue;
 }
 
-tree_node_action walker::a_enumdef (Pnode ta, Penum e, Pnode& replacement) 
+tree_node_action walker::a_enumdef (Pnode ta, Penum e, Pnode& replacement)
 {
     tree_node_action action = pre_act_on_node(ta, nc_enumdef, Pnode(e), replacement);
 
@@ -590,9 +590,9 @@ tree_node_action walker::a_enumdef (Pnode ta, Penum e, Pnode& replacement)
     action = walk(e->e_type);
 
     return tna_continue;
-}    
+}
 
-tree_node_action walker::a_virt(Pnode ta, Pvirt v, Pnode& replacement) 
+tree_node_action walker::a_virt(Pnode ta, Pvirt v, Pnode& replacement)
 {
     /* no unions */
 
@@ -621,13 +621,13 @@ tree_node_action walker::a_virt(Pnode ta, Pvirt v, Pnode& replacement)
     }
 
     if(fetching ()) free_fetched ((void *)v_virt_init);
-    
+
     action = walk(v->vclass);
-    
+
     return tna_continue;
 }
 
-tree_node_action walker::a_classdef(Pnode ta, Pclass c, Pnode& replacement) 
+tree_node_action walker::a_classdef(Pnode ta, Pclass c, Pnode& replacement)
 {
 
 // ::error('d',"walker::a_classdef: %t beginning ", c);
@@ -643,7 +643,7 @@ tree_node_action walker::a_classdef(Pnode ta, Pclass c, Pnode& replacement)
 
     action=walk(c->mem_list);
     if(action == tna_error) return action;
-    
+
     action=walk(c->memtbl);
     if(action == tna_error) return action;
 
@@ -655,7 +655,7 @@ tree_node_action walker::a_classdef(Pnode ta, Pclass c, Pnode& replacement)
 
     action=walk(c->pubdef);
     if(action == tna_error) return action;
-    
+
 //SYM    action=walk(c->tn_list);
 //SYM    if(action == tna_error) return action;
 
@@ -683,7 +683,7 @@ tree_node_action walker::a_classdef(Pnode ta, Pclass c, Pnode& replacement)
     return tna_continue;
 }
 
-tree_node_action walker::a_basetype(Pnode ta, Pbase b, Pnode& replacement) 
+tree_node_action walker::a_basetype(Pnode ta, Pbase b, Pnode& replacement)
 {
     int derr;
 
@@ -721,7 +721,7 @@ tree_node_action walker::a_basetype(Pnode ta, Pbase b, Pnode& replacement)
     return tna_continue;
 }
 
-tree_node_action walker::a_fct(Pnode ta, Pfct f, Pnode& replacement) 
+tree_node_action walker::a_fct(Pnode ta, Pfct f, Pnode& replacement)
 {
 
     tree_node_action action = pre_act_on_node(ta, nc_fct, Pnode(f), replacement);
@@ -767,7 +767,7 @@ tree_node_action walker::a_fct(Pnode ta, Pfct f, Pnode& replacement)
     return tna_continue;
 }
 
-tree_node_action walker::a_name_list(Pnode ta, Plist l, Pnode& replacement) 
+tree_node_action walker::a_name_list(Pnode ta, Plist l, Pnode& replacement)
 {
 
     int cl_error;
@@ -812,7 +812,7 @@ tree_node_action walker::a_tpdef(Pnode ta, Ptype t, Pnode& replacement)
     return tna_continue;
 }
 
-tree_node_action walker::a_gen(Pnode ta, Pgen g, Pnode& replacement) 
+tree_node_action walker::a_gen(Pnode ta, Pgen g, Pnode& replacement)
 {
 
     tree_node_action action = pre_act_on_node(ta, nc_gen, Pnode(g), replacement);
@@ -828,7 +828,7 @@ tree_node_action walker::a_gen(Pnode ta, Pgen g, Pnode& replacement)
     return tna_continue;
 }
 
-tree_node_action walker::a_vec(Pnode ta, Pvec v, Pnode& replacement) 
+tree_node_action walker::a_vec(Pnode ta, Pvec v, Pnode& replacement)
 {
 
     tree_node_action action = pre_act_on_node(ta, nc_vec, Pnode(v), replacement);
@@ -847,7 +847,7 @@ tree_node_action walker::a_vec(Pnode ta, Pvec v, Pnode& replacement)
     return tna_continue;
 }
 
-tree_node_action walker::a_ptr(Pnode ta, Pptr p, Pnode& replacement) 
+tree_node_action walker::a_ptr(Pnode ta, Pptr p, Pnode& replacement)
 {
 
     tree_node_action action = pre_act_on_node(ta, nc_ptr, Pnode(p), replacement);
@@ -930,7 +930,7 @@ tree_node_action walker::a_expr_guts(Pexpr e)
 	if(action == tna_error) return action;
 	break;
     }
-    
+
     switch(derr = e->discriminator (3)) {
       case 0:
 	break;
@@ -970,7 +970,7 @@ tree_node_action walker::a_expr_guts(Pexpr e)
 }
 
 
-tree_node_action walker::a_expr(Pnode ta, Pexpr e, Pnode& replacement) 
+tree_node_action walker::a_expr(Pnode ta, Pexpr e, Pnode& replacement)
 {
     tree_node_action action = pre_act_on_node(ta, nc_expr, Pnode(e), replacement);
 
@@ -983,7 +983,7 @@ tree_node_action walker::a_expr(Pnode ta, Pexpr e, Pnode& replacement)
 	    return action;
 	}
     }
-	
+
     if(action != tna_continue) return action;
 
     if(!fetching () && replacement)
@@ -996,7 +996,7 @@ tree_node_action walker::a_expr(Pnode ta, Pexpr e, Pnode& replacement)
     return action;
 }
 
-tree_node_action walker::a_baseclass(Pnode ta, Pbcl b, Pnode& replacement) 
+tree_node_action walker::a_baseclass(Pnode ta, Pbcl b, Pnode& replacement)
 {
     tree_node_action action = pre_act_on_node(ta, nc_baseclass, Pnode(b), replacement);
 
@@ -1019,9 +1019,9 @@ tree_node_action walker::a_baseclass(Pnode ta, Pbcl b, Pnode& replacement)
 
 
 /* a name is also an expr. */
-   
 
-tree_node_action walker::a_name(Pnode ta, Pname n, Pnode& replacement) 
+
+tree_node_action walker::a_name(Pnode ta, Pname n, Pnode& replacement)
 {
     int derr;
     tree_node_action action = pre_act_on_node(ta, nc_name, Pnode(n), replacement);
@@ -1031,7 +1031,7 @@ tree_node_action walker::a_name(Pnode ta, Pname n, Pnode& replacement)
     if(!fetching () && replacement)
 	n = Pname(replacement);
 
-    // We don't walk n_tbl_list. Its not part of the graph. 
+    // We don't walk n_tbl_list. Its not part of the graph.
 
     switch(derr = n->discriminator(0)) {
       case 0:
@@ -1078,16 +1078,16 @@ tree_node_action walker::a_name(Pnode ta, Pname n, Pnode& replacement)
     }
 
 // n_ktable is patched up after tree is fully walked
-    
+
     return action;
 }
-    
+
 /* --- NOTE: s_list should be deferred until AFTER the post-action
    procedure is called, if there is one. Since no one uses
    post-actions yet I haven't bothered to make this fix.
    --benson */
 
-tree_node_action walker::a_stmt(Pnode ta, Pstmt s, Pnode& replacement) 
+tree_node_action walker::a_stmt(Pnode ta, Pstmt s, Pnode& replacement)
 {
     int cl_error;
     int derr;
@@ -1185,7 +1185,7 @@ tree_node_action walker::a_stmt(Pnode ta, Pstmt s, Pnode& replacement)
     return tna_continue;
 }
 
-tree_node_action walker::a_ia(Pnode ta, struct ia * ia, Pnode& replacement) 
+tree_node_action walker::a_ia(Pnode ta, struct ia * ia, Pnode& replacement)
 {
     tree_node_action action = pre_act_on_node(ta, nc_ia, Pnode(ia), replacement);
 
@@ -1199,14 +1199,14 @@ tree_node_action walker::a_ia(Pnode ta, struct ia * ia, Pnode& replacement)
 
     action = walk(ia->arg);
     if(action == tna_error) return action;
-    
+
     action = walk(ia->tp);
     if(action == tna_error) return action;
 
     return tna_continue;
 }
 
-tree_node_action walker::a_iline(Pnode ta, Pin iline, Pnode& replacement) 
+tree_node_action walker::a_iline(Pnode ta, Pin iline, Pnode& replacement)
 {
     tree_node_action action = pre_act_on_node(ta, nc_iline, Pnode(iline), replacement);
 
@@ -1220,7 +1220,7 @@ tree_node_action walker::a_iline(Pnode ta, Pin iline, Pnode& replacement)
 
 //    action = walk(iline->i_next);
 //    if(action == tna_error) return action;
-    
+
     action = walk(iline->i_table);
     if(action == tna_error) return action;
 

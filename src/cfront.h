@@ -1,6 +1,6 @@
 /*ident	"@(#)cls4:src/cfront.h	1.28" */
 /*******************************************************************************
- 
+
 C++ source for the C++ Language System, Release 3.0.  This product
 is a new release of the original cfront developed in the computer
 science research center of AT&T Bell Laboratories.
@@ -24,7 +24,7 @@ any actual or intended publication of such source code.
 
 #ifndef GRAM
 extern const char* prog_name;		// compiler name and version
-extern int inline_restr;	// inline expansion restrictions 
+extern int inline_restr;	// inline expansion restrictions
 #endif
 
 extern TOK	tlex();
@@ -35,7 +35,7 @@ extern void	ext(int);
 extern Ptype unconst_type(Ptype);
 
 extern char* 	make_name(TOK);
-extern char* 	make_nested_name(const char*,Pclass); 
+extern char* 	make_nested_name(const char*,Pclass);
 extern void 	make_dummy();
 extern Pname	dummy_fct;
 extern Pname    really_dominate(Pname, Pname, bit);
@@ -72,7 +72,7 @@ struct ea {	// fudge portable printf-like formatting for error()
 		size_t i;
 	};
 
-	ea(const void* pp) {p = pp;} 
+	ea(const void* pp) {p = pp;}
 	ea(size_t ii)   { i = ii; }
 	ea() {}
 };
@@ -115,7 +115,7 @@ extern Pname insert_type( Pname, Pktab, TOK );
 extern Pname insert_name( Pname, Pktab );
 
 extern Ptable gtbl;		// global names
-extern Ptable ptbl;		
+extern Ptable ptbl;
 extern const char* oper_name(TOK);
 extern const char* name_oper(const char *);
 extern int is_probably_temp(const char*);
@@ -181,12 +181,12 @@ struct node {
 #ifdef DBG
 	bit	displayed;	// avoid infinite recursion in display functions
 	bit	allocated;	// set when not on free list
-	long	id;
+	ssize_t	id;
 #endif
         node():base(0), permanent(0), baseclass(0) {}
 };
 #ifdef DBG
-extern long node_id;
+extern ssize_t node_id;
 extern int Adebug;
 #define DBID() { node::id = ++::node_id; node::allocated=1; displayed=0; \
 	if(Adebug>=1)fprintf(stderr,"\n*** allocated %d base %d\n",id,base); }
@@ -233,9 +233,9 @@ struct table : public node {
 	Pname get_mem(int i) { return (i<=0 || free_slot<=i) ? 0 : entries[i]; }
 	void	del();
 	const char* whatami();
-#ifdef DBG 
+#ifdef DBG
 	void dump( int verbose = 1 );
-#endif 
+#endif
 };
 #define NEXT_NAME(tbl,n,i) (n = (n->n_tbl_list ? n->n_tbl_list : tbl->get_mem(++i)))
 struct ktable : public node { //SYM parsing table
@@ -248,7 +248,7 @@ struct ktable : public node { //SYM parsing table
 	bit k_tiny;     // set when table is small (not hash table)
 	TOK k_id;       // ARG CLASS BLOCK TEMPLATE 0
 
-	Pktab	k_next; // table for enclosing scope 
+	Pktab	k_next; // table for enclosing scope
 	Pname   k_name; // name of table
 	ktable(int, Pktab, Pname);
 	~ktable();
@@ -278,7 +278,7 @@ extern Plist local_class; //SYM -- preserve for use in del.c
 extern char *make_local_name(Ptype, Pname);
 
 // nested type
-extern Pname curr_fct; 
+extern Pname curr_fct;
 
 extern Pname start_cl(TOK, Pname, Pbcl);
 extern void end_cl();
@@ -324,8 +324,8 @@ struct type : public node {
 	Ptype	mkconst();
 
 	// encapsulate casts
-	Pclass classtype(); 
-	inline Penum enumtype(); 
+	Pclass classtype();
+	inline Penum enumtype();
 	inline Ptype bname_type();
 	inline Pname bname();
         inline bit is_templ_instance();
@@ -391,7 +391,7 @@ struct virt : public node {
 	bit	is_vbase;	// vtable for virtual base
 	bit	printed;
  	virt(Pclass cl, velem* v, const char* s, bit flag, int ni) {
-            base = XVIRT; vclass=cl; virt_init=v; string=s; 
+            base = XVIRT; vclass=cl; virt_init=v; string=s;
             is_vbase=flag; next=0; n_init = ni; printed=0;}
 };
 
@@ -406,12 +406,12 @@ struct classdef : public type {	/* CLASS */
 	TOK	csu;		/* CLASS, STRUCT, UNION, or ANON */
 	bit	obj_align;
 	bit	c_xref;
-		// 1 set:	has vptr(s) 
+		// 1 set:	has vptr(s)
 		// 2 set:	X(X&) exists
 		// 4 set:	operator=(X&) exists
 		// 8 set:	has vbaseptr(s)
 		// 16 set:	has reference data member(s)
-		
+
 	short	virt_count;	// number of virtual functions
 				// starting at max base class virt_count in
 	bit	virt_merge;	// set when no virtual functions, but
@@ -420,7 +420,7 @@ struct classdef : public type {	/* CLASS */
 	unsigned short c_strlen;// strlen(string) or strlen(local_sig)
 	Pbcl	baselist;	// list of base classes
 	const char*	string;		/* name of class */
-	Pname	c_abstract;	// abstract class: don't instantiate: virt func name 
+	Pname	c_abstract;	// abstract class: don't instantiate: virt func name
 	Pname	mem_list;
 	Ptable	memtbl;
 	Pktab	k_tbl; //SYM parsing table
@@ -507,7 +507,7 @@ public:
 	int onlist(Pclass);
 	void clear();
 };
-	
+
 extern clist * vcllist;
 
 struct vl {
@@ -537,12 +537,12 @@ extern Pexpr find_name(Pname, Pclass, Ptable, int, Pname);
 extern Pname find_virtual(Pclass,Pname);
 extern Pname vfct(Pclass, char*);
 extern int Vcheckerror;
-extern int ignore_const;	
+extern int ignore_const;
 
 extern int mex;
 extern Pclass mec;
 extern Pclass tcl;
-extern int processing_sizeof; // suppresscertain referencing errors for args to sizeof 
+extern int processing_sizeof; // suppresscertain referencing errors for args to sizeof
 #endif
 
 struct basetype : public type
@@ -587,7 +587,7 @@ struct basetype : public type
  	Pbase	arit_conv(Pbase);
         bit     parametrized_class();
 #endif
-	int     discriminator(int); // union discriminator fcn 
+	int     discriminator(int); // union discriminator fcn
 };
 
 enum Linkage { linkage_default, linkage_C, linkage_Cplusplus };
@@ -647,7 +647,7 @@ struct fct : public type {		// FCT
 	void	sign();
         int     is_templ() { return fct_base != VANILLA; }
 #endif
-	int     discriminator(int); // union discriminator fcn 
+	int     discriminator(int); // union discriminator fcn
 };
 
 struct name_list : public node {
@@ -683,7 +683,7 @@ struct vec : public pvtyp		// VEC
 				// typ [ dim ]
 {
 	Pexpr	dim;
-	int	size;	
+	int	size;
 
 	static Pvec vec_free;
 	void*	operator new(size_t);
@@ -776,14 +776,14 @@ struct expr : public node	/* PLUS, MINUS, etc. */
 		Ptype	tpdef;  // local and nested typedef info
 	};
 	union {			/* used by the derived classes */
-		Ptype	tp2;    
+		Ptype	tp2;
 		Pname	fct_name; // of a call expr
 		Pexpr	cond;
 		Pexpr	mem;
 		Ptype	as_type;
 		Ptable	n_table;
 		Pin	il;
-		Pname	query_this; 
+		Pname	query_this;
 	};
 
 	static Pexpr expr_free;
@@ -812,7 +812,7 @@ struct expr : public node	/* PLUS, MINUS, etc. */
 	void	simpl_new();
 	void	simpl_delete();
 #endif
-	int     discriminator(int); // union discriminator fcn 
+	int     discriminator(int); // union discriminator fcn
 };
 
 struct texpr : public expr {		// G_CAST, CAST NEW VALUE (also ICALL)
@@ -869,7 +869,7 @@ struct basecl : public node {	// NAME		=> base class
         basecl(Pclass cl, basecl* n):node() { baseclass=1; bclass=cl; next=n; promoted=0; init=0; obj_offset=ptr_offset=0;allocated=0;}
 };
 
-enum template_formal_types { 
+enum template_formal_types {
 	template_type_formal =1 , template_expr_formal,
         template_actual_arg_dummy // used during the parse
 };
@@ -880,7 +880,7 @@ struct name : public expr {	// NAME TNAME DTOR and the lexical keywords
 	TOK	n_oper;		// name of operator or 0
 	TOK	n_sto;		// EXTERN STATIC AUTO REGISTER ENUM 0
 	TOK	n_stclass;	// STATIC AUTO REGISTER 0
-	TOK	n_scope;	// EXTERN STATIC FCT ARG PUBLIC 0 
+	TOK	n_scope;	// EXTERN STATIC FCT ARG PUBLIC 0
 	TOK	n_key;	/* for names in table: class */
 	bit	n_evaluated;	// 0 or n_val holds the value
 	bit	n_xref;		// argument of type X(X&)
@@ -893,16 +893,16 @@ struct name : public expr {	// NAME TNAME DTOR and the lexical keywords
         // if this is set it implies that n_template_arg == template_type_formal
 	char    n_template_arg; // One of template_formal_types for template arguments
 	bit 	n_template_fct; // non-class template function
-        bit     n_redefined ;   // set only for PT function names && classes 
+        bit     n_redefined ;   // set only for PT function names && classes
 				// where an explict definition was provided.
 	short	n_addr_taken;
 	short	n_used;
 	short	n_assigned_to;
 	Loc where;
 	int	n_offset;	// byte offset in frame or struct
-	const char*	n_anon;	// 0, or anon union object name 
+	const char*	n_anon;	// 0, or anon union object name
 	union {//SYM ???
-	Pname	n_list;   // next name in arg or other list 
+	Pname	n_list;   // next name in arg or other list
 	Pname	n_hidden; //SYM type name hidden by this name in parse table
 	Pname	n_dtag;   // base==DTOR -- name after ~ or 0 for basic type dtor
 	};
@@ -911,19 +911,19 @@ struct name : public expr {	// NAME TNAME DTOR and the lexical keywords
         char    *n_template_arg_string ; // the mangled string name
 	Pktab	n_ktable;//SYM parsing table in which name is entered
 	union {
-	/* 
+	/*
 	 * n_qualifier: name of containing class
-	 * n_realscope: for labels (always entered in function table) 
+	 * n_realscope: for labels (always entered in function table)
          *		the table for the actual scope in which label occurred.
 	 * syn_class: lex table only
 	 */
-		Pname	n_qualifier;	
-                Ptable  n_realscope;    
-		int     syn_class; 
+		Pname	n_qualifier;
+                Ptable  n_realscope;
+		int     syn_class;
         };
 
 	/* n_val: the value of n_initializer */
-	long long	n_val;		
+	long long	n_val;
 	/* for inlines, the number of the argument when base == ANAME */
 	int argno;
 	static Pname name_free;
@@ -956,8 +956,8 @@ struct name : public expr {	// NAME TNAME DTOR and the lexical keywords
         // this works only for function templates which require type formals
         bit     is_template_arg() { return n_template_arg == template_type_formal; }
 	void	del();
-	inline Pfct fct_type();  
-	int     discriminator(int); // union discriminator fcn 
+	inline Pfct fct_type();
+	int     discriminator(int); // union discriminator fcn
 };
 
 extern int friend_in_class;
@@ -986,7 +986,7 @@ struct stmt : public node {	/* BREAK CONTINUE DEFAULT */
 		Pname	d; // goto/block -- destination
 		Pexpr	e2; // for iteration
 		Pstmt	has_default; // switch statement default
-		int	case_value; 
+		int	case_value;
 		Ptype	ret_tp; // pair
 	};
 	union {
@@ -1020,7 +1020,7 @@ struct stmt : public node {	/* BREAK CONTINUE DEFAULT */
 	// PAIR and BLOCK pun on `e': if (s->e) not safe
 	bit	has_expr() { return (base != BLOCK && base != PAIR)?e!=0:0; }
 #endif
-	int     discriminator(int); // union discriminator fcn 
+	int     discriminator(int); // union discriminator fcn
 };
 
 #ifndef GRAM
@@ -1111,7 +1111,7 @@ struct elist {
 
 extern Pexpr expr_unlist(elist*);
 
-#ifndef GRAM 
+#ifndef GRAM
 extern class dcl_context * cc;
 
 #define MAXCONT	100
@@ -1135,7 +1135,7 @@ struct dcl_context {
 				};
 	void	unstack()	{ cc--; };
 };
-#endif 
+#endif
 
 extern void yyerror(const char*);
 
@@ -1149,7 +1149,7 @@ extern Pstmt st_ilist;
 extern Pstmt st_dlist;
 extern Ptable sti_tbl;
 extern Ptable std_tbl;
-extern int need_sti( Pexpr e, Ptable tbl = 0, bit is_static_ok = 0 ); 
+extern int need_sti( Pexpr e, Ptable tbl = 0, bit is_static_ok = 0 );
 Pexpr try_to_coerce(Ptype, Pexpr, const char*, Ptable);
 extern bit can_coerce(Ptype, Ptype);
 extern Ptype np_promote(TOK, TOK, TOK, Ptype, Ptype, TOK, bit=1);
@@ -1259,20 +1259,20 @@ inline Pname type::bname() { return Pbase(this)->b_name; }
 inline Ptype type::bname_type() { return Pbase(this)->b_name->tp; }
 //move to typ.c because 2.0 bug
 /*
-inline Pclass type::classtype() { 
+inline Pclass type::classtype() {
     return (base==COBJ)?Pclass(Pbase(this)->b_name->tp)
-	: (error('i',"T::classtype(): %k cobjX",base),0); 
+	: (error('i',"T::classtype(): %k cobjX",base),0);
 }
 */
 
-inline Penum type::enumtype() { 
+inline Penum type::enumtype() {
     return (base==EOBJ)?Penum(Pbase(this)->b_name->tp)
-	: (error('i',"T::enumtype(): %k eobjX",base),Penum(0)); 
+	: (error('i',"T::enumtype(): %k eobjX",base),Penum(0));
 }
 
-inline Pfct name::fct_type() { 
+inline Pfct name::fct_type() {
     return (tp->base==FCT) ? Pfct(tp)
-	: (error('i',"N::fct_type():%n is %k notF",this,tp->base),Pfct(0)); 
+	: (error('i',"N::fct_type():%n is %k notF",this,tp->base),Pfct(0));
 }
 
 inline bit type::is_templ_instance() {
@@ -1284,7 +1284,7 @@ inline bit type::is_templ_instance() {
 }
 
 #ifndef GRAM
-inline Pfct name::get_fct() { 
+inline Pfct name::get_fct() {
     return (tp->base==FCT) ? Pfct(tp)
 	: Pfct(Pgen(tp)->fct_list->f->tp);
 }

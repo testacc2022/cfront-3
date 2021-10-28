@@ -10,6 +10,7 @@
 #include <time.h>
 #include <unistd.h>
 #include <utime.h>
+#ifndef _WIN32
 #include <sys/wait.h>
-
+#endif
 #endif

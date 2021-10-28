@@ -20,16 +20,18 @@ any actual or intended publication of such source code.
 #include <generic.h>
 #endif
 
+#include "typedef.h"
+
 #define Block(T)name2(Block_,T)
 
 #define Blockdeclare(T)							\
 									\
 class Block(T) {							\
 public:									\
-	unsigned size() const { return n; }				\
-	unsigned size(unsigned k) { move(new T[k], k); return n; }	\
+	size_t size() const { return n; }				\
+	size_t size(size_t k) { move(new T[k], k); return n; }	\
 	Block(T)() { n = 0; p = 0; }					\
-	Block(T)(unsigned k) { n = 0; p = 0; size(k); }			\
+	Block(T)(size_t k) { n = 0; p = 0; size(k); }			\
 	Block(T)(const Block(T)& b) { copy(b); }			\
 	~Block(T)() { delete[/*n*/] p; }					\
 	Block(T)& operator=(const Block(T)& b) {			\
@@ -43,16 +45,16 @@ public:									\
 	const T* end() const { return p + n; }				\
 	T& operator[](int i) { return p[i]; }				\
 	const T& operator[](int i) const { return p[i]; }		\
-	int reserve(unsigned k) { return k<n || grow(k); }		\
+	int reserve(size_t k) { return k<n || grow(k); }		\
 	void swap(Block(T)& b);						\
 private:								\
 	T* p;								\
-	unsigned n;							\
-	void move(T*, unsigned);					\
-	void transfer(T*, unsigned);					\
-	void clear(T*, unsigned);					\
+	size_t n;							\
+	void move(T*, size_t);					\
+	void transfer(T*, size_t);					\
+	void clear(T*, size_t);					\
 	void copy(const Block(T)&);					\
-	unsigned grow(unsigned);					\
+	size_t grow(size_t);					\
 };									\
 									\
 
@@ -62,7 +64,7 @@ static T name2(Block(T),_def);						\
 									\
 /* Clear k elements starting at v */					\
 void									\
-Block(T)::clear(T* v, unsigned k)					\
+Block(T)::clear(T* v, size_t k)					\
 {									\
 	/*register*/ T* p = v;						\
 	/*register*/ T* lim = v + k;					\
@@ -83,10 +85,10 @@ Block(T)::copy(const Block(T)& b)					\
 }									\
 									\
 /* Grow this Block by 1.5 until it can contain at least k+1 */		\
-unsigned								\
-Block(T)::grow(unsigned k)						\
+size_t								\
+Block(T)::grow(size_t k)						\
 {									\
-	unsigned nn = n;						\
+	size_t nn = n;						\
 	if (nn == 0)							\
 		nn++;							\
 	while (nn <= k)							\
@@ -102,7 +104,7 @@ Block(T)::grow(unsigned k)						\
 									\
 /* Transfer len (or fewer) elements into this Block. */			\
 void									\
-Block(T)::transfer(T* source, unsigned len)				\
+Block(T)::transfer(T* source, size_t len)				\
 {									\
 	/*register*/ T* plim;						\
 	/*register*/ T* pp = p;						\
@@ -123,10 +125,10 @@ Block(T)::transfer(T* source, unsigned len)				\
  * If np is 0, null out this Block.					\
  */									\
 void									\
-Block(T)::move(T* np, unsigned nn)					\
+Block(T)::move(T* np, size_t nn)					\
 {									\
 	T* oldp = p;							\
-	unsigned oldn = n;						\
+	size_t oldn = n;						\
 	p = np;								\
 	if (np) {							\
 		n = nn;							\
@@ -141,7 +143,7 @@ void									\
 Block(T)::swap(Block(T)& b)						\
 {									\
 	T* bp = b.p;							\
-	unsigned bn = b.n;						\
+	size_t bn = b.n;						\
 	b.p = p;							\
 	b.n = n;							\
 	p = bp;								\

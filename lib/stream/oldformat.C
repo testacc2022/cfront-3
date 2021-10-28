@@ -112,7 +112,7 @@ const char a10 = 'a'-10;
 
 char* hex(long ii, /*register*/ int w)
 {
-	size_t m = sizeof(long)*2;		// maximum hex digits for a long
+	size_t m = sizeof(size_t)*2;		// maximum hex digits for a long
 	if (w<0 || fld_size<w) w = 0;
 	size_t sz = (w?w:m)+1;
 	/*register*/ char* buf = bfree;
@@ -120,7 +120,7 @@ char* hex(long ii, /*register*/ int w)
 	/*register*/ char* p = buf+sz;
 	bfree = p+1;
 	*p-- = 0;			// trailing 0
-	/*register*/ unsigned long i = ii;
+	/*register*/ size_t i = ii;
 
 	if (w) {
 		do {
@@ -140,7 +140,7 @@ char* hex(long ii, /*register*/ int w)
 
 char* oct(long ii, int w)
 {
-	size_t m = sizeof(long)*3;		// maximum oct digits for a long
+	size_t m = sizeof(size_t)*3;		// maximum oct digits for a long
 	if (w<0 || fld_size<w) w = 0;
 	size_t sz = (w?w:m)+1;
 	/*register*/ char* buf = bfree;
@@ -148,7 +148,7 @@ char* oct(long ii, int w)
 	/*register*/ char* p = buf+sz;
 	bfree = p+1;
 	*p-- = 0;			// trailing 0
-	/*register*/ unsigned long i = ii;
+	/*register*/ size_t i = ii;
 
 	if (w) {
 		do {
@@ -174,7 +174,7 @@ char* dec(long i, int w)
 		sign = 1;
 		i = -i;
 	}	
-	size_t m = sizeof(long)*3;		/* maximum dec digits for a long */
+	size_t m = sizeof(size_t)*3;		/* maximum dec digits for a long */
 	if (w<0 || fld_size<w) w = 0;
 	size_t sz = (w?w:m)+1;
 	/*register*/ char* buf = bfree;

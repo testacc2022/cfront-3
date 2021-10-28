@@ -35,10 +35,10 @@ static const char* temp(const char* vn, Pname fn)
 //
 {
 	if (vn[0]!='_' || vn[1]!='_' || vn[2]!='X') {
-		unsigned long a = (unsigned long) fn->tp;
+		size_t a = (size_t) fn->tp;
 
 		// al = the number of radix-32 chars in a
-		unsigned long aa = a;
+		size_t aa = a;
 		int al = 0;
 		while (aa) {
 			al++;

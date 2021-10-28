@@ -1,6 +1,6 @@
 /*ident	"@(#)cls4:src/Bits.h	1.4" */
 /*******************************************************************************
- 
+
 C++ source for the C++ Language System, Release 3.0.  This product
 is a new release of the original cfront developed in the computer
 science research center of AT&T Bell Laboratories.
@@ -19,7 +19,7 @@ any actual or intended publication of such source code.
 
 #include "Block.h"
 
-typedef unsigned long Bits_chunk;
+typedef size_t Bits_chunk;
 static const int Bits_shift_ATTLC = 5;
 static const int Bits_len_ATTLC = 1 << Bits_shift_ATTLC;
 static const int Bits_mask_ATTLC = Bits_len_ATTLC - 1;
@@ -29,15 +29,15 @@ Blockdeclare(Bits_chunk)
 class Bits {
 private:
 	Block(Bits_chunk) b;
-	unsigned n;
+	size_t n;
 
 	// the chunk number that contains bit n
-	unsigned chunk(unsigned n) const {
+	size_t chunk(size_t n) const {
 		return n >> Bits_shift_ATTLC;
 	}
 
 	// the number of chunks needed to contain an n-bit string
-	unsigned bound(unsigned n) const {
+	size_t bound(size_t n) const {
 		return (n + Bits_len_ATTLC - 1) >> Bits_shift_ATTLC;
 	}
 
@@ -62,9 +62,9 @@ private:
 
 public:
 	Bits() { n = 0; }
-	Bits(Bits_chunk, unsigned = 1);
-	unsigned size() const { return n; }
-	unsigned size(unsigned);
+	Bits(Bits_chunk, size_t = 1);
+	size_t size() const { return n; }
+	size_t size(size_t);
 	friend Bits operator& (const Bits&, const Bits&);
 	friend Bits operator| (const Bits&, const Bits&);
 	friend Bits operator^ (const Bits&, const Bits&);
@@ -84,12 +84,12 @@ public:
 	Bits& operator>>= (int);
 	Bits& compl4();
 	Bits& concat(const Bits&);
-	Bits& set(unsigned i) {
+	Bits& set(size_t i) {
 		if (i < n)
 			b[chunk(i)] |= Bits_chunk(1) << (i&Bits_mask_ATTLC);
 		return *this;
 	}
-	Bits& set(unsigned i, unsigned long x) {
+	Bits& set(size_t i, size_t x) {
 		if (i < n) {
 			/*register*/ Bits_chunk* p = &b[chunk(i)];
 			/*register*/ Bits_chunk mask = Bits_chunk(1) << (i&Bits_mask_ATTLC);
@@ -100,26 +100,26 @@ public:
 		}
 		return *this;
 	}
-	Bits& reset(unsigned i) {
+	Bits& reset(size_t i) {
 		if (i < n)
 			b[chunk(i)] &= ~(Bits_chunk(1) << (i&Bits_mask_ATTLC));
 		return *this;
 	}
-	Bits& compl4(unsigned i) {
+	Bits& compl4(size_t i) {
 		if (i < n)
 			b[chunk(i)] ^= Bits_chunk(1) << (i&Bits_mask_ATTLC);
 		return *this;
 	}
-	unsigned count() const;
+	size_t count() const;
 	operator Bits_chunk() const;
-	int operator[] (unsigned i) const {
+	int operator[] (size_t i) const {
 		if (i >= n)
 			return 0;
 		else
 			return (b[chunk(i)] >> (i&Bits_mask_ATTLC)) & 1;
 	}
-	unsigned signif() const;
-	unsigned trim() { return size(signif()); }
+	size_t signif() const;
+	size_t trim() { return size(signif()); }
 };
 
 inline int

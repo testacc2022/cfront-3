@@ -213,7 +213,8 @@ classdef::same_class(Pclass pc,int access)
 {
 
 // error('d',"%t->same_class(%t, %d)",this,pc,access);
-	if (this == 0 || pc == 0 ) return false;
+	if (this == 0) return false;
+	if (pc == 0 ) return false;
 	if (this == pc) return true;
 
 	if (class_base==VANILLA && pc->class_base==VANILLA)

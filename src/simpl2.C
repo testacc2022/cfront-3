@@ -929,7 +929,8 @@ void expr::simpl()
 	});
 // error('d',"%d->expr::simpl() %k",this,this?base:0);
 
-	if (this==0 || permanent==2) return;	// already expanded
+	if (this==0) return;	// already expanded
+	if (permanent==2) return;	// already expanded
 	static TOK obase = 0;
 
 //error('d',"expr::simpl()"); display_expr(this,"e");

@@ -66,9 +66,9 @@ friend class pnd;
 friend int	__insert_new_array(KEYTYP addr, size_t count);
 	inline void*	operator new(size_t);
 	inline void	operator delete(void* p, size_t s);
-		inline RECORD(unsigned long k, size_t cnt);
+		inline RECORD(size_t k, size_t cnt);
 		inline ~RECORD();
-	unsigned long	key;	// rotated address of array
+	size_t	key;	// rotated address of array
 	size_t	count;  // number of elements of array
 };
 
@@ -114,7 +114,7 @@ RECORD::operator delete(void* p, size_t)
 }
 
 inline
-RECORD::RECORD(unsigned long k, size_t cnt)
+RECORD::RECORD(size_t k, size_t cnt)
 : key(k), count(cnt)
 {}
 
@@ -237,11 +237,11 @@ pnd_internal_node::pnd_internal_node()
 int
 pnd::insert(KEYTYP addr, size_t cnt)
 {
-	register unsigned long	mask = MASK_BITS;
-	register unsigned long	key = (unsigned long)addr & LOW_MASK;
+	register size_t	mask = MASK_BITS;
+	register size_t	key = (size_t)addr & LOW_MASK;
 	if (key)
-		key <<= BITS(long) - LOW_BITS;
-	key |= (unsigned long)addr >> LOW_BITS;
+		key <<= BITS(size_t) - LOW_BITS;
+	key |= (size_t)addr >> LOW_BITS;
 	RECORD*	new_rec = new RECORD(key, cnt);
 	register int	unshift = 0;
 	register pnd_internal_item*	itemp = &contents;
@@ -272,9 +272,9 @@ pnd::insert(KEYTYP addr, size_t cnt)
 	}
 	// assert(itemp->is_leaf());
 	RECORD*	temp = itemp->external_leaf();
-	unsigned long	other_key = temp->key;
+	size_t	other_key = temp->key;
 	// assert(other_key != key);
-	unsigned long	ind1, ind2;
+	size_t	ind1, ind2;
 	for (;; mask <<= DIGIT_SIZE, unshift += DIGIT_SIZE) {
 		nodep = new pnd_internal_node;
 		if (nodep == 0)
@@ -299,11 +299,11 @@ pnd::remove(KEYTYP addr)
 	pnd_internal_item*	curr_pos[POSITIONS];
 	int	curr_depth;
 	if (addr == 0) return -1;
-	register unsigned long	mask = MASK_BITS;
-	register unsigned long	key = (unsigned long)addr & LOW_MASK;
+	register size_t	mask = MASK_BITS;
+	register size_t	key = (size_t)addr & LOW_MASK;
 	if (key)
-		key <<= BITS(long) - LOW_BITS;
-	key |= (unsigned long)addr >> LOW_BITS;
+		key <<= BITS(size_t) - LOW_BITS;
+	key |= (size_t)addr >> LOW_BITS;
 	register int	unshift = 0;
 	register pnd_internal_item*	itemp = &contents;
 	register pnd_internal_node*	nodep = 0;

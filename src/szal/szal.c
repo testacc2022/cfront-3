@@ -45,7 +45,7 @@ struct ss {
 	double a4; char c4;
 	float f1;
 	double a6; char c5;
-	double d1;
+	long double d1;
 	double a7; char c6;
 	char* p1;
 	double a8; char c7;
@@ -132,7 +132,7 @@ int main()
 	out("#define DSZ_DOUBLE",sizeof(double));
 	out("#define DAL_DOUBLE",(size_t)&oo.d1-(size_t)&oo.c5);
 	/*  next two should just be repeats of above two */
-	out("#define DSZ_LDOUBLE",sizeof(double));
+	out("#define DSZ_LDOUBLE",sizeof(long double));
 	out("#define DAL_LDOUBLE",(size_t)&oo.d1-(size_t)&oo.c5);
 	i = 1<<(sizeof(char*)*i1-2); 
 	if (i<400*1024L)

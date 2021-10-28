@@ -14,7 +14,8 @@ Laboratories, Inc.  The copyright notice above does not evidence
 any actual or intended publication of such source code.
 
 *******************************************************************************/
-
+#ifndef _CFRONT_TYPEDEF_H
+#define _CFRONT_TYPEDEF_H
 typedef unsigned char TOK;
 typedef unsigned char bit;	// sometimes used as bits
 typedef class node * PP;
@@ -54,4 +55,12 @@ typedef class elist * Pelist;
 typedef class virt * Pvirt;
 typedef char* Pchar;
 typedef const char* CPchar;
+#ifdef WIN32
+typedef long long ssize_t;
+typedef unsigned long long size_t;
+#else
+typedef long ssize_t;
+typedef unsigned long size_t;
+#endif
 
+#endif //_CFRONT_TYPEDEF_H

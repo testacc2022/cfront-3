@@ -24,6 +24,7 @@
 #define	F_SETLK	6	/* Set file lock */
 #define	F_SETLKW	7	/* Set file lock and wait */
 
+#if !(defined(WIN32) || defined(__MSYS__))
 /* file segment locking set data type - information passed to system by user */
 struct flock {
 	short	l_type;
@@ -33,7 +34,7 @@ struct flock {
         short   l_pid;
         short   l_sysid;
 };
-
+#endif
 /* file segment locking types */
 	/* Read lock */
 #define	F_RDLCK	01

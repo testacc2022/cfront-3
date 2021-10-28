@@ -1,6 +1,6 @@
 /*ident	"@(#)cls4:src/tree_walk.h	1.5" */
 /*******************************************************************************
- 
+
 C++ source for the C++ Language System, Release 3.0.  This product
 is a new release of the original cfront developed in the computer
 science research center of AT&T Bell Laboratories.
@@ -35,7 +35,7 @@ enum tree_node_action {
 /* procedural interface to indirect via a pointer. */
 typedef int (*tree_fetch_proc) (void * info,
 				void * pointer,
-				unsigned long length,
+				size_t length,
 				int zero_stop,  /* for character strings.*/
 				void * target);
 
@@ -52,12 +52,12 @@ class tree_walk_tree {
    node in the hash table to short-circuit meeting it again */
 
 typedef void (*tree_pre_action)
-    (Pnode&, node_class, void *, tree_node_action&, int, Pnode, 
+    (Pnode&, node_class, void *, tree_node_action&, int, Pnode,
      tree_walk_tree&, int&);
 
 
 typedef void (*tree_post_action)
-    (Pnode&, node_class, void *, tree_node_action&, int, Pnode, 
+    (Pnode&, node_class, void *, tree_node_action&, int, Pnode,
      tree_walk_tree&);
 
 typedef void (*errorp) (char, const char *);
@@ -75,7 +75,7 @@ class tree_walk_control {
 				 more than one call to the walker. */
     int resolve_by_name;
     int alloc_stack_bytes;
-    /* if on, n_list and s_list are ignored for the very top node. 
+    /* if on, n_list and s_list are ignored for the very top node.
        this is for the benefit of the printer. */
     int dont_chase_lists_top;
     tree_walk_control () {

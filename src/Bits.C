@@ -1,6 +1,6 @@
 /*ident	"@(#)cls4:src/Bits.c	1.5" */
 /*******************************************************************************
- 
+
 C++ source for the C++ Language System, Release 3.0.  This product
 is a new release of the original cfront developed in the computer
 science research center of AT&T Bell Laboratories.
@@ -25,7 +25,7 @@ any actual or intended publication of such source code.
 
 Blockimplement(Bits_chunk)
 
-Bits::Bits(/*register*/ Bits_chunk val, /*register*/ unsigned ct)
+Bits::Bits(/*register*/ Bits_chunk val, /*register*/ size_t ct)
 {
 	if (ct < Bits_len_ATTLC) {
 		/*register*/ Bits_chunk mask = ~Bits_chunk(0) << ct;
@@ -38,10 +38,10 @@ Bits::Bits(/*register*/ Bits_chunk val, /*register*/ unsigned ct)
 		*((Bits_chunk*)b) = val;
 }
 
-unsigned
-Bits::size(unsigned x)
+size_t
+Bits::size(size_t x)
 {
-	unsigned newsize = bound(x);
+	size_t newsize = bound(x);
 	if (b.size() != newsize)
 		b.size(newsize);
 	n = b.size()? x: 0;
@@ -119,15 +119,15 @@ Bits::compl4()
 	return *this;
 }
 
-unsigned
+size_t
 Bits::count() const
 {
 	/*register*/ const Bits_chunk* p = b;
 	/*register*/ const Bits_chunk* lim = limit();
-	/*register*/ unsigned r = 0;
+	/*register*/ size_t r = 0;
 
 	while (p < lim) {
-		/*register*/ unsigned long x = *p++;
+		/*register*/ size_t x = *p++;
 		/*register*/ int i = Bits_len_ATTLC;
 
 		while (--i >= 0) {
@@ -390,7 +390,7 @@ Bits::operator>>= (int k)
 }
 
 // How many significant bits?
-unsigned
+size_t
 Bits::signif() const
 {
 	if (size() == 0)

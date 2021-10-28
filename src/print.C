@@ -1,6 +1,6 @@
 /*ident	"@(#)cls4:src/print.c	1.21" */
 /*******************************************************************************
- 
+
 C++ source for the C++ Language System, Release 3.0.  This product
 is a new release of the original cfront developed in the computer
 science research center of AT&T Bell Laboratories.
@@ -26,8 +26,8 @@ extern void puttok(TOK);
 
 #define eprint(e) if (e) Eprint(e)
 
-static long lab_cnt = 0;
-static long curr_lab = 0;
+static ssize_t lab_cnt = 0;
+static ssize_t curr_lab = 0;
 
 void Eprint(Pexpr e)
 {
@@ -119,7 +119,7 @@ void expr::print()
 			break;
 		case 5:
 			not_allocated = 1;
-			// no break;	
+			// no break;
 		case 3:
 			if (mem->tp->is_ptr_or_ref()==0) {
 				putch('(');	// Px is a pointer (T*) turn it back to a T
@@ -140,7 +140,7 @@ void expr::print()
 				if (not_allocated) {
 					putch('(');
 					mem->print();
-					if ( m == NAME || m == ANAME || m==REF ) 
+					if ( m == NAME || m == ANAME || m==REF )
 						puttok(REF);
 					else
 						puttok(DOT);
@@ -246,7 +246,7 @@ void expr::print()
 //error('d',"icall %n",il->fct_name);
 		eprint(e1);
 		if (e2) {
-			long save = curr_lab;
+			ssize_t save = curr_lab;
 			curr_lab = ++lab_cnt;
 			Pstmt(e2)->print();
 			curr_lab = save;
@@ -293,7 +293,7 @@ void expr::print()
 				putstring((cl->csu == UNION)?"union ":"struct ");
 				char *str = 0;
 				// nested local class does not encode name
-				if ( cl->lex_level && cl->nested_sig == 0 ) 
+				if ( cl->lex_level && cl->nested_sig == 0 )
 					str = cl->local_sig;
 		//		putstring(str?str:(cl->nested_sig?cl->nested_sig:cl->string));
 				if (str)
@@ -331,7 +331,7 @@ void expr::print()
 			tp2->print();
 			TCast=0;
 			Cast = oc;
-			putch(')');	
+			putch(')');
 		}
 		eprint(e1);
 		putch(')');
@@ -363,7 +363,7 @@ void expr::print()
 	case TEXT:
 	{
 		int oo = vtbl_opt;	// make `simulated static' name
-		vtbl_opt = -1;	
+		vtbl_opt = -1;
 		char* s = vtbl_name(string,string2);
 		vtbl_opt = oo;
 		s[2] = 'p';	// pointer, not tbl itself
@@ -372,7 +372,7 @@ void expr::print()
 		delete[] t;
 
 		char *str = 0;
-		if ( string ) { 
+		if ( string ) {
 			str = new char[ strlen(string) + strlen(string2) + 1 ];
 			strcpy( str, string );
 			strcat( str, string2 );
@@ -498,8 +498,8 @@ void expr::print()
 						m_ptr == 0
 						&&
 						(
-							t->is_ptr()==0 
-							|| 
+							t->is_ptr()==0
+							||
 							Mptr==0
 						)
 					) {
@@ -517,7 +517,7 @@ void expr::print()
 						}
 						else {
 #endif
-						if (ex->tp->is_cl_obj() && 
+						if (ex->tp->is_cl_obj() &&
 						   ((ex->base!=NAME && ex->base!=ANAME) || Pname(ex)->n_xref==0) &&	// beware of reference arguments
 						   (t->is_ptr()||t->is_ref())) {
 						   // trying to cast a class object to its pointer type
@@ -550,7 +550,7 @@ void expr::print()
 				if (e) {
 					puttok(CM);
 					e->print();
-				}		 
+				}
 			}
 			else
 				e2->print();
@@ -614,14 +614,14 @@ void expr::print()
 				if (
 					e2->tp==0
 					||
-					( !ansi_opt 
-					  && 
+					( !ansi_opt
+					  &&
 					  Pptr(t1)->typ
-					  && 
+					  &&
 					  Pptr(t1)->typ->skiptypedefs()->base==VEC
-					  && 
-					  e2->base != G_CAST 
-					  && 
+					  &&
+					  e2->base != G_CAST
+					  &&
 					  e2->base != CAST
 					)
 					||
@@ -643,7 +643,7 @@ void expr::print()
 					Cast = 1;
 					e1->tp->print();
 					Cast = oc;
-					putch(')');	
+					putch(')');
 				}
 			}
 			}
@@ -825,7 +825,7 @@ void expr::print()
 		case ASSIGN:		// &(a=b)	??? works on many cc s
 			eprint(e2);	// make sure it breaks!
 			return;
-                case ANAME:             
+                case ANAME:
 		case NAME: {
                         Pname n = Pname (e2);
 
@@ -844,10 +844,10 @@ void expr::print()
 				eprint (e2);
 				return;
 			}
-			if (!ansi_opt && (e2->tp && 
+			if (!ansi_opt && (e2->tp &&
 				e2->tp->skiptypedefs()->base==VEC ) ) {
 			  //no "ADDROF" ('&') if not ANSI C generation.
-                          eprint(e2);  
+                          eprint(e2);
   			  return;
                         }
 			break;
@@ -855,14 +855,14 @@ void expr::print()
 		}
 
 		// suppress cc warning on &fct
-		if ((e2->base != ADDROF && e2->base != G_ADDROF) && 
+		if ((e2->base != ADDROF && e2->base != G_ADDROF) &&
 		    (e2->tp==0 || (e2->tp->base!=FCT && e2->tp->base!=OVERLOAD)))
 			puttok(ADDROF);
 		if (e2->tp && e2->tp->base==OVERLOAD)
 			e2->tp = Pfct((Pgen(e2->tp)->fct_list->f)->tp);
 
 		eprint(e2);
-                }               
+                }
 		break;
 
 	case PLUS:
@@ -1080,7 +1080,7 @@ DB(if(Pdebug>=4)display_expr(e,"SM_e"););
 //error('d',"print return rt %t etp %t",ret_tp,e->tp);
 			if (ret_tp && ret_tp!=e->tp) {
 				Ptype tt = ret_tp->skiptypedefs();
-			
+
 				switch (tt->base) {
 				case COBJ:
 					break;	// cannot cast to struct
@@ -1322,7 +1322,7 @@ static ptbl_rec* ptbl_rec_pair_head = 0;
 void ptbl_init(int flag)
 {
 	if (!flag) {
-		char *p = st_name( "__ptbl_vec__" );	
+		char *p = st_name( "__ptbl_vec__" );
 		ptbl_name = new char[strlen(p)+1];
 		strcpy(ptbl_name, p);
 		delete[] p;
@@ -1374,7 +1374,7 @@ char* ptbl_lookup(const char *name)
 		s->vname = 0;
 		s->next = 0;
 		strcpy(s->pname, name);
-		if (ptbl_rec_lookup_head == 0) 
+		if (ptbl_rec_lookup_head == 0)
 			ptbl_rec_lookup_head = s;
 		else
 			r->next = s;
