@@ -474,6 +474,16 @@ inline Pname Ncopy(Pname n)
 #undef SM_PARAM
 #undef PTNAME
 #undef NEW_INIT_KLUDGE
+
+/*Forward declarations*/
+static void arg_redec( Pname fn );
+static void hoist_al();
+static Pname enumcheck( Pname n );
+static void check_tag();
+static bit check_if_base( Pclass c1, Pclass c2 );
+static Pname dummy_dtor( TOK q, TOK d );
+static Pname dummy_dtor();
+
 %}
 
 %union {
@@ -2338,11 +2348,11 @@ statement	:  simple sm
 				--scdp;
 				$$ = new estmt(SWITCH,$<l>1,$<pe>3,$<ps>4);
 			}
-		|  ID COLON { $$ = $1; stmt_seen=1; } caselab_stmt
+		|  ID COLON { $<pn>$ = $1; stmt_seen=1; } caselab_stmt
 			{	Pname n = $<pn>3;
 				$$ = new lstmt(LABEL,n->where,n,$<ps>4);
 			}
-		|  TNAME COLON { $$ = new name($<pn>1->string); stmt_seen=1; } caselab_stmt
+		|  TNAME COLON { $<pn>$ = new name($<pn>1->string); stmt_seen=1; } caselab_stmt
 			{	Pname n = $<pn>3;
 				$$ = new lstmt(LABEL,n->where,n,$<ps>4);
 			}
