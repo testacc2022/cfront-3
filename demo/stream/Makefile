@@ -30,9 +30,10 @@ run: $(ALL)
 	chmod +x ./runtests
 	./runtests $(NAMES)
 
-lengthdemo.E: ./lengthdemo.h ./lengthdemo.C
-	$(CC) $(CCFLAGS) -o lengthdemo.E  ./lengthdemo.C 
+lengthdemo.E: ./lengthdemo.h ./lengthdemo.cpp
+	$(CC) $(CCFLAGS) -o lengthdemo.E  ./lengthdemo.cpp 
 
 clean:
 	rm -f ./*.E
 	rm -f ./*.o
+	rm -f ./*.c

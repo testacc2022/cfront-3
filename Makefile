@@ -3,7 +3,7 @@
 #	and set CCFLAGS=-DBSD
 #	also set BSD=1
 
-CCFLAGS=-Os
+CCFLAGS=-Os -g
 scratchCC ?= gcc
 
 BSD=
@@ -40,14 +40,14 @@ scratch: always
 #files.  This is used to port to another machine.
 
 fillscratch:
-	make -C src szal.result y.tab.C yystype.h
+	make -C src szal.result y.tab.cpp yystype.h
 	cp src/_stdio.c scratch/src/
-	cd scratch/src; $(CC) -I../../src         -I../../incl -Fc -..c ../../src/*.C;
-	cd scratch/lib; $(CC) -I../../lib/complex -I../../incl -Fc -..c ../../lib/new/*.C
-	cd scratch/lib; $(CC) -I../../lib/complex -I../../incl -Fc -..c ../../lib/static/*.C
+	cd scratch/src; $(CC) -I../../src         -I../../incl -Fc -..c ../../src/*.cpp;
+	cd scratch/lib; $(CC) -I../../lib/complex -I../../incl -Fc -..c ../../lib/new/*.cpp
+	cd scratch/lib; $(CC) -I../../lib/complex -I../../incl -Fc -..c ../../lib/static/*.cpp
 	cp _munch/*.c scratch/mnch/
 
-always:	
+always:
 
 clean:
 	$(MAKE) -C src clean

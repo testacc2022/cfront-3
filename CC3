@@ -11,7 +11,7 @@
 # Copyright (c) 1984, 1989, 1990 AT&T.  All Rights Reserved.
 #
 # THIS IS UNPUBLISHED PROPRIETARY SOURCE CODE of AT&T and UNIX System
-#	
+#
 # Laboratories, Inc.  The copyright notice above does not evidence
 # any actual or intended publication of such source code.
 #
@@ -37,12 +37,13 @@
 
 	I=$CF/incl
 	LIBRARY=$CF/libC.a
-	
+
 	TINYCC=$(which tcc)
 	if test -z "$TINYCC"
 	then
-	  ccC="gcc -w"
-	  cppC="gcc -Du3b -U__GNUC__ -D__cfront__ -D__cplusplus=1 -D__signed__= -D__null=0 -E"
+	  #ccC="gcc -w"
+	  ccC="gcc"
+	  cppC="gcc -std=c++98 -Du3b -U__GNUC__ -D__cfront__ -D__cplusplus=1 -D__signed__= -D__null=0 -E"
 	else
 	  ccC="tcc -w"
 	  cppC="tcc -Du3b -U__GNUC__ -D__cfront__ -D__cplusplus=1 -D__signed__= -D__null=0 -E"
@@ -101,7 +102,7 @@ DEMANGLE=${DEMANGLE-1}
 LIB_ID=${LIB_ID-C}
 
 # C++ runtime library
-LIBRARY=${LIBRARY--l${LIB_ID}} 
+LIBRARY=${LIBRARY--l${LIB_ID}}
 
 if test "$CCROOTDIR" != "" ;then
 	CCROOTDIR="$CCROOTDIR/"
@@ -123,7 +124,7 @@ else
 	# location of nm
 	NM=${NM-nm}
 	# NMFLAGS should be set to the options required to produce
-	# BSD or SysV.3 style nm output.  Typically this involves 
+	# BSD or SysV.3 style nm output.  Typically this involves
 	# specifying -p as an option (for example, on HP or SysV.4 systems).
 	NMFLAGS=${NMFLAGS-}
 fi
@@ -336,7 +337,7 @@ do
 		;;
 	-YI*)	X="$X $A"
 		;;
-	-Y0*)	X="$X $A" 
+	-Y0*)	X="$X $A"
 		;;
 	-Y2*)	X="$X $A"
 		;;
@@ -381,7 +382,7 @@ do
 		else    echo "CC: -fs not available (ignoring -fs)" 1>&2
 		fi
 		;;
-	-I*) 	if test "$A" != "-I" 
+	-I*) 	if test "$A" != "-I"
 		then
 		  	Y="$Y $A"
 		else
@@ -491,7 +492,7 @@ for A do
 	-H)	;;
         -D*)    ;;
         -U)     ;;
-        -I*)    if test "$A" = "-I" 
+        -I*)    if test "$A" = "-I"
                 then
                         ION=1
                 fi
@@ -518,7 +519,7 @@ for A do
 	-r)	DASHR=1
 		Z="$Z $A"
 		;;
-	-o*)	if test "$A" != "-o" 
+	-o*)	if test "$A" != "-o"
 		then
 			OO=`expr $A : '-o\(.*\)'`
 			FINALNAME=$OO
@@ -533,18 +534,18 @@ for A do
 		;;
 	-.*)	SUF=`expr "$A" : '-\(.*\)'`
 		;;
-	*.[Cc])	if	test -f $A
+	*.cpp)	if	test -f $A
 		then
 			case $A in
 				*.c) B=`basename $A .c`; CXX_FILE=0 ;;
-				*.C) B=`basename $A .C`; CXX_FILE=1 ;;
+				*.cpp) B=`basename $A .cpp`; CXX_FILE=1 ;;
 			esac
 
 			if	test $PON
 			then
 				if test $SUF
 				then
-					echo "$cppC $O  $A > $B$SUF:" 1>&2
+					echo "Line x1: $cppC $O  $A > $B$SUF:" 1>&2
 					eval '$cppC' '$Y' $deflist '$CPLUS' '$cPLUS' '$SYS' '$IDIRS' '$A' \>$B$SUF
 					E=$?
 				else
@@ -569,9 +570,10 @@ for A do
 						echo "CC: cpp failure: $E" 1>&2
 						AFAIL=1; break
 					fi
+					echo "Line x2: $cfrontC ${LINE_OPT} +f$A $O $AON <$TEMPDIR/cpptmp >$B$SUF"
 					$cfrontC ${LINE_OPT} +f$A $O $AON <$TEMPDIR/cpptmp >$B$SUF
 					E=$?
-				else	
+				else
 					eval '$cppC' '$Y' $deflist '$CPLUS' '$cPLUS' '$SYS' '$IDIRS' '$A' \>$TEMPDIR/cpptmp
 					E=$?
 					if test $E -ne 0
@@ -579,7 +581,8 @@ for A do
 						echo "CC: cpp failure: $E" 1>&2
 						AFAIL=1; break
 					fi
-					$cfrontC ${LINE_OPT} +f$A $O $AON <$TEMPDIR/cpptmp 
+					echo "Line x3: $cfrontC ${LINE_OPT} +f$A $O $AON <$TEMPDIR/cpptmp"
+					$cfrontC ${LINE_OPT} +f$A $O $AON <$TEMPDIR/cpptmp
 					E=$?
 				fi
 				case $E in
@@ -624,13 +627,16 @@ for A do
 					echo '@none' > $x
 					x="+T$x +s"
 				fi
-				$cfrontC ${LINE_OPT} +f$A $x +t$TEMPDIR/ptcf $O $AON <$TEMPDIR/cpptmp >$TEMPDIR/$B$ISUF
+				echo "Line x4: $cfrontC ${LINE_OPT} +f$A $x +t$TEMPDIR/ptcf $O $AON <$TEMPDIR/cpptmp >$TEMPDIR/$B$ISUF"
+				#myvalgrind 
+                                $cfrontC ${LINE_OPT} +f$A $x +t$TEMPDIR/ptcf $O $AON <$TEMPDIR/cpptmp >$TEMPDIR/$B$ISUF
+				#cp $TEMPDIR/$B$ISUF .
 				E=$?
 				R=1
 				C="$C $TEMPDIR/$B$ISUF"
 				case $E in
 				0)	X="$X $B$ISUF"
-					#if test "$NOLOAD" != ".c" 
+					#if test "$NOLOAD" != ".c"
 					#then
 						Z="$Z $TEMPDIR/$B.o"
 					#fi
@@ -749,22 +755,24 @@ for A do
 					#	echo "CC: cpp failure: $E" 1>&2
 					#	AFAIL=1; break
 					#fi
-					#$cfrontC +L +f$A $O $AON <$TEMPDIR/cpptmp 
+					#$cfrontC +L +f$A $O $AON <$TEMPDIR/cpptmp
+					echo "Line x5: $cfrontC ${LINE_OPT} +f$A $O $AON < $A"
 					$cfrontC ${LINE_OPT} +f$A $O $AON < $A
 					if test $? -ne 0
 					then
 						AFAIL=1
 					fi
-				else	
+				else
 					B=`basename $A .i`
 					echo "CC $O $A:" 1>&2
+					echo "Line x6: $cfrontC ${LINE_OPT} +f$A $O $AON < $A > $TEMPDIR/$B$ISUF"
 					$cfrontC ${LINE_OPT} +f$A $O $AON < $A > $TEMPDIR/$B$ISUF
 					E=$?
 					R=1
 					C="$C $TEMPDIR/$B$ISUF"
 					case $E in
 					0)	X="$X $B$ISUF"
-						#if test "$NOLOAD" != "-c" 
+						#if test "$NOLOAD" != "-c"
 						#then
 							Z="$Z $TEMPDIR/$B.o"
 						#fi
@@ -786,7 +794,7 @@ for A do
 		X="$X $B.s"
 		cp $A $TEMPDIR/$B.s
 		APASS=1
-		#if test "$NOLOAD" != "-c" 
+		#if test "$NOLOAD" != "-c"
 		#then
 			# add object entry to the load list
 			Z="$Z $TEMPDIR/$B.o"
@@ -818,9 +826,9 @@ for A do
                 done
 		# Z="$Z $LPPEXPAND"
 		# X="$X $LPPEXPAND"
-                ;;  
+                ;;
 	*)	if test $XON
-		then	
+		then
 			O="$O +x$A"
 			PTLISTC="$PTLISTC +x$A"
 			XON=""
@@ -862,11 +870,12 @@ case $APASS in
 		#remove #line's from the ..c's for sdb
 		for f in $C
 		do
-			sed "/^#/d" $f >$TEMPDIR/temp
+			#sed "/^#/d" $f >$TEMPDIR/temp
+			cat $f >$TEMPDIR/temp
 			mv $TEMPDIR/temp $f 2> /dev/null
 		done
 	fi
-	
+
 	#if one file failed in cpp or cfront then do not create a.out
 	if test $AFAIL -eq 1
 	then
@@ -875,7 +884,7 @@ case $APASS in
 			NOLOAD=".o"
 			NLO="-c"
 		fi
-	fi 
+	fi
 
 	if test "$NOLOAD"
 	then
@@ -895,7 +904,7 @@ case $APASS in
 				if test -s $TEMPDIR/_lsout_
 				then
 					# if -c and -o were both specified,
-					# and only one source file was 
+					# and only one source file was
 					# specified, put the resulting .o in
 					# the file specified with the -o option
 					if test "$NOLOAD" != "" -a "$OON" -a "$dotCcount" -lt 2; then
@@ -909,7 +918,7 @@ case $APASS in
 		fi
 	else
 		echo "$ccC $EL $P $LLIBPATH $OF $X $LIBRARY" 1>&2
-		
+
 		# run cc on the cfront-generated files.
 		# first have to remove .o's from the argument list
 		# passed to cc, since some cc's don't like .o's with -c
@@ -934,7 +943,7 @@ case $APASS in
 		else
 			EE=0	# okay to link
 		fi
-		
+
 		case $EE in
 		0) # load
 			#echo "$ccC $P $LLIBPATH $Z $LIBRARY"
@@ -1081,7 +1090,7 @@ case $APASS in
 				PATCH)
 					$patchC $OO
 					EE=$?
-					if test $EE != 0 
+					if test $EE != 0
 					then
 					echo "CC: error: patch failed in handling static constructors or destructors" 1>&2
 					fi
@@ -1104,7 +1113,7 @@ case $APASS in
 					else
 					  EE=1
 					fi
-					if test $EE != 0 
+					if test $EE != 0
 					then
 					echo "CC: error: munch failed in handling static constructors or destructors" 1>&2
 					fi
@@ -1122,9 +1131,9 @@ case $APASS in
 					strip $OO
 				fi
 			fi
-			COUNT=0 
+			COUNT=0
 			for A in $X
-			do 
+			do
 			   COUNT="`expr $COUNT + 1`"
 			done
 			if test $COUNT -gt 1

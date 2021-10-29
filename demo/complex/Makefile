@@ -75,9 +75,9 @@ democomplex: run
 
 $(OBJECTS):
 
-.SUFFIXES:	.C .E
+.SUFFIXES:	.cpp .E
 
-.C.o:
+.cpp.o:
 	$(CCC) $(CCFLAGS) -c $<
 
 .o.E:
@@ -87,3 +87,4 @@ clean:
 	rm -f $(ALL)
 	rm -f $(OBJECTS)
 	rm -f *.out
+	rm -f *.c

@@ -10,7 +10,7 @@
 # Copyright (c) 1984, 1989, 1990 AT&T.  All Rights Reserved.
 #
 # THIS IS UNPUBLISHED PROPRIETARY SOURCE CODE of AT&T and UNIX System
-#	
+#
 # Laboratories, Inc.  The copyright notice above does not evidence
 # any actual or intended publication of such source code.
 #
@@ -18,7 +18,7 @@
 O_COMPLEX	=	abs.o arg.o cos.o error.o exp.o io.o log.o oper.o \
 			polar.o pow.o sin.o sqrt.o
 CC	=	../../../CC
-CCFLAGS	= -DPRAGMATIC -I../../../incl
+CCFLAGS	= -Wall -DPRAGMATIC -I../../../incl
 
 libcomplex.a:	$(O_COMPLEX)
 	ar r libcomplex.a $(O_COMPLEX)
@@ -38,41 +38,41 @@ libcomplex_p.a:	$(O_COMPLEX)
 	ar r libcomplex_p.a $(O_COMPLEX)
 	if test "$(BSD)" ; then ranlib libcomplex_p.a; fi
 
-abs.o:	../complex/abs.C
-	$(CC) $(CCFLAGS) -I../complex -c ../complex/abs.C
+abs.o:	../complex/abs.cpp
+	$(CC) $(CCFLAGS) -I../complex -c ../complex/abs.cpp
 
-arg.o:	../complex/arg.C
-	$(CC) $(CCFLAGS) -I../complex -c ../complex/arg.C
+arg.o:	../complex/arg.cpp
+	$(CC) $(CCFLAGS) -I../complex -c ../complex/arg.cpp
 
-cos.o:	../complex/cos.C
-	$(CC) $(CCFLAGS) -I../complex -c ../complex/cos.C
+cos.o:	../complex/cos.cpp
+	$(CC) $(CCFLAGS) -I../complex -c ../complex/cos.cpp
 
-error.o:	../complex/error.C
-	$(CC) $(CCFLAGS) -I../complex -c ../complex/error.C
+error.o:	../complex/error.cpp
+	$(CC) $(CCFLAGS) -I../complex -c ../complex/error.cpp
 
-exp.o:	../complex/exp.C
-	$(CC) $(CCFLAGS) -I../complex -c ../complex/exp.C
+exp.o:	../complex/exp.cpp
+	$(CC) $(CCFLAGS) -I../complex -c ../complex/exp.cpp
 
-io.o:	../complex/io.C
-	$(CC) $(CCFLAGS) -I../complex -c ../complex/io.C
+io.o:	../complex/io.cpp
+	$(CC) $(CCFLAGS) -I../complex -c ../complex/io.cpp
 
-log.o:	../complex/log.C
-	$(CC) $(CCFLAGS) -I../complex -c ../complex/log.C
+log.o:	../complex/log.cpp
+	$(CC) $(CCFLAGS) -I../complex -c ../complex/log.cpp
 
-oper.o:	../complex/oper.C
-	$(CC) $(CCFLAGS) -I../complex -c ../complex/oper.C
+oper.o:	../complex/oper.cpp
+	$(CC) $(CCFLAGS) -I../complex -c ../complex/oper.cpp
 
-polar.o:	../complex/polar.C
-	$(CC) $(CCFLAGS) -I../complex -c ../complex/polar.C
+polar.o:	../complex/polar.cpp
+	$(CC) $(CCFLAGS) -I../complex -c ../complex/polar.cpp
 
-pow.o:	../complex/pow.C
-	$(CC) $(CCFLAGS) -I../complex -c ../complex/pow.C
+pow.o:	../complex/pow.cpp
+	$(CC) $(CCFLAGS) -I../complex -c ../complex/pow.cpp
 
-sin.o:	../complex/sin.C
-	$(CC) $(CCFLAGS) -I../complex -c ../complex/sin.C
+sin.o:	../complex/sin.cpp
+	$(CC) $(CCFLAGS) -I../complex -c ../complex/sin.cpp
 
-sqrt.o:	../complex/sqrt.C
-	$(CC) $(CCFLAGS) -I../complex -c ../complex/sqrt.C
+sqrt.o:	../complex/sqrt.cpp
+	$(CC) $(CCFLAGS) -I../complex -c ../complex/sqrt.cpp
 
 clean:
 	-@rm -f $(O_COMPLEX)

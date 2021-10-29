@@ -30,12 +30,13 @@ run : $(ALL)
 	chmod +x ./runtests
 	./runtests $(NAMES)
 
-Vector.E:	Vector.C
-	$(CCC) $(CCFLAGS) -o Vector.E Vector.C
+Vector.E:	Vector.cpp
+	$(CCC) $(CCFLAGS) -o Vector.E Vector.cpp
 
-Generic.E:	Generic.C
-	$(CCC) $(CCFLAGS) -o Generic.E Generic.C
+Generic.E:	Generic.cpp
+	$(CCC) $(CCFLAGS) -o Generic.E Generic.cpp
 
 clean:
 	rm -f ./*.E
 	rm -f ./*.o
+	rm -f ./*.c
