@@ -97,7 +97,7 @@ extern int perf_opt;
 extern int dtpt_opt;
 extern int se_opt;
 extern int strict_opt;
-extern FILE* out_file;
+extern FILE* out_file; // output file descriptor
 extern FILE* pt_file;
 extern FILE* dtpt_file;
 extern char scan_started;
@@ -1198,7 +1198,6 @@ extern Pblock curr_block;
 extern Pstmt curr_switch;
 extern loc last_line;  // last #line + number of '\n's output since
 extern int last_ll;    // 0 or line of current stmt/dcl being printed
-extern FILE* out_file; // output file descriptor
 extern bit Cast;
 extern bit TCast;
 extern bit simpl_friend; // are we simplifying a friend function
