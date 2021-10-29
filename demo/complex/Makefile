@@ -15,7 +15,7 @@
 #
 ###############################################################################
 CCC	?=	../../CC
-CCFLAGS=-O
+CCFLAGS=-O  -fno-builtin-clog
 L=../..
 LINKOPT=-lcomplex -lm
 LOPT="-L$(L)"

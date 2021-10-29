@@ -15,7 +15,7 @@
 #
 ###############################################################################
 CCC	?=	../../CC
-CCFLAGS = -O -I../..
+CCFLAGS = -O -I../.. -fno-builtin-clog
 
 ALL = Vector.E Generic.E
 NAMES = Vector Generic

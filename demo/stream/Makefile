@@ -15,7 +15,7 @@
 #
 ###############################################################################
 CC=../../CC
-CCFLAGS=-O -I../..
+CCFLAGS=-O -I../.. -fno-builtin-clog
 
 ALL = lengthdemo.E 
 NAMES = lengthdemo

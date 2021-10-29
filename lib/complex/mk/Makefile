@@ -18,7 +18,7 @@
 O_COMPLEX	=	abs.o arg.o cos.o error.o exp.o io.o log.o oper.o \
 			polar.o pow.o sin.o sqrt.o
 CC	=	../../../CC
-CCFLAGS	= -Wall -DPRAGMATIC -I../../../incl
+CCFLAGS	= -Wall -DPRAGMATIC -I../../../incl -fno-builtin-clog
 
 libcomplex.a:	$(O_COMPLEX)
 	ar r libcomplex.a $(O_COMPLEX)

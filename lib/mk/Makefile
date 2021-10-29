@@ -25,7 +25,7 @@ filebuf.o  oldformat.o sbuf.dbp.o swstdio.o ios_compat.o _stdio.o 	# exit.o
 
 OFILES	=	$(O_GENERIC) $(O_NEW) $(O_STATIC) $(O_STREAM)
 CC	=	CC
-override CCFLAGS	=	-O2 -g -I../../incl
+override CCFLAGS	=	-O2 -g -I../../incl -fno-builtin-clog
 
 # have everything depend on this makefile to force recompilation
 # when going from patch to munch
