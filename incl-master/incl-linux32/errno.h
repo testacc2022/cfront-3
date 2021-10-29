@@ -5,8 +5,10 @@
  */
 
 #include <sys/errno.h>
+#if !(defined(WIN32) || defined(__MSYS__))
 #ifdef __cplusplus
 extern "C"
 #endif
 int* _get_errno();
 #define errno (*_get_errno())
+#endif
