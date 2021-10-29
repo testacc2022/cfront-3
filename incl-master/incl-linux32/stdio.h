@@ -5,9 +5,7 @@
 extern "C" {
 #endif
 
-#ifndef __STDDEF_H
 #include <stddef.h>
-#endif
 
 #define	BUFSIZ 1024
 #define	_NFILE 20

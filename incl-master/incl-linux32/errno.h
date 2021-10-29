@@ -5,7 +5,7 @@
  */
 
 #include <sys/errno.h>
-#if !(defined(WIN32) || defined(__MSYS__))
+#if !defined(WIN32)
 #ifdef __cplusplus
 extern "C"
 #endif

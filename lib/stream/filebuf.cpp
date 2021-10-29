@@ -15,6 +15,10 @@ any actual or intended publication of such source code.
 
 *******************************************************************************/
 
+#ifdef __MSYS__
+    typedef char *__builtin_va_list;
+#endif
+
 #include <iostream.h>
 #include <fstream.h>
 

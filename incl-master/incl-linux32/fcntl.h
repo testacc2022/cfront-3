@@ -2,6 +2,9 @@
 /*ident	"@(#)cfront:incl/fcntl.h	1.2"*/
 /* Flag values accessible to open(2) and fcntl(2) */
 /*  (The first three can only be set by open) */
+
+#include <stddef.h>
+
 #define	O_RDONLY 0
 #define	O_WRONLY 1
 #define	O_RDWR	 2
@@ -46,6 +49,9 @@ struct flock {
 #undef open
 #undef fcntl
 #undef creat
+#ifndef __mode_t_defined
+typedef int mode_t;
+#endif
 
 extern "C" {
 	int fcntl(int, int, ...);

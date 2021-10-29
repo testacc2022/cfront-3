@@ -17,7 +17,7 @@ FILE* _get_stderr()
 {
     return stderr;
 }
-#if !(defined(WIN32) || defined(__MSYS__))
+#if !defined(WIN32)
 int* _get_errno()
 {
     return &errno;
