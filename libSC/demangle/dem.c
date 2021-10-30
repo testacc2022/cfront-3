@@ -382,6 +382,7 @@ int* ncount;
 			case 's':
 			case 'i':
 			case 'l':
+			case 'm':
 			case 'f':
 			case 'd':
 			case 'r':
@@ -1098,6 +1099,9 @@ int f;
 			break;
 		case 'l':
 			t = "long";
+			break;
+		case 'm':
+			t = "long long";
 			break;
 		case 'f':
 			t = "float";
