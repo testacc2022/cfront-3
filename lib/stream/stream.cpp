@@ -329,7 +329,7 @@ void ios::uresize(size_t n)
 	for ( size_t x = 0 ; x < nuser ; ++x ) {
 		newu[x] = x_user[x] ;
 		} ;
-	delete [] x_user ;
+	delete[] x_user ;
 	nuser = n+1 ;
 	x_user = newu ;
 	}
