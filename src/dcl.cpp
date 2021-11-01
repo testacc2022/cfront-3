@@ -30,6 +30,7 @@ dcl.c:
 #include "template.h"
 
 class dcl_context ccvec[MAXCONT], * cc = ccvec;
+dcl_context *ccvec_end = &ccvec[MAXCONT];
 int byte_offset;
 int bit_offset;
 int max_align;
@@ -354,7 +355,11 @@ static void check_def_name( Pname nn, int scope )
 		&&
 		nn->n_oper != NEW
 		&&
+		nn->n_oper != VEC_NEW
+		&&
 		nn->n_oper != DELETE
+		&&
+		nn->n_oper != VEC_DELETE
 	) { 
 		if (
 			f->body
@@ -754,7 +759,9 @@ xdr:
 		switch (n_oper) {
 		case 0:
 		case NEW:
+		case VEC_NEW:
 		case DELETE:
+		case VEC_DELETE:
 		case CTOR:
 		case DTOR:
 		case TYPE:

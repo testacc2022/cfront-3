@@ -64,8 +64,10 @@ int expr::discriminator(int which_union)
 	  case VALUE:
 	  case SIZEOF:
 	  case NEW:
+	  case VEC_NEW:
 	  case GNEW:
 	  case DELETE:
+	  case VEC_DELETE:
 	  case CAST:
 	  case G_CAST:
 	  case CALL:

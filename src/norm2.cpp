@@ -126,6 +126,7 @@ classdef::classdef(TOK b)
         virt_list = NULL;
         c_abstract = NULL;
         conv = NULL;
+        string = NULL;
 	DBID();
 }
 

@@ -920,10 +920,12 @@ Pexpr expr::typ(Ptable tbl)
 		return dovalue(tbl);
 
 	case NEW:
+	case VEC_NEW:
 	case GNEW:
 		return donew(tbl);
 
 	case DELETE:	// delete e1 OR delete[e2] e1
+	case VEC_DELETE:	// delete e1 OR delete[e2] e1
 	case GDELETE:
 	{	int i;
 		//if (e1->base == ADDROF) error('w',"delete &E");

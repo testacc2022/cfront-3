@@ -209,7 +209,7 @@ void table::del()
 			break;
 		default:
 		{	const char* s = n->string;
-			if (s && (s[0]!='_' || s[1]!='_' || s[2]!='X')) delete[] s;
+			if (s && (s[0]!='_' || s[1]!='_' || s[2]!='X')) delete[] (char*)s;
 			/* delete n; */
 			n->del();
 		}

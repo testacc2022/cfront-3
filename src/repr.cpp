@@ -75,7 +75,9 @@ const char* oper_name(TOK op)
 	case REFMUL:	return "__rm";
 // library functions:
 //				"_vec_delete"
+	case VEC_DELETE: return "_vec_delete";
 //				"_vec_new"
+	case VEC_NEW:   return "_vec_new";
 //				"_main"
 	}
 }
@@ -239,6 +241,8 @@ void otbl_init()
 	new_op(" constructor call",VALUE);
 	new_op(" ::delete",GDELETE);
 	new_op(" typedef",TPDEF); // did not want to introduce new TOKEN
+	new_op("new[]",VEC_NEW);
+	new_op("delete[]",VEC_DELETE);
 	if (ansi_opt)
 		new_op(" long double",LDOUBLE);
 	else

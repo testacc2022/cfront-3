@@ -2016,7 +2016,7 @@ void print_body(Pfct f)
 		}
 
 		if (MAIN) {
-			putstring("{ _main(); ");	// call constructors
+			putstring("{ extern void _main(); _main(); ");	// call constructors
 			f->body->print();
 			puttok(RC);
 		}
@@ -2165,7 +2165,7 @@ int p2(Pname nn, Ptype t, Pclass cl, Pvirt vtab, char* s)
 	}
 	vtbl_opt = oo;
 
-	delete[] ss;
+	delete[] (char*)ss;
 
 	return 1;
 }
@@ -2307,11 +2307,11 @@ void really_really_print(Pclass cl, Pvirt vtab, const char* s, char* ss)
 		vstr = cstr?cstr:(cs?cs:cl->string);
 	if ( (nm = ptbl->look(vstr,0)) )  {
 		nm->n_key = HIDDEN;
-		if ( vstr != cstr && vstr != cs && vstr != cl->string ) delete[] vstr;
+		if ( vstr != cstr && vstr != cs && vstr != cl->string ) delete[] (char*)vstr;
 	} else if ( ptbl->look(vstr,HIDDEN) == 0 )
 		ptbl->insert(new name(vstr),HIDDEN);
 	else
-		if ( vstr != cstr && vstr != cl->string && vstr != cs ) delete[] vstr;
+		if ( vstr != cstr && vstr != cl->string && vstr != cs ) delete[] (char*)vstr;
 }
 
 #include <ctype.h>

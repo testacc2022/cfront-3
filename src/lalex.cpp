@@ -1501,10 +1501,11 @@ la_decl( int arg_decl )
 	if ( tk == OPERATOR ) {
 	    switch ( tk2 ) {
 	    case PLUS: case MINUS: case MUL: case REFMUL:
-            case AND: case OR: case ER: case SHIFTOP: case EQUOP: 
-	    case DIVOP: case RELOP: case ANDAND: case OROR: 
-	    case NOT: case COMPL: case ICOP: case ASSIGN: 
-            case ASOP: case NEW: case GNEW: case DELETE:
+            case AND: case OR: case ER: case SHIFTOP: case EQUOP:
+	    case DIVOP: case RELOP: case ANDAND: case OROR:
+	    case NOT: case COMPL: case ICOP: case ASSIGN:
+            case ASOP: case NEW: case VEC_NEW: case GNEW:
+            case DELETE: case VEC_DELETE:
 		// OPERATOR oper
 		tk2 = lookahead();
 		break;

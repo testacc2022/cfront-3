@@ -272,7 +272,9 @@ extern const char* keys[MAXTOK+1];
 #define PTNAME           209
 #define NEW_INIT_KLUDGE  210
 #define XDELETED_NODE    211
-#define DUMMY_LAST_NODE  212
+#define VEC_DELETE       212
+#define VEC_NEW          213
+#define DUMMY_LAST_NODE  214
 
 //-------------------------------------------------------------------------
 // oper values for type::check	

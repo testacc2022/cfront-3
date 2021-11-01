@@ -393,6 +393,7 @@ inline Pname Ncopy(Pname n)
 #undef CONTINUE
 #undef DEFAULT
 #undef DELETE
+#undef VEC_DELETE
 #undef DO
 #undef ELSE
 #undef ENUM
@@ -402,6 +403,7 @@ inline Pname Ncopy(Pname n)
 #undef GOTO
 #undef IF
 #undef NEW
+#undef VEC_NEW
 #undef OPERATOR
 #undef RETURN
 #undef SIZEOF
@@ -651,7 +653,9 @@ ll:
 %token PTNAME           209
 %token NEW_INIT_KLUDGE  210
 %token XDELETED_NODE    211
-%token DUMMY_LAST_NODE  212
+%token VEC_DELETE      212
+%token VEC_NEW          213
+%token DUMMY_LAST_NODE  214
 
 %type <p>	external_def fct_dcl fct_def att_fct_def arg_dcl_list
 		base_init init_list binit
@@ -1780,7 +1784,9 @@ oper		:  PLUS
 		|  ASOP
 		|  ASSIGN
 		|  NEW		{	$$ = NEW; --in_new; }
+		|  NEW LB RB	{	$$ = VEC_NEW; --in_new; }
 		|  DELETE	{	$$ = DELETE; }
+		|  DELETE LB RB {	$$ = VEC_DELETE; }
 		|  REF		{	$$ = REF; }
 		|  CM		{	$$ = CM; }
 		|  REFMUL	{	$$ = REFMUL;
@@ -1807,8 +1813,8 @@ tn_list		:  tscope
 					yylval.pn = Ncopy(yylval.pn);
 					yylval.pn->n_oper = TNAME;
 				}
-				if ( str ) delete [] str;
-				if ( str2 ) delete [] str2;
+				if ( str ) delete[] (char*)str;
+				if ( str2 ) delete[] (char*)str2;
 			    }
 			    $<pn>$ = $<pn>1;
 			}
@@ -1833,8 +1839,8 @@ tn_list		:  tscope
 					yylval.pn = Ncopy(yylval.pn);
 					yylval.pn->n_oper = TNAME;
 				}
-				if ( str ) delete [] str;
-				if ( str2 ) delete [] str2;
+				if ( str ) delete[] (char*)str;
+				if ( str2 ) delete[] (char*)str2;
 				if ( $<pn>1 != sta_name
 				&&   $<pn>1->n_template_arg != template_type_formal){
 				    Pname cx = $<pn>1->tp->is_cl_obj();

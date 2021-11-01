@@ -104,7 +104,7 @@ extern void syn_init();
 extern void lex_init();
 extern void error_init();
 
-char *st_name(char*);	// generates names of static ctor, dtor callers, ptbl_vec
+char *st_name(const char*);	// generates names of static ctor, dtor callers, ptbl_vec
 Pname def_name;		// first definition in file
 Pname pdef_name;	// used with ptbl_vec if function is first definition
 
@@ -768,6 +768,13 @@ int main(int argc, char* argv[])
 					pt_opt = 1;
 					pt_file = fopen (cp+1, "w");
 					if (pt_file == NULL) {
+						fprintf(stderr, "Failed to open %s\n", cp+1);
+						exit(11);
+					}
+					goto xx;
+				case 'i':
+					in_file = fopen (cp+1, "r");
+					if (in_file == NULL) {
 						fprintf(stderr, "Failed to open %s\n", cp+1);
 						exit(11);
 					}

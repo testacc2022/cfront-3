@@ -2104,7 +2104,9 @@ void classdef::dcl(Pname cname, Ptable tbl)
 
 	int omex = mex; mex = 0;
 	Pname on = has_oper(NEW);
+	Pname onv = has_oper(VEC_NEW);
 	Pname od = has_oper(DELETE);
+	Pname odv = has_oper(VEC_DELETE);
 	mex = omex;
 
 	if (dt && ct==0 && Pfct(dt->tp)->f_virtual == 0 )
@@ -2113,6 +2115,10 @@ void classdef::dcl(Pname cname, Ptable tbl)
 		error('w',"%t has%n but no operator delete()",this,on);
 	if (od && on==0)
 		error('w',"%t has%n but no operator new()",this,od);
+	if (onv && odv==0)
+		error('w',"%t has%n but no operator delete[]()",this,on);
+	if (odv && onv==0)
+		error('w',"%t has%n but no operator new[]()",this,od);
 
 	if (dt==0 && od && od && od->n_table==memtbl)
 		make_dtor = 1;

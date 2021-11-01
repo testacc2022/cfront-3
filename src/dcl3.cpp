@@ -2463,6 +2463,7 @@ Pname name::dofct(Ptable tbl, TOK scope)
 
 		break;
 
+	case VEC_NEW:	// void* operator new [](long)
 	case NEW:	// void* operator new(long)
 		if (f->f_virtual)
 			error("virtual%n (operator new() is static)",this);
@@ -2485,6 +2486,8 @@ Pname name::dofct(Ptable tbl, TOK scope)
 		}
 		break;
 
+	case VEC_DELETE:	// void operator delete [](void*) or
+			// void operator delete [](void*, long)
 	case DELETE:	// void operator delete(void*) or
 			// void operator delete(void*, long)
 		if (f->f_virtual)
@@ -2519,7 +2522,7 @@ Pname name::dofct(Ptable tbl, TOK scope)
 					if (a->tp->check(Pvoid_type,0))
 						error("%n's 1stA must be a void*",this);
 					else if ((a = a->n_list)) {
-						if (class_name == 0)
+						if (class_name == 0 && n_oper != VEC_DELETE)
 							error("%n takes only oneA",this);
 						else if (a->tp->check(size_t_type,0)) {
 							error("%n's 2ndA must be a size_t",this);
@@ -2868,7 +2871,11 @@ Pname name::dofct(Ptable tbl, TOK scope)
 			&&
 			n_oper!=NEW	 	// X::operator new() static by default
 			&&
+			n_oper!=VEC_NEW	 	// X::operator new[]() static by default
+			&&
 			n_oper!=DELETE		// X::operator delete() static by default
+			&&
+			n_oper!=VEC_DELETE		// X::operator delete[]() static by default
 			&&
 			etbl!=gtbl		// beware of implicit declaration 
 		) {
@@ -2995,8 +3002,10 @@ Pname name::dofct(Ptable tbl, TOK scope)
 			Pclass(class_name->tp)->c_dtor = nn;
 			break;
 
-		case NEW:	
+		case NEW:
+		case VEC_NEW:
 		case DELETE:
+		case VEC_DELETE:
 		case CALL:
 		case 0:
 			break;

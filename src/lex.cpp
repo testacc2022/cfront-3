@@ -182,7 +182,7 @@ void set_linkage(const char* p)
 }
 
 FILE * out_file = stdout;
-static FILE * in_file = stdin;
+FILE * in_file = stdin;
 FILE * pt_file;
 FILE * dtpt_file;
 static bit doneflag=0;

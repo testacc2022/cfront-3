@@ -98,6 +98,7 @@ extern int dtpt_opt;
 extern int se_opt;
 extern int strict_opt;
 extern FILE* out_file; // output file descriptor
+extern FILE* in_file; // input file descriptor
 extern FILE* pt_file;
 extern FILE* dtpt_file;
 extern char scan_started;
@@ -1115,7 +1116,8 @@ extern Pexpr expr_unlist(elist*);
 extern class dcl_context * cc;
 
 #define MAXCONT	100
-extern dcl_context ccvec[MAXCONT];
+//extern dcl_context ccvec[MAXCONT]; //this generates code that doesn't compile
+extern dcl_context *ccvec_end;
 
 struct dcl_context {
 	Pname	c_this;	/* current fct's "this" */
@@ -1127,7 +1129,7 @@ struct dcl_context {
 
 	void	stack()		{
 					cc++;
-					cc >= &ccvec[MAXCONT] ?
+					cc >= ccvec_end ?
 					    error('i', "ccvec buffer overflow")
 					    :
 					    0;

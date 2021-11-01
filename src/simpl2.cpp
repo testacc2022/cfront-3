@@ -305,7 +305,7 @@ Pname n;
 			dl->tp = e->tp;
 		}
 	}
-	dl->simpl();
+	if(dl) dl->simpl();
 	return dl;
 }
 
@@ -1074,11 +1074,13 @@ void expr::simpl()
 		break;
 
 	case NEW:
+	case VEC_NEW:
 	case GNEW:
 		simpl_new();
 		return;
 
 	case DELETE:
+	case VEC_DELETE:
 	case GDELETE:
 		simpl_delete();
 		break;

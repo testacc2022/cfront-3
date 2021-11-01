@@ -542,7 +542,9 @@ Ptype expr::call_fct(Ptable tbl)
 		case DTOR:
 		case TYPE:
 		case NEW:
+		case VEC_NEW:
 		case DELETE:
+		case VEC_DELETE:
 			break;
 		default:	// real operator: check for operator+(1,2);
 			{

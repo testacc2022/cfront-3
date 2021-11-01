@@ -814,6 +814,7 @@ void check_templ_funct(Pname fn)
 	    case ASSIGN:
 		error("YF operator%s must be aCM",keys[fn->n_oper]);
 		return;
+	    case VEC_DELETE:
 	    case DELETE:
 		error("::operator %s may not be aYF",keys[fn->n_oper]);
 		return;	
@@ -2207,12 +2208,12 @@ stradd(char *&target, const char *source, int numeric = 0) {
 void 
 stradd(char *&p, long long i) {
   char s[64];
-  char t[64];
+  char t[sizeof(s)*2];
   
   	if (!emode) { *p++ = 'L'; }
   	sprintf(s,"%lld", i);
 	if (!emode) {
-		size_t len = strlen(s);
+		long long len = strlen(s);
 		if (len >= 10)
   	    		sprintf(t,"%lld_%s", len,s);
         	else sprintf(t,"%lld%s", len,s);
