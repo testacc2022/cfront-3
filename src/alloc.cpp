@@ -393,6 +393,14 @@ extern "C" void __cxa_pure_virtual ()
     abort ();
 }
 
+#ifdef __cfront__
+extern "C" void __pure_virtual_called ()
+{
+    puts("__pure_virtual called\n");
+    abort ();
+}
+#endif
+
 void* NEWDEL_CALL operator new [] (size_t sz)	// get memory that might be freed
 {
     return ::operator new(sz);
@@ -408,8 +416,9 @@ void NEWDEL_CALL operator delete [] (void *p, size_t)
     if (p) free (p);
 }
 
+#ifndef __cfront__
 void NEWDEL_CALL operator delete (void *p, size_t)
 {
     if (p) free (p);
 }
-
+#endif
