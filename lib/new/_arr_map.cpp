@@ -128,7 +128,7 @@ friend class pnd_internal_node;
 		pnd_internal_node*	nodep;
 	};
 	int	this_is_leaf;
-        pnd_internal_item(): nodep(0), this_is_leaf(0) {}
+        //pnd_internal_item(): nodep(0), this_is_leaf(0) {} //cfront emit double new
 	int	is_node() { return !this_is_leaf && nodep; }
 	int	is_leaf() { return this_is_leaf; }
 	int	is_null() { return !nodep; }
