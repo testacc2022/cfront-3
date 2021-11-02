@@ -550,10 +550,9 @@ Ptype expr::call_fct(Ptable tbl)
 			{
 			if (arg == 0) break;
 			Pexpr a = arg->e1;	// first operand
-
-			if (Pfct(fn->tp)->memof	// obj.operator(1) is OK
-			|| a->tp->is_cl_obj()
-			|| a->tp->is_ref()) break;
+			//if (Pfct(fn->tp)->memof) break; //this is invalid memory access detected by valgrind on demo/stream
+			if (a->tp->is_cl_obj()) break;
+			if (a->tp->is_ref()) break;
 			a = arg->e2;
 			if (a == 0)		// unary
 				error("%k of basicT",fn->n_oper);
