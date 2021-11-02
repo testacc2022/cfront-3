@@ -61,7 +61,7 @@ copy_walker (Pnode& node, node_class cl, void * info,
 	Pclass c;
 	Pbcl   bcl;
 	Pin    iline;
-	struct ia * ia;
+	Pia ia;
 	Pname  n;
 	Pptr p;
       } n;
@@ -247,8 +247,8 @@ copy_walker (Pnode& node, node_class cl, void * info,
 	goto Replace;
 
       case nc_ia:
-	n.ia = (ia *)tci->malloc(sizeof(ia));
-	*n.ia = *(ia *)node;
+	n.ia = (Pia)tci->malloc(sizeof(ia));
+	*n.ia = *(Pia)node;
 	goto Replace;
 
       case nc_name:

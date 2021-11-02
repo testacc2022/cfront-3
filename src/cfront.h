@@ -1168,7 +1168,7 @@ struct ia : public node {
 	Pname	local;	// local variable for argument
 	Pexpr	arg;	// actual arguments for call
 	Ptype	tp;	// type of formal argument
-        ia() { base = XIA; };
+        ia():local(0), arg(0), tp(0) { base = XIA; };
 };
 
 struct iline : public node {
@@ -1176,7 +1176,7 @@ struct iline : public node {
 	Pin	i_next;
 	Ptable	i_table;
 	int	i_slots;	// no of arg slots pointer to by i_args
-	ia*	i_args;
+	Pia	i_args;
         iline() { base = XILINE; };
 };
 

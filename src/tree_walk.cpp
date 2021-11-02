@@ -121,7 +121,7 @@ class walker {
     tree_node_action a_virt (Pnode, Pvirt, Pnode&);
     tree_node_action a_name_list (Pnode, Plist, Pnode&);
     tree_node_action a_iline (Pnode, Pin, Pnode&);
-    tree_node_action a_ia (Pnode, struct ia *, Pnode&);
+    tree_node_action a_ia (Pnode, Pia, Pnode&);
     tree_node_action a_baseclass (Pnode, Pbcl, Pnode&);
     tree_node_action a_expr_guts (Pexpr);
 };
@@ -424,7 +424,7 @@ walker::walk (Pnode& top)
 
       case nc_ia:
 	fetch((void *)top, sizeof (struct ia), node);
-	err = a_ia(top, (struct ia *)node, replacement);
+	err = a_ia(top, (Pia)node, replacement);
 	break;
 
       case nc_baseclass:
@@ -1185,7 +1185,7 @@ tree_node_action walker::a_stmt(Pnode ta, Pstmt s, Pnode& replacement)
     return tna_continue;
 }
 
-tree_node_action walker::a_ia(Pnode ta, struct ia * ia, Pnode& replacement)
+tree_node_action walker::a_ia(Pnode ta, Pia ia, Pnode& replacement)
 {
     tree_node_action action = pre_act_on_node(ta, nc_ia, Pnode(ia), replacement);
 

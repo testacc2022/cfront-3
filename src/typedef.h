@@ -48,7 +48,7 @@ typedef class gen* Pgen;
 typedef class ref * Pref;
 typedef class name_list * Plist;
 typedef class iline * Pin;
-typedef class ia * Pia;
+typedef struct ia * Pia;
 typedef class nlist * Pnlist;
 typedef class slist * Pslist;
 typedef class elist * Pelist;

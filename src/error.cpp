@@ -543,7 +543,7 @@ display_expr( Pexpr ptr, char* label, int oneline )
 		if ( !oneline ) {
 			++indent;
 			for ( int i = 0;  i < ptr->il->i_slots;  ++i ) {
-				ia *aa = &ptr->il->i_args[i];
+				Pia aa = &ptr->il->i_args[i];
 				INDENT(indent);
 				fprintf(stderr,"arg:'%s'",aa->local&&aa->local->string?aa->local->string:"");
 				display_type(aa->tp);
