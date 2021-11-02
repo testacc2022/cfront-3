@@ -1,0 +1,22 @@
+name: Makefile CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Build 64 bits
+      run: make clean; make demo
+      
+    - name: Build 32 bits
+      run: make clean; make MSIZE='-m32' demo
+      
