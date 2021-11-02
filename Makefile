@@ -33,6 +33,8 @@ cfront: always
 
 demo: all
 	$(MAKE)  MSIZE="$(MSIZE)" -C demo/hello
+	$(MAKE)  MSIZE="$(MSIZE)" -C demo/generic
+	$(MAKE)  MSIZE="$(MSIZE)" -C demo/stream
 
 scratch: always
 	cd scratch && $(MAKE) CC=$(scratchCC) BSD=$(BSD) CCFLAGS="$(CCFLAGS)" MSIZE="$(MSIZE)"

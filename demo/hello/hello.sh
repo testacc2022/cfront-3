@@ -14,13 +14,13 @@ if [ ! -x ${D}/cfront ]; then
     exit
 fi
 
-cpp -I${D}/incl hello.cpp > hello.i			# run preprocessor
+cpp ${MSIZE} -I${D}/incl hello.cpp > hello.i			# run preprocessor
 ${D}/cfront +a1 +L +fhello.cpp < hello.i > hello..c	# run cfront
-cc hello..c ${D}/libC.a -o hello.tmp			# compile and link plain C
+cc ${MSIZE} hello..c ${D}/libC.a -o hello.tmp			# compile and link plain C
 
 # For static con/destructors, the nm/munch thingy is needed
 
 nm hello.tmp | ${D}/munch > hello.cdts..c	# run mn against linked binary and filter
-cc hello..c hello.cdts..c ${D}/libC.a -o hello	# compile and link again
+cc ${MSIZE} hello..c hello.cdts..c ${D}/libC.a -o hello	# compile and link again
 
 ./hello

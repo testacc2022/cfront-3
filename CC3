@@ -1077,7 +1077,7 @@ case $APASS in
 			if [ $PTEE -eq 0 -a $ptd -eq 0 ]
 			# end PT
 			then
-				$ccC $EL $P $LLIBPATH $Z $LIBRARY >$TEMPDIR/__err 2>&1
+				$ccC $EL $P $LLIBPATH $Z $Y $LIBRARY >$TEMPDIR/__err 2>&1
 				EE=$?
 				(test $DEMANGLE = 1 &&
 				 $cplusfiltC -w <$TEMPDIR/__err 2>/dev/null |
@@ -1112,8 +1112,8 @@ case $APASS in
                                         EE=$?
                                         if test $EE = 0 -a -s ${TCTDT}.c
 					then
-						$ccC $EC -c ${TCTDT}.c && \
-							$ccC $EL $P $LLIBPATH ${CTDT}.o $Z $LIBRARY
+						$ccC $EC -c $Y ${TCTDT}.c && \
+							$ccC $EL $P $Y $LLIBPATH ${CTDT}.o $Z $LIBRARY
 						EE=$?
 						rm ${CTDT}.o
 					elif test $EE = 1 -a ! -s ${TCTDT}.c
