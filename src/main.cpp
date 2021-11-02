@@ -759,7 +759,11 @@ int main(int argc, char* argv[])
 					strict_opt = 1;
 					break;
 				case 'L':
-					line_format = "\n#line %d \"%s\"\n";
+                                        if(*(cp+1) == 'c') { //emit commented line numbers
+                                            ++cp;
+                                            line_format = "\n/*#line %d \"%s\"*/\n";
+                                        }
+					else line_format = "\n#line %d \"%s\"\n";
 					break;
 				case 's':
 					se_opt=1;
