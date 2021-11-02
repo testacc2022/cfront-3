@@ -1,12 +1,14 @@
 #CC  ?=  gcc
 CC  =  gcc
+#CC  =  gcc -fsanitize=address
 #CC  =  clang-11-env clang
 #CXX	?=	g++ -fno-rtti -fno-exceptions
 CXX	=	g++ -fno-rtti -fno-exceptions
+#CXX	=	g++ -fno-rtti -fno-exceptions -fsanitize=address
 #CXX	=	clang-11-env clang++ -fno-rtti -fno-exceptions
 #CCFLAGS	= -fpermissive -I../incl -D__HAVE_SIZE_T -g
 #CCFLAGS	= -Wall -I../incl -D__HAVE_SIZE_T -g
-CCFLAGS	= -I../incl -D__HAVE_SIZE_T -g -O2
+CCFLAGS	= -I../incl -D__HAVE_SIZE_T -g $(MSIZE)
 
 #MPMACRO = PATCH
 MPMACRO = MUNCH
@@ -28,17 +30,32 @@ COMDEP	=	$(COMDEP0) yystype.h
 
 cfront:	$(OFILES)
 	#$(CXX)	-o cfront $(OFILES)
-	$(CC)	-o cfront $(OFILES)
+	$(CC) $(MSIZE)	-o cfront $(OFILES)
 	cp cfront ..
 
+cfront_c: $(OFILES)
+	$(CC) $(MSIZE) -g -o cfront_c $(OFILES) ../libC.a
+	nm cfront_c | ../munch > cfront_c.cdts..c
+	$(CC) $(MSIZE) -g -o cfront_c $(OFILES) cfront_c.cdts..c ../libC.a
+
+cfront_cc: $(OFILES)
+	$(CC) $(MSIZE) -g -o cfront_cc $(OFILES) ../libC.a
+	nm cfront_cc | ../munch > cfront_cc.cdts..c
+	$(CC) $(MSIZE) -g -o cfront_cc $(OFILES) cfront_cc.cdts..c ../libC.a
+
+cfront_ccc: $(OFILES)
+	$(CC) $(MSIZE) -g -o cfront_ccc $(OFILES) ../libC.a
+	nm cfront_ccc | ../munch > cfront_ccc.cdts..c
+	$(CC) $(MSIZE) -g -o cfront_ccc $(OFILES) cfront_ccc.cdts..c ../libC.a
+
 szal.result: szal/szal.c
-	gcc -o szal/szal szal/szal.c
+	gcc $(MSIZE) -o szal/szal szal/szal.c
 	./szal/szal > szal.result
 
 y.tab.cpp yystype.h: gram.y $(COMDEP0)
-	byacc -d gram.y
-	mv y.tab.c y.tab.cpp
-	mv y.tab.h yystype.h
+	#byacc -d gram.y
+	#mv y.tab.c y.tab.cpp
+	#mv y.tab.h yystype.h
 	#mybison -y --defines=yystype.h -o y.tab.cpp gram.y
 	#mv gram.tab.c y.tab.cpp
 	#mv gram.tab.h yystype.h
@@ -148,9 +165,9 @@ y.tab.o: y.tab.cpp $(COMDEP)
 	$(CXX) $(CCFLAGS) -c y.tab.cpp
 
 _stdio.o: _stdio.c
-	cc -c _stdio.c
+	cc  $(MSIZE) -c _stdio.c
 
 clean:
 	rm -f szal.result szal/szal
 	#rm -f y.tab.cpp yystype.h
-	rm -f *.o *..c cfront ../cfront
+	rm -f *.o *..c cfront #../cfront

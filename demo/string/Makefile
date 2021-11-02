@@ -1,6 +1,6 @@
 CC=../../CC
 LIBS=
-CCFLAGS=-Wall -g -DNO_EXCEPTION -I../../incl
+CCFLAGS=-Wall -g -DNO_EXCEPTION -I../../incl  $(MSIZE)
 #ISTL=--stl -I../../stl
 G=
 LDFLAGS=$(G)

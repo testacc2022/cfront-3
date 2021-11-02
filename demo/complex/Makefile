@@ -15,7 +15,7 @@
 #
 ###############################################################################
 CCC	?=	../../CC
-CCFLAGS=-O  -fno-builtin-clog
+CCFLAGS=-O  -fno-builtin-clog $(MSIZE)
 L=../..
 LINKOPT=-lcomplex -lm
 LOPT="-L$(L)"

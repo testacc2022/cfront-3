@@ -25,7 +25,7 @@ filebuf.o  oldformat.o sbuf.dbp.o swstdio.o ios_compat.o _stdio.o 	# exit.o
 
 OFILES	=	$(O_GENERIC) $(O_NEW) $(O_STATIC) $(O_STREAM)
 CC	=	CC
-override CCFLAGS	=	-O2 -g -I../../incl -fno-builtin-clog
+override CCFLAGS	= -g -I../../incl -fno-builtin-clog $(MSIZE)
 
 # have everything depend on this makefile to force recompilation
 # when going from patch to munch
@@ -38,7 +38,7 @@ libC.a:	$(OFILES)
 	ar r libC.a $(OFILES)
 
 _stdio.o: _stdio.c
-	cc -c _stdio.c
+	cc $(MSIZE) -c _stdio.c
 
 generic.o:	../generic/generic.cpp $(DEPEND)
 	$(CC) $(CCFLAGS)  -c ../generic/generic.cpp
