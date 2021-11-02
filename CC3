@@ -26,12 +26,14 @@
 
 	AON=+a1
 	LINE_OPT=+L
+	#LINE_OPT=+Lc #line number commented
 	LIBRARY=$CF/libC.a
 	NMFLAGS=
 	DEMANGLE=1
 	PLUSI=0
 
 	cfrontC="$CF/cfront"
+	#cfrontC="$CF/cfront_ccc"
 	munch=$CF/munch
 	cplusfiltC=$CF/c++filt}
 
@@ -43,7 +45,8 @@
 	then
 	  #ccC="gcc -w"
 	  ccC="gcc"
-	  cppC="gcc -std=c++98 -Du3b -U__GNUC__ -D__cfront__ -D__cplusplus=1 -D__signed__= -D__null=0 -E"
+	  #cppC="gcc -std=c++98 -Du3b -U__GNUC__ -D__cfront__ -D__cplusplus=1 -D__signed__= -D__null=0 -E"
+	  cppC="gcc -std=c++98 -Du3b -U__GNUC__ -D__cfront__ -D__signed__= -D__null=0 -E"
 	else
 	  ccC="tcc -w"
 	  cppC="tcc -Du3b -U__GNUC__ -D__cfront__ -D__cplusplus=1 -D__signed__= -D__null=0 -E"
@@ -201,7 +204,7 @@ export cppC
 # for Ansi compatibility, c_plusplus => __cplusplus
 # for backward compatibility, retain c_plusplus for 2.0
 CPLUS=-Dc_plusplus=1
-cPLUS=-D__cplusplus=1
+#cPLUS=-D__cplusplus=1
 
 # variables for the C++ license manager
 
@@ -418,6 +421,8 @@ do
 	-ispace)O="$O +J3"
 		PTLISTC="$PTLISTC $A"
 		;;
+	-m*) 	Y="$Y $A"	# for -m option
+		;;
 	-o*) 	OON=1	# for -o option
 		;;
 	 *)	if test $ION
@@ -632,8 +637,8 @@ for A do
 					x="+T$x +s"
 				fi
 				echo "Line x4: $cfrontC ${LINE_OPT} +f$A $x +t$TEMPDIR/ptcf $O $AON <$TEMPDIR/cpptmp >$TEMPDIR/$B$ISUF"
-				#myvalgrind 
-                                $cfrontC ${LINE_OPT} +f$A $x +t$TEMPDIR/ptcf $O $AON <$TEMPDIR/cpptmp >$TEMPDIR/$B$ISUF
+				#myvalgrind
+				$cfrontC ${LINE_OPT} +f$A $x +t$TEMPDIR/ptcf $O $AON <$TEMPDIR/cpptmp >$TEMPDIR/$B$ISUF
 				#cp $TEMPDIR/$B$ISUF .
 				E=$?
 				R=1
