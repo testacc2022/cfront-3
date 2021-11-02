@@ -49,3 +49,6 @@ I've included the generated parser so you don't need `yacc/byacc` installed to b
 To build on OSX and Windows under MSYS2 I still need some hack fixes not included here yet (pull requests are wellcome).
 
 It can build itself through valgrind without any invalid memory access (of course it leaks memory as usual for this kind of software and it's epoch).
+
+Added a github workflow to build on linux for 32/64 bits see the output at https://github.com/mingodad/cfront-3/actions
+
