@@ -66,12 +66,12 @@ void* operator new(NEW_SIZE sz)	// get memory that might be freed
 	if (sz == 0) sz = 4; // most stringent alignment criteria
 #endif
 
-	char* p = (char*)calloc((unsigned)sz,1);
+	void* p = calloc(sz,1);
 
 //fprintf(stderr,"alloc(%d)->%d\n",sz,p);
 
 	if (p == 0 && sz!=0) {			// no space
-		free((char*)gtbl);	// get space for error message
+		free((void*)gtbl);	// get space for error message
 		error('i',"free store exhausted");
 	}
 	return p;
