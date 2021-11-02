@@ -14,6 +14,10 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     
+    - name: Install depedencies
+      run: sudo apt-get install -y
+        gcc-9-multilib g++-9-multilib
+    
     - name: Build 64 bits
       run: make clean; make demo
       
