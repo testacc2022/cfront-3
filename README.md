@@ -46,7 +46,7 @@ The extension `.C` was changed to `.cpp` to allow build on operating systems wit
 
 I've included the generated parser so you don't need `yacc/byacc` installed to build it.
 
-To build on OSX and Windows under MSYS2 I still need some hack fixes not included here yet (pull requests are wellcome).
+To build on OSX and Windows under MSYS2 <s>I still need some hack fixes not included here yet</s> (pull requests are wellcome).
 
 It can build itself through valgrind without any invalid memory access (of course it leaks memory as usual for this kind of software and it's epoch).
 
