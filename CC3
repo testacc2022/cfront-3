@@ -32,7 +32,7 @@
 	DEMANGLE=1
 	PLUSI=0
 
-	cfrontC="$CF/cfront"
+	cfrontC=${CFRONTC-"$CF/cfront"}
 	#cfrontC="$CF/cfront_ccc"
 	munch=$CF/munch
 	cplusfiltC=$CF/c++filt}
@@ -40,13 +40,15 @@
 	I=$CF/incl
 	LIBRARY=$CF/libC.a
 
+	CCOMP=${CCOMP-gcc}
+
 	TINYCC=$(which tcc)
 	if test -z "$TINYCC"
 	then
 	  #ccC="gcc -w"
-	  ccC="gcc"
+	  ccC=$CCOMP
 	  #cppC="gcc -std=c++98 -Du3b -U__GNUC__ -D__cfront__ -D__cplusplus=1 -D__signed__= -D__null=0 -E"
-	  cppC="gcc -std=c++98 -Du3b -U__GNUC__ -D__cfront__ -D__signed__= -D__null=0 -E"
+	  cppC="$CCOMP -std=c++98 -Du3b -U__GNUC__ -D__cfront__ -D__signed__= -D__null=0 -E"
 	else
 	  ccC="tcc -w"
 	  cppC="tcc -Du3b -U__GNUC__ -D__cfront__ -D__cplusplus=1 -D__signed__= -D__null=0 -E"
@@ -617,6 +619,7 @@ for A do
 					AFAIL=1; break
 				fi
 				# PT compile-time actions
+				cp $TEMPDIR/cpptmp $A.i
 
 				# set up for directed mode
 				if [ "$ptT" = "" -a $ptscnt -eq 1 -a "$NLO" != "-c" -a $ptn -eq 0 ]

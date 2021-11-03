@@ -27,6 +27,8 @@ OFILES	=	$(O_GENERIC) $(O_NEW) $(O_STATIC) $(O_STREAM)
 CC	=	CC
 override CCFLAGS	= -g -I../../incl -fno-builtin-clog $(MSIZE)
 
+CCOMP = gcc
+
 # have everything depend on this makefile to force recompilation
 # when going from patch to munch
 DEPEND	= Makefile
@@ -38,7 +40,7 @@ libC.a:	$(OFILES)
 	ar r libC.a $(OFILES)
 
 _stdio.o: _stdio.c
-	cc $(MSIZE) -c _stdio.c
+	$(CCOMP) $(MSIZE) -c _stdio.c
 
 generic.o:	../generic/generic.cpp $(DEPEND)
 	$(CC) $(CCFLAGS)  -c ../generic/generic.cpp
@@ -68,10 +70,10 @@ _dtor.o:	../static/_dtor.cpp $(DEPEND)
 	$(CC) $(CCFLAGS)  -c ../static/_dtor.cpp
 
 _main.o:	../../$(MPDIR)/_main.c $(DEPEND)
-	cc $(CCFLAGS)  -c ../../$(MPDIR)/_main.c
+	$(CCOMP) $(CCFLAGS)  -c ../../$(MPDIR)/_main.c
 
 dtors.o:	../../$(MPDIR)/dtors.c $(DEPEND)
-	cc $(CCFLAGS)  -c ../../$(MPDIR)/dtors.c
+	$(CCOMP) $(CCFLAGS)  -c ../../$(MPDIR)/dtors.c
 
 exit.o:	../static/exit.cpp $(DEPEND)
 	$(CC) $(CCFLAGS)  -c ../static/exit.cpp

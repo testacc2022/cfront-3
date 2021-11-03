@@ -20,6 +20,7 @@ L=../..
 LINKOPT=-lcomplex -lm
 LOPT="-L$(L)"
 
+CCOMP = gcc
 
 ALL = \
 	abs.test.E \

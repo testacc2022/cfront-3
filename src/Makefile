@@ -10,6 +10,8 @@ CXX	=	g++ -fno-rtti -fno-exceptions
 #CCFLAGS	= -Wall -I../incl -D__HAVE_SIZE_T -g
 CCFLAGS	= -I../incl -D__HAVE_SIZE_T -g $(MSIZE)
 
+CCOMP = gcc
+
 #MPMACRO = PATCH
 MPMACRO = MUNCH
 
@@ -30,27 +32,27 @@ COMDEP	=	$(COMDEP0) yystype.h
 
 cfront:	$(OFILES)
 	#$(CXX)	-o cfront $(OFILES)
-	$(CC) $(MSIZE)	-o cfront $(OFILES)
-	cp cfront ..
+	$(CCOMP) $(MSIZE)	-o cfront$(EXEEXT) $(OFILES)
+	cp cfront$(EXEEXT) ..
 
 cfront_c: $(OFILES)
-	$(CC) $(MSIZE) -g -o cfront_c $(OFILES) ../libC.a
-	nm cfront_c | ../munch > cfront_c.cdts..c
-	$(CC) $(MSIZE) -g -o cfront_c $(OFILES) cfront_c.cdts..c ../libC.a
+	$(CCOMP) $(MSIZE) -g -o cfront_c$(EXEEXT) $(OFILES) ../libC.a
+	nm cfront_c$(EXEEXT) | $(EXEWRAPPER) ../munch$(EXEEXT) > cfront_c.cdts..c
+	$(CCOMP) $(MSIZE) -g -o cfront_c$(EXEEXT) $(OFILES) cfront_c.cdts..c ../libC.a
 
 cfront_cc: $(OFILES)
-	$(CC) $(MSIZE) -g -o cfront_cc $(OFILES) ../libC.a
-	nm cfront_cc | ../munch > cfront_cc.cdts..c
-	$(CC) $(MSIZE) -g -o cfront_cc $(OFILES) cfront_cc.cdts..c ../libC.a
+	$(CCOMP) $(MSIZE) -g -o cfront_cc$(EXEEXT) $(OFILES) ../libC.a
+	nm cfront_cc$(EXEEXT) | $(EXEWRAPPER) ../munch$(EXEEXT) > cfront_cc.cdts..c
+	$(CCOMP) $(MSIZE) -g -o cfront_cc$(EXEEXT) $(OFILES) cfront_cc.cdts..c ../libC.a
 
 cfront_ccc: $(OFILES)
-	$(CC) $(MSIZE) -g -o cfront_ccc $(OFILES) ../libC.a
-	nm cfront_ccc | ../munch > cfront_ccc.cdts..c
-	$(CC) $(MSIZE) -g -o cfront_ccc $(OFILES) cfront_ccc.cdts..c ../libC.a
+	$(CCOMP) $(MSIZE) -g -o cfront_ccc$(EXEEXT) $(OFILES) ../libC.a
+	nm cfront_ccc$(EXEEXT) | $(EXEWRAPPER) ../munch$(EXEEXT) > cfront_ccc.cdts..c
+	$(CCOMP) $(MSIZE) -g -o cfront_ccc$(EXEEXT) $(OFILES) cfront_ccc.cdts..c ../libC.a
 
 szal.result: szal/szal.c
-	gcc $(MSIZE) -o szal/szal szal/szal.c
-	./szal/szal > szal.result
+	$(CCOMP) $(MSIZE) -o szal/szal szal/szal.c
+	$(EXEWRAPPER) ./szal/szal > szal.result
 
 y.tab.cpp yystype.h: gram.y $(COMDEP0)
 	#byacc -d gram.y
@@ -165,7 +167,7 @@ y.tab.o: y.tab.cpp $(COMDEP)
 	$(CXX) $(CCFLAGS) -c y.tab.cpp
 
 _stdio.o: _stdio.c
-	cc  $(MSIZE) -c _stdio.c
+	$(CCOMP)  $(MSIZE) -c _stdio.c
 
 clean:
 	rm -f szal.result szal/szal

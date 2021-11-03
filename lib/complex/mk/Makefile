@@ -20,6 +20,8 @@ O_COMPLEX	=	abs.o arg.o cos.o error.o exp.o io.o log.o oper.o \
 CC	=	../../../CC
 CCFLAGS	= $(MSIZE) -Wall -DPRAGMATIC -I../../../incl -fno-builtin-clog
 
+CCOMP = gcc
+
 libcomplex.a:	$(O_COMPLEX)
 	ar r libcomplex.a $(O_COMPLEX)
 	if test "$(BSD)" ; then ranlib libcomplex.a; fi

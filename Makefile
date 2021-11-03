@@ -18,32 +18,34 @@ PATH:=$(CURDIR):$(PATH)
 
 CC	=	CC
 
+CCOMP = gcc
+
 .PHONY: demo
 all: cfront munch libC.a
 
 libC.a:	always
-	cd lib/mk && $(MAKE) CC=$(CC) CCFLAGS="$(CCFLAGS)" MSIZE="$(MSIZE)" BSD=$(BSD)
+	cd lib/mk && $(MAKE) CC="$(CC)" CCOMP="$(CCOMP)" CCFLAGS="$(CCFLAGS)" MSIZE="$(MSIZE)" BSD=$(BSD)
 	mv lib/mk/libC.a .
 
 munch:	_munch/munch.c
-	cc $(MSIZE) -o munch _munch/munch.c
+	$(CCOMP) $(MSIZE) -o munch$(EXEEXT) _munch/munch.c
 
 cfront: always
-	$(MAKE)  MSIZE="$(MSIZE)" -C src
+	$(MAKE)   CCOMP="$(CCOMP)" MSIZE="$(MSIZE)" -C src
 
 demo: all
-	$(MAKE)  MSIZE="$(MSIZE)" -C demo/hello
-	$(MAKE)  MSIZE="$(MSIZE)" -C demo/generic
-	$(MAKE)  MSIZE="$(MSIZE)" -C demo/stream
+	$(MAKE)   CCOMP="$(CCOMP)" MSIZE="$(MSIZE)" -C demo/hello
+	$(MAKE)   CCOMP="$(CCOMP)" MSIZE="$(MSIZE)" -C demo/generic
+	$(MAKE)   CCOMP="$(CCOMP)" MSIZE="$(MSIZE)" -C demo/stream
 
 scratch: always
-	cd scratch && $(MAKE) CC=$(scratchCC) BSD=$(BSD) CCFLAGS="$(CCFLAGS)" MSIZE="$(MSIZE)"
+	cd scratch && $(MAKE) CCOMP="$(CCOMP)" CC=$(scratchCC) BSD=$(BSD) CCFLAGS="$(CCFLAGS)" MSIZE="$(MSIZE)"
 
 #This target will populate the scratch directories with good-old-c
 #files.  This is used to port to another machine.
 
 fillscratch:
-	make  MSIZE="$(MSIZE)" -C src szal.result y.tab.cpp yystype.h
+	make  CCOMP="$(CCOMP)" MSIZE="$(MSIZE)" -C src szal.result y.tab.cpp yystype.h
 	cp src/_stdio.c scratch/src/
 	cd scratch/src; $(CC) -I../../src         -I../../incl -Fc -..c ../../src/*.cpp;
 	cd scratch/lib; $(CC) -I../../lib/complex -I../../incl -Fc -..c ../../lib/new/*.cpp

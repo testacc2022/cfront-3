@@ -17,6 +17,8 @@
 CCC	?=	../../CC
 CCFLAGS =  $(MSIZE) -O -I../.. -fno-builtin-clog
 
+CCOMP = gcc
+
 ALL = Vector.E Generic.E
 NAMES = Vector Generic
 

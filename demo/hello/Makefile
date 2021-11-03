@@ -1,3 +1,5 @@
+CCOMP = gcc
+
 all:
 	./hello.sh $(MSIZE)
 

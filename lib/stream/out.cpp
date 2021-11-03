@@ -245,7 +245,7 @@ static int dofield(
 
 static const int dbufsize = 32 ;
 
-ostream& OSTREAM::operator<<(long i)
+ostream& OSTREAM::operator<<(long long i)
 {
 	if (!opfx()) {
 		width(0) ;
@@ -297,7 +297,12 @@ ostream& OSTREAM::operator<<(long i)
 	return *this ;
 	}
 
-ostream& OSTREAM::operator<<(unsigned long i)
+ostream& OSTREAM::operator<<(long i)
+{
+    return operator<<((long long) i);
+}
+
+ostream& OSTREAM::operator<<(unsigned long long i)
 {
 	if (!opfx()) {
 		width(0) ;
@@ -342,6 +347,11 @@ ostream& OSTREAM::operator<<(unsigned long i)
 	osfx() ;
 	return *this ;
 	}
+
+ostream& OSTREAM::operator<<(unsigned long i)
+{
+    return operator<<((unsigned long long) i);
+}
 	
 ostream& OSTREAM::operator<<(register streambuf* b)
 {
@@ -369,7 +379,7 @@ ostream& OSTREAM::operator<<(register streambuf* b)
 ostream& OSTREAM::operator<<( void* p)
 {
 	long f = setf(ios::showbase|PTRBASE,  basebits|ios::showbase) ;
-	*this << (long)p ;
+	*this << (ssize_t)p ;
 	setf(f,~0) ;
 	return *this ;
 	}
@@ -386,13 +396,13 @@ ostream& OSTREAM::operator<<( const void* p)
 
 ostream& OSTREAM::operator<<(int x)
 {
-	*this << (long)x ;
+	*this << (ssize_t)x ;
 	return *this ;
 	}
 
 ostream& OSTREAM::operator<<(unsigned int x)
 {
-	*this << (unsigned long)x ;
+	*this << (size_t)x ;
 	return *this ;
 	}
 

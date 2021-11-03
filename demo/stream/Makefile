@@ -17,6 +17,8 @@
 CC=../../CC
 CCFLAGS=-O -I../.. -fno-builtin-clog  $(MSIZE)
 
+CCOMP = gcc
+
 ALL = lengthdemo.E 
 NAMES = lengthdemo
 

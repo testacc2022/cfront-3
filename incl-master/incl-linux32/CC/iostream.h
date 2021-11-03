@@ -571,10 +571,12 @@ public:
 	ostream&	operator<<(const char*);
 	ostream&	operator<<(int a);
 	ostream&	operator<<(long);
+	ostream&	operator<<(long long);
 	ostream&	operator<<(double);
 	ostream&	operator<<(float);
 	ostream&	operator<<(unsigned int a);
 	ostream&	operator<<(unsigned long);
+	ostream&	operator<<(unsigned long long);
 	ostream&	operator<<(void*);
 /*	ostream&	operator<<(const void*);   add this later */
 	ostream&	operator<<(streambuf*);

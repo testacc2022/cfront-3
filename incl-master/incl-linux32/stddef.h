@@ -4,15 +4,13 @@
 #ifndef __CF_STDDEF_H
 #define __CF_STDDEF_H
 
-#if defined(WIN32) || defined(__MSYS__)
-#if __SIZEOF_LONG__ != __SIZEOF_POINTER__
-    typedef long long ssize_t;
-    typedef unsigned long long size_t;
-#else
+#if defined(_WIN32) && !defined(_WIN64)
     typedef long ssize_t;
     typedef unsigned long size_t;
-#endif
-#else
+#elif defined(_WIN64)
+    typedef long long ssize_t;
+    typedef unsigned long long size_t;
+#else //UNIX
 #if __SIZEOF_LONG__ == __SIZEOF_INT__
     typedef int ssize_t;
     typedef unsigned int size_t;
