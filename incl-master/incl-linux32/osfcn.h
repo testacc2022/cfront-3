@@ -7,18 +7,22 @@
 #define __cdecl
 #endif
 
-#ifndef __MINGW32__
+#if !(defined(__MINGW32__) || defined(__APPLE__))
 #include <sys/types.h>
 #endif
 #include <fcntl.h>
 #include <grp.h>
 #include <pwd.h>
+#ifndef __APPLE__
 #include <signal.h>
+#endif
 #include <stdlib.h>
 #include <time.h>
 #include <unistd.h>
+#ifndef __APPLE__
 #include <utime.h>
-#ifndef _WIN32
+#endif
+#if !(defined(_WIN32) || defined(__APPLE__))
 #include <sys/wait.h>
 #endif
 #endif

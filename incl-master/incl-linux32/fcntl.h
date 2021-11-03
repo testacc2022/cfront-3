@@ -49,7 +49,7 @@ struct flock {
 #undef open
 #undef fcntl
 #undef creat
-#if !defined(__mode_t_defined) || defined(__MINGW32__)
+#if !(defined(__mode_t_defined) || defined(_MODE_T)) || defined(__MINGW32__)
 typedef int mode_t;
 #endif
 

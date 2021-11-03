@@ -619,7 +619,7 @@ for A do
 					AFAIL=1; break
 				fi
 				# PT compile-time actions
-				cp $TEMPDIR/cpptmp $A.i
+				#cp $TEMPDIR/cpptmp $A.i
 
 				# set up for directed mode
 				if [ "$ptT" = "" -a $ptscnt -eq 1 -a "$NLO" != "-c" -a $ptn -eq 0 ]

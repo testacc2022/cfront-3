@@ -27,3 +27,13 @@ jobs:
       
     - name: Cross compiling for Win64
       run: make clean; ./mk-mingw.sh
+
+  build-osx-amd64:
+    name: cfront osx/amd64
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    # build project amd64
+    - name: build amd64
+      run: make clean; make

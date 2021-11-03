@@ -24,6 +24,10 @@ any actual or intended publication of such source code.
 
 #include "streamdefs.h"
 
+#ifdef __APPLE__
+#define __GNUC__ 7
+#endif
+
 #ifdef STDIO_ONLY 
 #include <stdio.h>
 
