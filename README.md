@@ -39,6 +39,9 @@ Fix the issues of compilation under Ubuntu.
     # Demo
     make demo
 
+    # Build itself (bootstrap)
+    make cfront_c
+
     # Clean
     make clean
 

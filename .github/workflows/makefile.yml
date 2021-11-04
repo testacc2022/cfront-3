@@ -19,16 +19,16 @@ jobs:
       run: sudo apt-get install -y
         gcc-multilib g++-multilib mingw-w64 wine64
 
-    - name: Build 64 bits
+    - name: Build Linux 64 bits
       run: make clean; make demo
 
-    - name: build itself 64 bits (bootstrap)
+    - name: Build itself Linux 64 bits (bootstrap)
       run: make cfront_c
 
-    - name: Build 32 bits
+    - name: Build Linux 32 bits
       run: make clean; make MSIZE='-m32' demo
 
-    - name: Build itself 32 bits (bootstrap)
+    - name: Build itself Linux 32 bits (bootstrap)
       run: rm cfront_c; make  MSIZE='-m32' cfront_c
 
     - name: Cross compiling for Win64
@@ -38,7 +38,7 @@ jobs:
       run: ./mk-mingw.sh cfront_c.exe
 
   build-osx-amd64:
-    name: cfront osx/amd64
+    name: cfront OSX/amd64
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v2
