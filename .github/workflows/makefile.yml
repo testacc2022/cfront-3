@@ -15,9 +15,12 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Install depedencies
-      run: sudo apt-get install -y
-        gcc-multilib g++-multilib mingw-w64 wine64 wine32
+    - name: Install depedencies    
+      run: |
+        sudo dpkg --add-architecture i386
+        sudo apt update
+        sudo apt-get install -y
+          gcc-multilib g++-multilib mingw-w64 wine64 wine32
 
     - name: Build Linux 64 bits
       run: make clean; make demo
