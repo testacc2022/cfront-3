@@ -28,13 +28,13 @@ jobs:
     - name: Build 32 bits
       run: make clean; make MSIZE='-m32' demo
 
-    - name: build itself 32 bits (bootstrap)
+    - name: Build itself 32 bits (bootstrap)
       run: rm cfront_c; make  MSIZE='-m32' cfront_c
 
     - name: Cross compiling for Win64
       run: make clean; ./mk-mingw.sh
 
-    - name: build itself (bootstrap)
+    - name: Build itself Win64 (bootstrap)
       run: ./mk-mingw.sh cfront_c.exe
 
   build-osx-amd64:
@@ -44,8 +44,8 @@ jobs:
     - uses: actions/checkout@v2
 
     # build project amd64
-    - name: build amd64
+    - name: Build amd64
       run: make clean; make demo
 
-    - name: build itself (bootstrap)
+    - name: Build itself (bootstrap)
       run: make cfront_c
