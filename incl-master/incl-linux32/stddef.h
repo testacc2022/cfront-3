@@ -5,8 +5,8 @@
 #define __CF_STDDEF_H
 
 #if defined(_WIN32) && !defined(_WIN64)
-    typedef long ssize_t;
-    typedef unsigned long size_t;
+    typedef int ssize_t;
+    typedef unsigned int size_t;
 #elif defined(_WIN64)
     typedef long long ssize_t;
     typedef unsigned long long size_t;

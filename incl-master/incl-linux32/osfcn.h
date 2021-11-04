@@ -4,7 +4,9 @@
 #ifdef __MINGW32__
 #define _INC_MINGW_SECAPI
 #define _INC_CRTDEFS
+#ifdef __cfront__
 #define __cdecl
+#endif
 #endif
 
 #if !(defined(__MINGW32__) || defined(__APPLE__))
