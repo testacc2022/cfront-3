@@ -15,7 +15,8 @@ extern "C" {
     #define va_start /
 #endif
 
-#if 0 //ndef FILE
+//#ifndef FILE
+#if 0
 extern	struct	_iobuf {
 	int	_cnt;
 	char	*_ptr;

@@ -14,18 +14,23 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    
+
     - name: Install depedencies
       run: sudo apt-get install -y
         gcc-multilib g++-multilib mingw-w64 wine64
-    
+
     - name: Build 64 bits
       run: make clean; make demo
-      
+
+    - name: build itself 64 bits (bootstrap)
+      run: make cfront_c
+
     - name: Build 32 bits
       run: make clean; make MSIZE='-m32' demo
-      
-      
+
+    - name: build itself 32 bits (bootstrap)
+      run: rm cfront_c; make  MSIZE='-m32' cfront_c
+
     - name: Cross compiling for Win64
       run: make clean; ./mk-mingw.sh
 
@@ -37,4 +42,7 @@ jobs:
 
     # build project amd64
     - name: build amd64
-      run: make clean; make
+      run: make clean; make demo
+
+    - name: build itself (bootstrap)
+      run: make cfront_c

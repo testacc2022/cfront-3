@@ -33,6 +33,11 @@ munch:	_munch/munch.c
 cfront: always
 	$(MAKE)   CCOMP="$(CCOMP)" MSIZE="$(MSIZE)" -C src
 
+cfront_c:
+	rm src/*.o
+	$(MAKE) CXX=`pwd`/CC  CCOMP="$(CCOMP)" MSIZE="$(MSIZE)" -C src cfront_c
+	mv src/cfront_c .
+
 demo: all
 	$(MAKE)   CCOMP="$(CCOMP)" MSIZE="$(MSIZE)" -C demo/hello
 	$(MAKE)   CCOMP="$(CCOMP)" MSIZE="$(MSIZE)" -C demo/generic
