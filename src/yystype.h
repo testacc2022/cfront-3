@@ -97,7 +97,7 @@
 #endif
 #ifndef YYSTYPE_IS_DECLARED
 #define YYSTYPE_IS_DECLARED 1
-typedef union {
+typedef union YYSTYPE {
 	const char*	s;
 	TOK	t;
 	int	i;

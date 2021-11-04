@@ -3,9 +3,9 @@
 /* (use YYMAJOR/YYMINOR for ifdefs dependent on parser version) */
 
 #define YYBYACC 1
-#define YYMAJOR 1
-#define YYMINOR 9
-#define YYPATCH 20140715
+#define YYMAJOR 2
+#define YYMINOR 0
+#define YYPATCH 20210808
 
 #define YYEMPTY        (-1)
 #define yyclearin      (yychar = YYEMPTY)
@@ -477,14 +477,14 @@ static bit check_if_base( Pclass c1, Pclass c2 );
 static Pname dummy_dtor( TOK q, TOK d );
 static Pname dummy_dtor();
 
-#line 491 "gram.y"
 #ifdef YYSTYPE
 #undef  YYSTYPE_IS_DECLARED
 #define YYSTYPE_IS_DECLARED 1
 #endif
 #ifndef YYSTYPE_IS_DECLARED
 #define YYSTYPE_IS_DECLARED 1
-typedef union {
+#line 491 "gram.y"
+typedef union YYSTYPE {
 	const char*	s;
 	TOK	t;
 	int	i;
@@ -562,6 +562,10 @@ ll:
 #else
 # define YYLEX_DECL() yylex(void)
 # define YYLEX yylex()
+#endif
+
+#if !(defined(yylex) || defined(YYSTATE))
+int YYLEX_DECL();
 #endif
 
 /* Parameters sent to yyerror. */
@@ -668,7 +672,7 @@ extern int YYPARSE_DECL();
 #define VEC_NEW 213
 #define DUMMY_LAST_NODE 214
 #define YYERRCODE 256
-typedef short YYINT;
+typedef int YYINT;
 static const YYINT yylhs[] = {                           -1,
     0,    0,    0,    0,    0,    0,   83,   85,   86,   82,
    66,   66,   66,   66,   66,   72,   72,    1,    1,    1,
@@ -3110,13 +3114,15 @@ static const char *const yyrule[] = {
 };
 #endif
 
+#if YYDEBUG
 int      yydebug;
-int      yynerrs;
+#endif
 
 int      yyerrflag;
 int      yychar;
 YYSTYPE  yyval;
 YYSTYPE  yylval;
+int      yynerrs;
 
 /* define the initial stack-sizes */
 #ifdef YYSTACKSIZE
@@ -3292,10 +3298,10 @@ check_if_base( Pclass c1, Pclass c2 )
 	}
 	return 0;
 }
-#line 3296 "y.tab.c"
+#line 3302 "y.tab.c"
 
 #if YYDEBUG
-#include <stdio.h>		/* needed for printf */
+#include <stdio.h>	/* needed for printf */
 #endif
 
 #include <stdlib.h>	/* needed for malloc, etc */
@@ -3367,6 +3373,8 @@ YYPARSE_DECL()
     }
 #endif
 
+    /* yym is set below */
+    /* yyn is set below */
     yynerrs = 0;
     yyerrflag = 0;
     yychar = YYEMPTY;
@@ -3386,28 +3394,26 @@ yyloop:
     if ((yyn = yydefred[yystate]) != 0) goto yyreduce;
     if (yychar < 0)
     {
-        if ((yychar = YYLEX) < 0) yychar = YYEOF;
+        yychar = YYLEX;
+        if (yychar < 0) yychar = YYEOF;
 #if YYDEBUG
         if (yydebug)
         {
-            yys = yyname[YYTRANSLATE(yychar)];
+            if ((yys = yyname[YYTRANSLATE(yychar)]) == NULL) yys = yyname[YYUNDFTOKEN];
             printf("%sdebug: state %d, reading %d (%s)\n",
                     YYPREFIX, yystate, yychar, yys);
         }
 #endif
     }
-    if ((yyn = yysindex[yystate]) && (yyn += yychar) >= 0 &&
-            yyn <= YYTABLESIZE && yycheck[yyn] == yychar)
+    if (((yyn = yysindex[yystate]) != 0) && (yyn += yychar) >= 0 &&
+            yyn <= YYTABLESIZE && yycheck[yyn] == (YYINT) yychar)
     {
 #if YYDEBUG
         if (yydebug)
             printf("%sdebug: state %d, shifting to state %d\n",
                     YYPREFIX, yystate, yytable[yyn]);
 #endif
-        if (yystack.s_mark >= yystack.s_last && yygrowstack(&yystack) == YYENOMEM)
-        {
-            goto yyoverflow;
-        }
+        if (yystack.s_mark >= yystack.s_last && yygrowstack(&yystack) == YYENOMEM) goto yyoverflow;
         yystate = yytable[yyn];
         *++yystack.s_mark = yytable[yyn];
         *++yystack.l_mark = yylval;
@@ -3415,18 +3421,17 @@ yyloop:
         if (yyerrflag > 0)  --yyerrflag;
         goto yyloop;
     }
-    if ((yyn = yyrindex[yystate]) && (yyn += yychar) >= 0 &&
-            yyn <= YYTABLESIZE && yycheck[yyn] == yychar)
+    if (((yyn = yyrindex[yystate]) != 0) && (yyn += yychar) >= 0 &&
+            yyn <= YYTABLESIZE && yycheck[yyn] == (YYINT) yychar)
     {
         yyn = yytable[yyn];
         goto yyreduce;
     }
-    if (yyerrflag) goto yyinrecovery;
+    if (yyerrflag != 0) goto yyinrecovery;
 
     YYERROR_CALL("syntax error");
 
-    goto yyerrlab;
-
+    goto yyerrlab; /* redundant goto avoids 'unused label' warning */
 yyerrlab:
     ++yynerrs;
 
@@ -3436,18 +3441,15 @@ yyinrecovery:
         yyerrflag = 3;
         for (;;)
         {
-            if ((yyn = yysindex[*yystack.s_mark]) && (yyn += YYERRCODE) >= 0 &&
-                    yyn <= YYTABLESIZE && yycheck[yyn] == YYERRCODE)
+            if (((yyn = yysindex[*yystack.s_mark]) != 0) && (yyn += YYERRCODE) >= 0 &&
+                    yyn <= YYTABLESIZE && yycheck[yyn] == (YYINT) YYERRCODE)
             {
 #if YYDEBUG
                 if (yydebug)
                     printf("%sdebug: state %d, error recovery shifting\
  to state %d\n", YYPREFIX, *yystack.s_mark, yytable[yyn]);
 #endif
-                if (yystack.s_mark >= yystack.s_last && yygrowstack(&yystack) == YYENOMEM)
-                {
-                    goto yyoverflow;
-                }
+                if (yystack.s_mark >= yystack.s_last && yygrowstack(&yystack) == YYENOMEM) goto yyoverflow;
                 yystate = yytable[yyn];
                 *++yystack.s_mark = yytable[yyn];
                 *++yystack.l_mark = yylval;
@@ -3472,7 +3474,7 @@ yyinrecovery:
 #if YYDEBUG
         if (yydebug)
         {
-            yys = yyname[YYTRANSLATE(yychar)];
+            if ((yys = yyname[YYTRANSLATE(yychar)]) == NULL) yys = yyname[YYUNDFTOKEN];
             printf("%sdebug: state %d, error recovery discards token %d (%s)\n",
                     YYPREFIX, yystate, yychar, yys);
         }
@@ -3488,23 +3490,27 @@ yyreduce:
                 YYPREFIX, yystate, yyn, yyrule[yyn]);
 #endif
     yym = yylen[yyn];
-    if (yym)
+    if (yym > 0)
         yyval = yystack.l_mark[1-yym];
     else
         memset(&yyval, 0, sizeof yyval);
+
     switch (yyn)
     {
 case 1:
 #line 732 "gram.y"
 	{	YYCLEAN;return 2; }
+#line 3504 "y.tab.c"
 break;
 case 2:
 #line 733 "gram.y"
 	{	YYCLEAN;return 1; }
+#line 3509 "y.tab.c"
 break;
 case 3:
 #line 734 "gram.y"
 	{	YYCLEAN;return 0; }
+#line 3514 "y.tab.c"
 break;
 case 4:
 #line 736 "gram.y"
@@ -3513,6 +3519,7 @@ case 4:
 				bl_level--;
 				YYCLEAN;return 1;
 			}
+#line 3523 "y.tab.c"
 break;
 case 5:
 #line 742 "gram.y"
@@ -3521,10 +3528,12 @@ case 5:
 				bl_level++;
 				YYCLEAN;return 1;
 			}
+#line 3532 "y.tab.c"
 break;
 case 6:
 #line 747 "gram.y"
 	{  YYCLEAN;return 1; }
+#line 3537 "y.tab.c"
 break;
 case 7:
 #line 751 "gram.y"
@@ -3540,10 +3549,12 @@ case 7:
 			templp->start() ;
 			templp->formals_in_progress = true;
 		 }
+#line 3553 "y.tab.c"
 break;
 case 8:
 #line 763 "gram.y"
 	{ in_arg_list = 2; }
+#line 3558 "y.tab.c"
 break;
 case 9:
 #line 764 "gram.y"
@@ -3552,6 +3563,7 @@ case 9:
 			templp->formals_in_progress = false;
 			in_arg_list = 0;
 		 }
+#line 3567 "y.tab.c"
 break;
 case 10:
 #line 770 "gram.y"
@@ -3568,14 +3580,17 @@ case 10:
 			}
                   /*SYM -- goto mod removed*/
                  }
+#line 3584 "y.tab.c"
 break;
 case 12:
 #line 786 "gram.y"
 	{ goto mod; }
+#line 3589 "y.tab.c"
 break;
 case 13:
 #line 787 "gram.y"
 	{ goto mod; }
+#line 3594 "y.tab.c"
 break;
 case 15:
 #line 790 "gram.y"
@@ -3586,10 +3601,12 @@ case 15:
                     	yyval.p = (pn ? pn : yystack.l_mark[-1].pb->b_name);
                     	DECL_TYPE = 0;
 		  }
+#line 3605 "y.tab.c"
 break;
 case 17:
 #line 801 "gram.y"
 	{ yyval.pn = Ncopy(yystack.l_mark[0].pn) ;}
+#line 3610 "y.tab.c"
 break;
 case 18:
 #line 805 "gram.y"
@@ -3597,10 +3614,12 @@ case 18:
 				/*SYM -- tn stuff removed*/
 				if (yystack.l_mark[0].pn==0) yyval.i = 1;
 			}
+#line 3618 "y.tab.c"
 break;
 case 19:
 #line 809 "gram.y"
 	{ goto mod; }
+#line 3623 "y.tab.c"
 break;
 case 20:
 #line 811 "gram.y"
@@ -3613,6 +3632,7 @@ case 20:
 						n->n_qualifier = 0;
 				}
 			}
+#line 3636 "y.tab.c"
 break;
 case 22:
 #line 822 "gram.y"
@@ -3621,6 +3641,7 @@ case 22:
 				Pbase(n->tp)->b_name = Pname(yystack.l_mark[-2].s);
 				yyval.p = n;
 			}
+#line 3645 "y.tab.c"
 break;
 case 23:
 #line 830 "gram.y"
@@ -3629,6 +3650,7 @@ case 23:
 				if(err_name) err_name->n_initializer = yystack.l_mark[-1].pe;
 				goto fix;
 			}
+#line 3654 "y.tab.c"
 break;
 case 24:
 #line 836 "gram.y"
@@ -3661,6 +3683,7 @@ case 24:
 						err_name->n_qualifier = 0;
 				}
 			}
+#line 3687 "y.tab.c"
 break;
 case 25:
 #line 868 "gram.y"
@@ -3672,6 +3695,7 @@ case 25:
 			 	if ( yychar == LC ) ++bl_level;
 				Ctbl->k_name = n;
 			}
+#line 3699 "y.tab.c"
 break;
 case 26:
 #line 877 "gram.y"
@@ -3683,6 +3707,7 @@ case 26:
 				yyval.p = n;
 				NOT_EXPECT_ID();
 			}
+#line 3711 "y.tab.c"
 break;
 case 27:
 #line 886 "gram.y"
@@ -3693,6 +3718,7 @@ case 27:
 				yyval.p = n;
 				NOT_EXPECT_ID();
 			}
+#line 3722 "y.tab.c"
 break;
 case 28:
 #line 894 "gram.y"
@@ -3703,6 +3729,7 @@ case 28:
 				yyval.p = n;
 				NOT_EXPECT_ID();
 			}
+#line 3733 "y.tab.c"
 break;
 case 29:
 #line 904 "gram.y"
@@ -3714,6 +3741,7 @@ case 29:
 			 	if ( yychar == LC ) ++bl_level;
 				Ctbl->k_name = n;
 			}
+#line 3745 "y.tab.c"
 break;
 case 30:
 #line 913 "gram.y"
@@ -3726,6 +3754,7 @@ case 30:
 				yyval.p = n;
 				NOT_EXPECT_ID();
 			}
+#line 3758 "y.tab.c"
 break;
 case 31:
 #line 923 "gram.y"
@@ -3736,6 +3765,7 @@ case 31:
 				yyval.p = n;
 				NOT_EXPECT_ID();
 			}
+#line 3769 "y.tab.c"
 break;
 case 32:
 #line 931 "gram.y"
@@ -3754,6 +3784,7 @@ case 32:
 				yyval.p = n;
 				NOT_EXPECT_ID();
 			}
+#line 3788 "y.tab.c"
 break;
 case 33:
 #line 949 "gram.y"
@@ -3761,6 +3792,7 @@ case 33:
                         	arg_redec(yystack.l_mark[0].pn);
                         	Ctbl->k_name = yystack.l_mark[0].pn;
                    	}
+#line 3796 "y.tab.c"
 break;
 case 34:
 #line 954 "gram.y"
@@ -3770,6 +3802,7 @@ case 34:
 				yyval.pn = yystack.l_mark[-3].pn;
 				NOT_EXPECT_ID();
 			}
+#line 3806 "y.tab.c"
 break;
 case 35:
 #line 964 "gram.y"
@@ -3807,10 +3840,12 @@ case 35:
 				break;
 			}
 		   }
+#line 3844 "y.tab.c"
 break;
 case 36:
 #line 1000 "gram.y"
 	{ ++in_binit_list; }
+#line 3849 "y.tab.c"
 break;
 case 37:
 #line 1001 "gram.y"
@@ -3819,18 +3854,22 @@ case 37:
 				in_arg_list = 0;
 				--in_binit_list;
 			}
+#line 3858 "y.tab.c"
 break;
 case 38:
 #line 1007 "gram.y"
 	{	yyval.p = 0; }
+#line 3863 "y.tab.c"
 break;
 case 39:
 #line 1011 "gram.y"
 	{ yyval.p = yystack.l_mark[0].p; }
+#line 3868 "y.tab.c"
 break;
 case 40:
 #line 1013 "gram.y"
 	{ yyval.pn = yystack.l_mark[0].pn;  yyval.pn->n_list = yystack.l_mark[-2].pn; }
+#line 3873 "y.tab.c"
 break;
 case 41:
 #line 1017 "gram.y"
@@ -3838,6 +3877,7 @@ case 41:
 				yyval.pn = new name;
 				yyval.pn->n_initializer = yystack.l_mark[-1].pe;
 			}
+#line 3881 "y.tab.c"
 break;
 case 42:
 #line 1022 "gram.y"
@@ -3848,6 +3888,7 @@ case 42:
 				n->n_initializer = yystack.l_mark[-1].pe;
 				yyval.pn = n;
 			}
+#line 3892 "y.tab.c"
 break;
 case 43:
 #line 1037 "gram.y"
@@ -3860,6 +3901,7 @@ case 43:
 				else
 					yyval.nl = new nlist(yystack.l_mark[0].pn);
 			}
+#line 3905 "y.tab.c"
 break;
 case 44:
 #line 1047 "gram.y"
@@ -3867,6 +3909,7 @@ case 44:
 				PUSH_ARG_SCOPE();/*SYM*/
                                 yyval.p = 0;
 			}
+#line 3913 "y.tab.c"
 break;
 case 46:
 #line 1055 "gram.y"
@@ -3877,12 +3920,14 @@ case 46:
                                 }
                         /*      ENTER_NAME($<pn>1);*/
                         }
+#line 3924 "y.tab.c"
 break;
 case 47:
 #line 1063 "gram.y"
 	{	yyval.p = yystack.l_mark[-3].pn;
 				yyval.pn->tp = new basetype(FIELD,yystack.l_mark[0].pn);
 		 	}
+#line 3931 "y.tab.c"
 break;
 case 48:
 #line 1067 "gram.y"
@@ -3893,12 +3938,14 @@ case 48:
                                         in_typedef = 0;
                                 }
 			}
+#line 3942 "y.tab.c"
 break;
 case 49:
 #line 1075 "gram.y"
 	{
                         /*      ENTER_NAME($<pn>1);*/
                         }
+#line 3949 "y.tab.c"
 break;
 case 50:
 #line 1079 "gram.y"
@@ -3907,6 +3954,7 @@ case 50:
                                 yystack.l_mark[-3].pn->n_initializer = e;
                                 init_seen = 0;
                         }
+#line 3958 "y.tab.c"
 break;
 case 51:
 #line 1087 "gram.y"
@@ -3923,6 +3971,7 @@ case 51:
 				if ( NEXTTOK() == CM && la_look() == TNAME )
 					EXPECT_ID();
 			}
+#line 3975 "y.tab.c"
 break;
 case 52:
 #line 1101 "gram.y"
@@ -3947,6 +3996,7 @@ case 52:
 				if ( NEXTTOK() == CM && la_look() == TNAME )
 					EXPECT_ID();
 			}
+#line 4000 "y.tab.c"
 break;
 case 53:
 #line 1125 "gram.y"
@@ -3964,6 +4014,7 @@ case 53:
 				DECL_TYPE = 0;
 				yyval.p = n;
 			}
+#line 4018 "y.tab.c"
 break;
 case 54:
 #line 1140 "gram.y"
@@ -3974,6 +4025,7 @@ case 54:
 				in_tag = 0;
 				DECL_TYPE = 0;
 			}
+#line 4029 "y.tab.c"
 break;
 case 55:
 #line 1152 "gram.y"
@@ -3982,6 +4034,7 @@ case 55:
 			in_arg_list = 2;
 			check_decl();
 		  }
+#line 4038 "y.tab.c"
 break;
 case 56:
 #line 1158 "gram.y"
@@ -3990,10 +4043,12 @@ case 56:
 			if (!templp->parameters_in_progress)
 				in_arg_list = 0;
 		  }
+#line 4047 "y.tab.c"
 break;
 case 57:
 #line 1164 "gram.y"
 	{ yyval.pn = templp->check_tname(yystack.l_mark[0].pn) ; }
+#line 4052 "y.tab.c"
 break;
 case 58:
 #line 1166 "gram.y"
@@ -4010,6 +4065,7 @@ case 58:
 			if (flag)
 				righttname=yyval.pn;
 		  }
+#line 4069 "y.tab.c"
 break;
 case 59:
 #line 1180 "gram.y"
@@ -4017,6 +4073,7 @@ case 59:
 		    error("%n was not aZizedT.", yyval.pn) ;
                     yyval.pn= yystack.l_mark[-3].pn->tdef() ;
                     yyval.pn->tp = any_type ; }
+#line 4077 "y.tab.c"
 break;
 case 60:
 #line 1189 "gram.y"
@@ -4032,6 +4089,7 @@ case 60:
 				}
 				if (DECL_TYPE == -1) DECL_TYPE = 0;
 			}
+#line 4093 "y.tab.c"
 break;
 case 61:
 #line 1202 "gram.y"
@@ -4039,6 +4097,7 @@ case 61:
 				yyval.pb->b_linkage = yystack.l_mark[0].s;
 				if (DECL_TYPE == -1) DECL_TYPE = 0;
 			}
+#line 4101 "y.tab.c"
 break;
 case 62:
 #line 1207 "gram.y"
@@ -4046,6 +4105,7 @@ case 62:
 				yyval.p = new basetype(TYPE,yystack.l_mark[0].pn);
 				if (DECL_TYPE == -1) DECL_TYPE = 0;
 			}
+#line 4109 "y.tab.c"
 break;
 case 63:
 #line 1212 "gram.y"
@@ -4054,6 +4114,7 @@ case 63:
 				/*xxx qualifier currently ignored...*/
 				if (DECL_TYPE == -1) DECL_TYPE = 0;
 			}
+#line 4118 "y.tab.c"
 break;
 case 66:
 #line 1220 "gram.y"
@@ -4070,6 +4131,7 @@ case 66:
 					yyval.p = new basetype(yystack.l_mark[0].t,0);
 				DECL_TYPE = -1;
 			}
+#line 4135 "y.tab.c"
 break;
 case 68:
 #line 1237 "gram.y"
@@ -4087,6 +4149,7 @@ case 68:
 				}
 				DECL_TYPE = 0;
 			}
+#line 4153 "y.tab.c"
 break;
 case 69:
 #line 1252 "gram.y"
@@ -4097,14 +4160,17 @@ case 69:
 			/*XXX*/	else if(yystack.l_mark[-1].pb==0) yyval.p=new basetype(TYPE,yystack.l_mark[0].pn);
 				DECL_TYPE = 0;
 			}
+#line 4164 "y.tab.c"
 break;
 case 70:
 #line 1259 "gram.y"
 	{ yyval.p = yystack.l_mark[-1].pb->base_adj(yystack.l_mark[0].pb); }
+#line 4169 "y.tab.c"
 break;
 case 71:
 #line 1260 "gram.y"
 	{ yyval.p = yystack.l_mark[-1].pb->base_adj(yystack.l_mark[0].pb); }
+#line 4174 "y.tab.c"
 break;
 case 72:
 #line 1262 "gram.y"
@@ -4130,24 +4196,29 @@ case 72:
 					yyval.p = yystack.l_mark[-1].pb->name_adj(yystack.l_mark[0].pn);
 				DECL_TYPE = -1;
 			}
+#line 4200 "y.tab.c"
 break;
 case 73:
 #line 1286 "gram.y"
 	{in_arg_list = 2; check_decl();}
+#line 4205 "y.tab.c"
 break;
 case 74:
 #line 1290 "gram.y"
 	{yystack.l_mark[-2].el->add(new expr(ELIST,yystack.l_mark[0].pe,0)) ; }
+#line 4210 "y.tab.c"
 break;
 case 75:
 #line 1292 "gram.y"
 	{ in_arg_list=0; yyval.el = new elist(new expr(ELIST,yystack.l_mark[0].pe,0)); }
+#line 4215 "y.tab.c"
 break;
 case 76:
 #line 1296 "gram.y"
 	{
 				yyval.p = new name;
 			}
+#line 4222 "y.tab.c"
 break;
 case 77:
 #line 1300 "gram.y"
@@ -4156,6 +4227,7 @@ case 77:
 				in_arg_list = 0;
 				hoist_al();
 			}
+#line 4231 "y.tab.c"
 break;
 case 78:
 #line 1306 "gram.y"
@@ -4165,6 +4237,7 @@ case 78:
 				yyval.p = yystack.l_mark[0].p;
 				NOT_EXPECT_ID();
 			}
+#line 4241 "y.tab.c"
 break;
 case 79:
 #line 1313 "gram.y"
@@ -4172,6 +4245,7 @@ case 79:
 				Freturns(yystack.l_mark[0].p) = yystack.l_mark[-1].pn->tp;
 				yystack.l_mark[-1].pn->tp = (Ptype)yystack.l_mark[0].p;
 			}
+#line 4249 "y.tab.c"
 break;
 case 80:
 #line 1318 "gram.y"
@@ -4179,10 +4253,12 @@ case 80:
 				Vtype(yystack.l_mark[0].p) = yystack.l_mark[-1].pn->tp;
 				yystack.l_mark[-1].pn->tp = (Ptype)yystack.l_mark[0].p;
 			}
+#line 4257 "y.tab.c"
 break;
 case 81:
 #line 1324 "gram.y"
 	{ yyval.p = Ncast(yystack.l_mark[-1].p,yystack.l_mark[0].pn); }
+#line 4262 "y.tab.c"
 break;
 case 82:
 #line 1327 "gram.y"
@@ -4190,6 +4266,7 @@ case 82:
 				yystack.l_mark[0].pn->n_template_arg = template_actual_arg_dummy;
 				yyval.pe = yystack.l_mark[0].pn; /* keep yacc happy */
 			}
+#line 4270 "y.tab.c"
 break;
 case 83:
 #line 1332 "gram.y"
@@ -4197,10 +4274,12 @@ case 83:
 				if (yystack.l_mark[0].pe == dummy) error("emptyYZL");
 				yyval.pe = yystack.l_mark[0].pe;
 			}
+#line 4278 "y.tab.c"
 break;
 case 84:
 #line 1340 "gram.y"
 	{ yyval.p = enumcheck( yystack.l_mark[0].pn); }
+#line 4283 "y.tab.c"
 break;
 case 85:
 #line 1342 "gram.y"
@@ -4211,6 +4290,7 @@ case 85:
 			} else
 				yyval.p = enumcheck( yystack.l_mark[0].pn);
 		}
+#line 4294 "y.tab.c"
 break;
 case 86:
 #line 1350 "gram.y"
@@ -4224,30 +4304,37 @@ case 86:
 				in_typedef->defined = TNAME_SEEN;
 			/*xxx qualifier currently ignored...*/
 		}
+#line 4308 "y.tab.c"
 break;
 case 87:
 #line 1362 "gram.y"
 	{ ++in_class_decl; }
+#line 4313 "y.tab.c"
 break;
 case 88:
 #line 1363 "gram.y"
 	{ --in_class_decl; yyval.p = end_enum(0,yystack.l_mark[-1].nl); }
+#line 4318 "y.tab.c"
 break;
 case 89:
 #line 1364 "gram.y"
 	{ ++in_class_decl; }
+#line 4323 "y.tab.c"
 break;
 case 90:
 #line 1365 "gram.y"
 	{ --in_class_decl; yyval.p = end_enum(yystack.l_mark[-4].pn,yystack.l_mark[-1].nl); }
+#line 4328 "y.tab.c"
 break;
 case 91:
 #line 1366 "gram.y"
 	{ yyval.pb = (Pbase)yystack.l_mark[0].pn->tp; }
+#line 4333 "y.tab.c"
 break;
 case 92:
 #line 1370 "gram.y"
 	{	if (yystack.l_mark[0].p) yyval.nl = new nlist(yystack.l_mark[0].pn); }
+#line 4338 "y.tab.c"
 break;
 case 93:
 #line 1372 "gram.y"
@@ -4257,6 +4344,7 @@ case 93:
 					else
 						yyval.nl = new nlist(yystack.l_mark[0].pn);
 			}
+#line 4348 "y.tab.c"
 break;
 case 96:
 #line 1383 "gram.y"
@@ -4264,18 +4352,22 @@ case 96:
 				yyval.pn = 0;
 				error("emptyYZL");
 			}
+#line 4356 "y.tab.c"
 break;
 case 97:
 #line 1392 "gram.y"
 	{ templp->collect(yystack.l_mark[-1].t, yystack.l_mark[0].pn) ; }
+#line 4361 "y.tab.c"
 break;
 case 98:
 #line 1394 "gram.y"
 	{templp->collect(Ndata(yystack.l_mark[-1].p,yystack.l_mark[0].pn)); }
+#line 4366 "y.tab.c"
 break;
 case 99:
 #line 1401 "gram.y"
 	{	yyval.p = yystack.l_mark[0].pn; }
+#line 4371 "y.tab.c"
 break;
 case 100:
 #line 1403 "gram.y"
@@ -4283,18 +4375,21 @@ case 100:
 				yystack.l_mark[0].pn->tp = (Ptype)yystack.l_mark[-1].p;
 				yyval.p = yystack.l_mark[0].p;
 			}
+#line 4379 "y.tab.c"
 break;
 case 101:
 #line 1408 "gram.y"
 	{	Vtype(yystack.l_mark[0].p) = yystack.l_mark[-1].pn->tp;
 				yystack.l_mark[-1].pn->tp = (Ptype)yystack.l_mark[0].p;
 			}
+#line 4386 "y.tab.c"
 break;
 case 102:
 #line 1412 "gram.y"
 	{	Freturns(yystack.l_mark[0].p) = yystack.l_mark[-1].pn->tp;
 				yystack.l_mark[-1].pn->tp = (Ptype)yystack.l_mark[0].p;
 			}
+#line 4393 "y.tab.c"
 break;
 case 103:
 #line 1416 "gram.y"
@@ -4303,6 +4398,7 @@ case 103:
 				in_arg_list = 0;
 				hoist_al();
 			}
+#line 4402 "y.tab.c"
 break;
 case 104:
 #line 1425 "gram.y"
@@ -4312,6 +4408,7 @@ case 104:
 				yyval.p = yystack.l_mark[0].pn;
 				yyval.pn->tp = moe_type;
 			}
+#line 4412 "y.tab.c"
 break;
 case 105:
 #line 1432 "gram.y"
@@ -4319,6 +4416,7 @@ case 105:
 				if ( yystack.l_mark[0].pn->n_oper != TNAME )
 					insert_name(yystack.l_mark[0].pn,Ctbl);
 			}
+#line 4420 "y.tab.c"
 break;
 case 106:
 #line 1437 "gram.y"
@@ -4326,10 +4424,12 @@ case 106:
 				yyval.pn->tp = moe_type;
 				yyval.pn->n_initializer = yystack.l_mark[0].pe;
 			}
+#line 4428 "y.tab.c"
 break;
 case 107:
 #line 1442 "gram.y"
 	{	yyval.p = 0; }
+#line 4433 "y.tab.c"
 break;
 case 108:
 #line 1446 "gram.y"
@@ -4348,6 +4448,7 @@ case 108:
 				++bl_level; /* scope weirdness!*/
 				++in_mem_fct;
 			}
+#line 4452 "y.tab.c"
 break;
 case 109:
 #line 1462 "gram.y"
@@ -4384,6 +4485,7 @@ case 109:
 				end_cl();
 				declTag = 1;
 			}
+#line 4489 "y.tab.c"
 break;
 case 110:
 #line 1496 "gram.y"
@@ -4407,6 +4509,7 @@ case 110:
 					error("%n of type%t redeclared as%k",yystack.l_mark[0].pn,yyval.pb,yystack.l_mark[-1].t);
 				check_tag();
 			}
+#line 4513 "y.tab.c"
 break;
 case 111:
 #line 1517 "gram.y"
@@ -4456,44 +4559,54 @@ case 111:
                     yyval.pb = (Pbase)p->tp;
                     check_tag();
                   }
+#line 4563 "y.tab.c"
 break;
 case 112:
 #line 1564 "gram.y"
 	{
 				goto aggrcheck;
 			}
+#line 4570 "y.tab.c"
 break;
 case 115:
 #line 1574 "gram.y"
 	{ yyval.pbc = yystack.l_mark[0].pbc; }
+#line 4575 "y.tab.c"
 break;
 case 116:
 #line 1575 "gram.y"
 	{ yyval.pbc = 0; }
+#line 4580 "y.tab.c"
 break;
 case 118:
 #line 1580 "gram.y"
 	{	if (yystack.l_mark[0].pbc) { yyval.pbc = yystack.l_mark[0].pbc; yyval.pbc->next = yystack.l_mark[-2].pbc; } }
+#line 4585 "y.tab.c"
 break;
 case 119:
 #line 1583 "gram.y"
 	{ yyval.pbc = dobase(0,yystack.l_mark[0].pn); }
+#line 4590 "y.tab.c"
 break;
 case 120:
 #line 1584 "gram.y"
 	{ yyval.pbc = dobase(yystack.l_mark[-1].t,yystack.l_mark[0].pn); }
+#line 4595 "y.tab.c"
 break;
 case 121:
 #line 1585 "gram.y"
 	{ yyval.pbc = dobase(0,yystack.l_mark[0].pn,yystack.l_mark[-1].t); }
+#line 4600 "y.tab.c"
 break;
 case 122:
 #line 1586 "gram.y"
 	{ yyval.pbc = dobase(yystack.l_mark[-2].t,yystack.l_mark[0].pn,yystack.l_mark[-1].t); }
+#line 4605 "y.tab.c"
 break;
 case 123:
 #line 1587 "gram.y"
 	{ yyval.pbc = dobase(yystack.l_mark[-1].t,yystack.l_mark[0].pn,yystack.l_mark[-2].t); }
+#line 4610 "y.tab.c"
 break;
 case 124:
 #line 1591 "gram.y"
@@ -4507,6 +4620,7 @@ case 124:
 				in_class_decl++;
 				SAVE_STATE();
 			}
+#line 4624 "y.tab.c"
 break;
 case 125:
 #line 1603 "gram.y"
@@ -4520,6 +4634,7 @@ case 125:
 				in_class_decl++;
 				SAVE_STATE();
 			}
+#line 4638 "y.tab.c"
 break;
 case 126:
 #line 1614 "gram.y"
@@ -4558,22 +4673,27 @@ case 126:
 			in_class_decl++;
 			SAVE_STATE();
 			}
+#line 4677 "y.tab.c"
 break;
 case 127:
 #line 1651 "gram.y"
 	{ yyval.p = yystack.l_mark[0].pn; }
+#line 4682 "y.tab.c"
 break;
 case 128:
 #line 1652 "gram.y"
 	{ yyval.p=yystack.l_mark[0].p; }
+#line 4687 "y.tab.c"
 break;
 case 129:
 #line 1655 "gram.y"
 	{ yyval.p = yystack.l_mark[0].pn; }
+#line 4692 "y.tab.c"
 break;
 case 130:
 #line 1656 "gram.y"
 	{ yyval.p=yystack.l_mark[0].p; }
+#line 4697 "y.tab.c"
 break;
 case 131:
 #line 1660 "gram.y"
@@ -4586,10 +4706,12 @@ case 131:
 				}
 				in_friend = 0;
 			}
+#line 4710 "y.tab.c"
 break;
 case 132:
 #line 1669 "gram.y"
 	{ yyval.p = 0; }
+#line 4715 "y.tab.c"
 break;
 case 133:
 #line 1671 "gram.y"
@@ -4602,6 +4724,7 @@ case 133:
   				templ_friends = new cons(templp->parsed_template,templ_friends);
 				templp->parsed_template = 0;
 			}
+#line 4728 "y.tab.c"
 break;
 case 135:
 #line 1684 "gram.y"
@@ -4613,12 +4736,14 @@ case 135:
 				    yystack.l_mark[-1].pn->n_qualifier->n_template_arg != template_type_formal)
 					UNSET_SCOPE();
 			}
+#line 4740 "y.tab.c"
 break;
 case 136:
 #line 1693 "gram.y"
 	{
 				goto fct_friend1;
 			}
+#line 4747 "y.tab.c"
 break;
 case 137:
 #line 1697 "gram.y"
@@ -4630,18 +4755,21 @@ case 137:
 				    yystack.l_mark[0].pn->n_qualifier->n_template_arg != template_type_formal)
 					UNSET_SCOPE();
 			}
+#line 4759 "y.tab.c"
 break;
 case 138:
 #line 1706 "gram.y"
 	{
 				goto fct_friend2;
 			}
+#line 4766 "y.tab.c"
 break;
 case 140:
 #line 1711 "gram.y"
 	{	yyval.p = new name;
 				yyval.pn->base = yystack.l_mark[-1].t;
 			}
+#line 4773 "y.tab.c"
 break;
 case 141:
 #line 1715 "gram.y"
@@ -4661,22 +4789,26 @@ case 141:
 				if ( yystack.l_mark[-2].pn && yystack.l_mark[-2].pn->n_template_arg != template_type_formal )
 					UNSET_SCOPE();/*SYM*/
 			}
+#line 4793 "y.tab.c"
 break;
 case 142:
 #line 1745 "gram.y"
 	{ yyval.p = yystack.l_mark[0].pn; }
+#line 4798 "y.tab.c"
 break;
 case 143:
 #line 1747 "gram.y"
 	{	yyval.p = Ncopy(yystack.l_mark[0].pn);
 				yyval.pn->n_oper = DTOR;
 			}
+#line 4805 "y.tab.c"
 break;
 case 144:
 #line 1751 "gram.y"
 	{	yyval.p = new name(oper_name(yystack.l_mark[0].t));
 				yyval.pn->n_oper = yystack.l_mark[0].t;
 			}
+#line 4812 "y.tab.c"
 break;
 case 145:
 #line 1755 "gram.y"
@@ -4688,48 +4820,59 @@ case 145:
 				n->tp = 0;
 				yyval.p = n;
 			}
+#line 4824 "y.tab.c"
 break;
 case 160:
 #line 1779 "gram.y"
 	{	yyval.t = CALL; }
+#line 4829 "y.tab.c"
 break;
 case 161:
 #line 1780 "gram.y"
 	{	yyval.t = DEREF; }
+#line 4834 "y.tab.c"
 break;
 case 167:
 #line 1786 "gram.y"
 	{	yyval.t = NEW; --in_new; }
+#line 4839 "y.tab.c"
 break;
 case 168:
 #line 1787 "gram.y"
 	{	yyval.t = VEC_NEW; --in_new; }
+#line 4844 "y.tab.c"
 break;
 case 169:
 #line 1788 "gram.y"
 	{	yyval.t = DELETE; }
+#line 4849 "y.tab.c"
 break;
 case 170:
 #line 1789 "gram.y"
 	{	yyval.t = VEC_DELETE; }
+#line 4854 "y.tab.c"
 break;
 case 171:
 #line 1790 "gram.y"
 	{	yyval.t = REF; }
+#line 4859 "y.tab.c"
 break;
 case 172:
 #line 1791 "gram.y"
 	{	yyval.t = CM; }
+#line 4864 "y.tab.c"
 break;
 case 173:
 #line 1792 "gram.y"
 	{	yyval.t = REFMUL;
 					if (yystack.l_mark[0].t == DOT) error(".* cannot be overloaded");
 				}
+#line 4871 "y.tab.c"
 break;
 case 174:
 #line 1797 "gram.y"
 	{ yyval.pn = SET_SCOPE(yystack.l_mark[0].pn); }
+#line 4876 "y.tab.c"
 break;
 case 175:
 #line 1801 "gram.y"
@@ -4753,6 +4896,7 @@ case 175:
 			    }
 			    yyval.pn = yystack.l_mark[0].pn;
 			}
+#line 4900 "y.tab.c"
 break;
 case 176:
 #line 1822 "gram.y"
@@ -4787,6 +4931,7 @@ case 176:
 				}
 			    }
 			}
+#line 4935 "y.tab.c"
 break;
 case 177:
 #line 1856 "gram.y"
@@ -4799,6 +4944,7 @@ case 177:
 				/* $<pn>$->n_oper = TNAME;*/
 				/* $<pn>$->n_qualifier = $<pn>1;*/
 			}
+#line 4948 "y.tab.c"
 break;
 case 178:
 #line 1866 "gram.y"
@@ -4809,10 +4955,12 @@ case 178:
 			/*	$<pn>$ = Ncopy( $<pn>1 );*/
 			/*	$<pn>$->n_oper = TNAME;*/
 			}
+#line 4959 "y.tab.c"
 break;
 case 179:
 #line 1876 "gram.y"
 	{ yyval.i = 0; }
+#line 4964 "y.tab.c"
 break;
 case 180:
 #line 1878 "gram.y"
@@ -4838,24 +4986,29 @@ case 180:
 					break;
 				}
  			}
+#line 4990 "y.tab.c"
 break;
 case 181:
 #line 1901 "gram.y"
 	{ yyval.i = yystack.l_mark[-4].i; }
+#line 4995 "y.tab.c"
 break;
 case 182:
 #line 1904 "gram.y"
 	{ yyval.pl = 0; }
+#line 5000 "y.tab.c"
 break;
 case 183:
 #line 1906 "gram.y"
 	{ yyval.pl = 0; }
+#line 5005 "y.tab.c"
 break;
 case 184:
 #line 1910 "gram.y"
 	{	Freturns(yystack.l_mark[0].p) = yystack.l_mark[-1].pn->tp;
 				yystack.l_mark[-1].pn->tp = yystack.l_mark[0].pt;
 			}
+#line 5012 "y.tab.c"
 break;
 case 185:
 #line 1914 "gram.y"
@@ -4863,6 +5016,7 @@ case 185:
  				yystack.l_mark[-3].pn->tp = new fct(yystack.l_mark[-3].pn->tp,0,1);
  				Pfct(yystack.l_mark[-3].pn->tp)->f_const = (yystack.l_mark[0].i & 1);
  			}
+#line 5020 "y.tab.c"
 break;
 case 186:
 #line 1919 "gram.y"
@@ -4877,6 +5031,7 @@ case 186:
 				Freturns(yystack.l_mark[0].p) = yyval.pn->tp;
 				yyval.pn->tp = yystack.l_mark[0].pt;
 			}
+#line 5035 "y.tab.c"
 break;
 case 187:
 #line 1935 "gram.y"
@@ -4887,6 +5042,7 @@ case 187:
  				POP_SCOPE();/*SYM*/
 				/*RESTORE_STATE();*/
 			}
+#line 5046 "y.tab.c"
 break;
 case 188:
 #line 1943 "gram.y"
@@ -4902,6 +5058,7 @@ case 188:
 				yyval.p = yystack.l_mark[-2].pn;
 				if (DECL_TYPE == -1) DECL_TYPE = 0;
 			}
+#line 5062 "y.tab.c"
 break;
 case 189:
 #line 1956 "gram.y"
@@ -4917,6 +5074,7 @@ case 189:
 				yyval.p = yystack.l_mark[-2].pn;
 				if (DECL_TYPE == -1) DECL_TYPE = 0;
 			}
+#line 5078 "y.tab.c"
 break;
 case 190:
 #line 1969 "gram.y"
@@ -4931,6 +5089,7 @@ case 190:
 				yyval.pn->n_oper = TNAME;
 				yyval.pn->tp = new fct(0,yystack.l_mark[-1].pn,1);
 			}
+#line 5093 "y.tab.c"
 break;
 case 191:
 #line 1981 "gram.y"
@@ -4945,12 +5104,14 @@ case 191:
  				yyval.pn->tp = new fct(0,0,1);
  				Pfct(yyval.pn->tp)->f_const = (yystack.l_mark[0].i & 1);
 			}
+#line 5108 "y.tab.c"
 break;
 case 192:
 #line 1993 "gram.y"
 	{	memptrdcl(yystack.l_mark[-3].pn,yystack.l_mark[-5].pn,yystack.l_mark[0].pt,yystack.l_mark[-2].pn);
 				yyval.p = yystack.l_mark[-2].p;
 			}
+#line 5115 "y.tab.c"
 break;
 case 193:
 #line 1997 "gram.y"
@@ -4974,6 +5135,7 @@ case 193:
 				    }
 				}
 			}
+#line 5139 "y.tab.c"
 break;
 case 194:
 #line 2018 "gram.y"
@@ -4981,6 +5143,7 @@ case 194:
 				/*$<pn>$->n_qualifier = $1;*/
 				error("`.' used for qualification; please use `::'");
 			}
+#line 5147 "y.tab.c"
 break;
 case 195:
 #line 2023 "gram.y"
@@ -4993,6 +5156,7 @@ case 195:
     					yyval.pn->n_qualifier = yystack.l_mark[-1].pn;
 				/*SYM }*/
 			}
+#line 5160 "y.tab.c"
 break;
 case 196:
 #line 2033 "gram.y"
@@ -5005,6 +5169,7 @@ case 196:
     				/*	$<pn>2->n_qualifier = $<pn>1;*/
 				/*}*/
 			}
+#line 5173 "y.tab.c"
 break;
 case 197:
 #line 2043 "gram.y"
@@ -5012,6 +5177,7 @@ case 197:
 				yystack.l_mark[0].pn->tp = yystack.l_mark[-1].pt;
 				yyval.p = yystack.l_mark[0].p;
 			}
+#line 5181 "y.tab.c"
 break;
 case 198:
 #line 2048 "gram.y"
@@ -5023,6 +5189,7 @@ case 198:
 				else in_tag = yystack.l_mark[0].pn;/*SYM???*/
 				yyval.pn->tp = yystack.l_mark[-1].pt;
 			}
+#line 5193 "y.tab.c"
 break;
 case 199:
 #line 2057 "gram.y"
@@ -5033,12 +5200,14 @@ case 199:
 				else in_tag = yystack.l_mark[-1].pn;/*SYM???*/
 				yyval.pn->tp = yystack.l_mark[0].pt;
 			}
+#line 5204 "y.tab.c"
 break;
 case 200:
 #line 2065 "gram.y"
 	{	Vtype(yystack.l_mark[0].p) = yystack.l_mark[-1].pn->tp;
 				yystack.l_mark[-1].pn->tp = yystack.l_mark[0].pt;
 			}
+#line 5211 "y.tab.c"
 break;
 case 201:
 #line 2082 "gram.y"
@@ -5048,6 +5217,7 @@ case 201:
 				hoist_al();/*SYM end_al($1,0);*/
 				/*RESTORE_STATE();*/
 			}
+#line 5221 "y.tab.c"
 break;
 case 202:
 #line 2091 "gram.y"
@@ -5058,6 +5228,7 @@ case 202:
 				}
 				yyval.p = yystack.l_mark[0].pn;
 			}
+#line 5232 "y.tab.c"
 break;
 case 203:
 #line 2099 "gram.y"
@@ -5066,6 +5237,7 @@ case 203:
 				yystack.l_mark[0].pn->hide();
 				yyval.pn->tp = yystack.l_mark[-1].pt;
 			}
+#line 5241 "y.tab.c"
 break;
 case 204:
 #line 2105 "gram.y"
@@ -5073,6 +5245,7 @@ case 204:
 				yyval.p = new name;
 				NOT_EXPECT_ID();
 			}
+#line 5249 "y.tab.c"
 break;
 case 205:
 #line 2110 "gram.y"
@@ -5080,18 +5253,21 @@ case 205:
 				yystack.l_mark[0].pn->tp = (Ptype)yystack.l_mark[-1].p;
 				yyval.p = yystack.l_mark[0].p;
 			}
+#line 5257 "y.tab.c"
 break;
 case 206:
 #line 2115 "gram.y"
 	{	Vtype(yystack.l_mark[0].p) = yystack.l_mark[-1].pn->tp;
 				yystack.l_mark[-1].pn->tp = (Ptype)yystack.l_mark[0].p;
 			}
+#line 5264 "y.tab.c"
 break;
 case 207:
 #line 2119 "gram.y"
 	{	Freturns(yystack.l_mark[0].p) = yystack.l_mark[-1].pn->tp;
 				yystack.l_mark[-1].pn->tp = (Ptype)yystack.l_mark[0].p;
 			}
+#line 5271 "y.tab.c"
 break;
 case 208:
 #line 2135 "gram.y"
@@ -5102,10 +5278,12 @@ case 208:
 				hoist_al();/*SYM end_al($1,0);*/
 				/*RESTORE_STATE();*/
 			}
+#line 5282 "y.tab.c"
 break;
 case 209:
 #line 2145 "gram.y"
 	{	yyval.p = new name; }
+#line 5287 "y.tab.c"
 break;
 case 210:
 #line 2147 "gram.y"
@@ -5114,16 +5292,19 @@ case 210:
 				yyval.p = yystack.l_mark[0].p;
                                 NOT_EXPECT_ID();
 			}
+#line 5296 "y.tab.c"
 break;
 case 211:
 #line 2153 "gram.y"
 	{	Vtype(yystack.l_mark[0].p) = yystack.l_mark[-1].pn->tp;
 				yystack.l_mark[-1].pn->tp = (Ptype)yystack.l_mark[0].p;
 			}
+#line 5303 "y.tab.c"
 break;
 case 212:
 #line 2158 "gram.y"
 	{ yyval.p = new name; }
+#line 5308 "y.tab.c"
 break;
 case 213:
 #line 2160 "gram.y"
@@ -5132,12 +5313,14 @@ case 213:
 				yyval.p = yystack.l_mark[0].p;
 				NOT_EXPECT_ID();
 			}
+#line 5317 "y.tab.c"
 break;
 case 214:
 #line 2166 "gram.y"
 	{	Vtype(yystack.l_mark[0].p) = yystack.l_mark[-1].pn->tp;
 				yystack.l_mark[-1].pn->tp = (Ptype)yystack.l_mark[0].p;
 			}
+#line 5324 "y.tab.c"
 break;
 case 215:
 #line 2170 "gram.y"
@@ -5145,6 +5328,7 @@ case 215:
 				yystack.l_mark[-2].pn->tp = yystack.l_mark[0].pt;
 				yyval.p = yystack.l_mark[-2].p;
 			}
+#line 5332 "y.tab.c"
 break;
 case 216:
 #line 2175 "gram.y"
@@ -5152,10 +5336,12 @@ case 216:
 				yystack.l_mark[-2].pn->tp = yystack.l_mark[0].pt;
 				yyval.p = yystack.l_mark[-2].p;
 			}
+#line 5340 "y.tab.c"
 break;
 case 217:
 #line 2182 "gram.y"
 	{	yyval.p = new name; }
+#line 5345 "y.tab.c"
 break;
 case 218:
 #line 2184 "gram.y"
@@ -5163,12 +5349,14 @@ case 218:
 				yystack.l_mark[0].pn->tp = (Ptype)yystack.l_mark[-1].p;
 				yyval.p = yystack.l_mark[0].p;
 			}
+#line 5353 "y.tab.c"
 break;
 case 219:
 #line 2194 "gram.y"
 	{
 				yyval.p = 0;
 			}
+#line 5360 "y.tab.c"
 break;
 case 220:
 #line 2198 "gram.y"
@@ -5176,6 +5364,7 @@ case 220:
 				error( "ZizedTD must be atG, not local scope" );
 				error('i', "cannot recover from previous error" );
 			}
+#line 5368 "y.tab.c"
 break;
 case 221:
 #line 2203 "gram.y"
@@ -5188,6 +5377,7 @@ case 221:
 						stmt_seen = 1;
 					}
 			}
+#line 5381 "y.tab.c"
 break;
 case 222:
 #line 2214 "gram.y"
@@ -5195,6 +5385,7 @@ case 222:
 				yyval.p = yystack.l_mark[0].p;
 				if (yystack.l_mark[0].p)	stmt_seen = 1;
 			}
+#line 5389 "y.tab.c"
 break;
 case 223:
 #line 2221 "gram.y"
@@ -5202,6 +5393,7 @@ case 223:
 				yyval.p = 0;
 				check_decl();
 			}
+#line 5397 "y.tab.c"
 break;
 case 224:
 #line 2228 "gram.y"
@@ -5209,6 +5401,7 @@ case 224:
 			/*	if ($<pe>$ == dummy) error("empty condition");*/
 				stmt_seen = 1;
 			}
+#line 5405 "y.tab.c"
 break;
 case 225:
 #line 2235 "gram.y"
@@ -5220,6 +5413,7 @@ case 225:
 				stmt_seen = 0;
 				/*SYM -- tn stuff removed*/
 			}
+#line 5417 "y.tab.c"
 break;
 case 226:
 #line 2244 "gram.y"
@@ -5234,42 +5428,51 @@ case 226:
 				yyval.ps->k_tbl = Ctbl;/*SYM*/
                         	POP_SCOPE();/*SYM*/
 			}
+#line 5432 "y.tab.c"
 break;
 case 227:
 #line 2256 "gram.y"
 	{ yyval.p = new block(yystack.l_mark[-1].l,0,0,yystack.l_mark[0].l); NOT_EXPECT_ID();
 			  if ( Ctbl->k_id == ARG ) POP_SCOPE();/*SYM*/
 			}
+#line 5439 "y.tab.c"
 break;
 case 228:
 #line 2260 "gram.y"
 	{ yyval.p = new block(yystack.l_mark[-2].l,0,0,yystack.l_mark[0].l); NOT_EXPECT_ID();
 			  if ( Ctbl->k_id == ARG ) POP_SCOPE();/*SYM*/
 			}
+#line 5446 "y.tab.c"
 break;
 case 229:
 #line 2266 "gram.y"
 	{	yyval.p = new estmt(SM,curloc,yystack.l_mark[0].pe,0);	}
+#line 5451 "y.tab.c"
 break;
 case 230:
 #line 2268 "gram.y"
 	{	yyval.p = new stmt(BREAK,yystack.l_mark[0].l,0); }
+#line 5456 "y.tab.c"
 break;
 case 231:
 #line 2270 "gram.y"
 	{	yyval.p = new stmt(CONTINUE,yystack.l_mark[0].l,0); }
+#line 5461 "y.tab.c"
 break;
 case 232:
 #line 2272 "gram.y"
 	{	yyval.p = new lstmt(GOTO,yystack.l_mark[-1].l,yystack.l_mark[0].pn,0); }
+#line 5466 "y.tab.c"
 break;
 case 233:
 #line 2273 "gram.y"
 	{ stmt_seen=1; }
+#line 5471 "y.tab.c"
 break;
 case 234:
 #line 2274 "gram.y"
 	{	yyval.p = new estmt(DO,yystack.l_mark[-4].l,yystack.l_mark[0].pe,yystack.l_mark[-2].ps); }
+#line 5476 "y.tab.c"
 break;
 case 235:
 #line 2276 "gram.y"
@@ -5286,6 +5489,7 @@ case 235:
 					yyval.p = 0;
 				}
 			}
+#line 5493 "y.tab.c"
 break;
 case 236:
 #line 2291 "gram.y"
@@ -5296,14 +5500,17 @@ case 236:
 				yychar = SM;
 			}
 		  }
+#line 5504 "y.tab.c"
 break;
 case 239:
 #line 2302 "gram.y"
 	{	yyval.p = new estmt(SM,curloc,dummy,0); }
+#line 5509 "y.tab.c"
 break;
 case 240:
 #line 2304 "gram.y"
 	{	yyval.p = new estmt(RETURN,yystack.l_mark[-2].l,yystack.l_mark[-1].pe,0); }
+#line 5514 "y.tab.c"
 break;
 case 241:
 #line 2306 "gram.y"
@@ -5311,6 +5518,7 @@ case 241:
 				error("local linkage specification");
 				yyval.p = yystack.l_mark[0].pn;
 			}
+#line 5522 "y.tab.c"
 break;
 case 242:
 #line 2311 "gram.y"
@@ -5335,6 +5543,7 @@ case 242:
 					yyval.ps->base = FDCL;
 				}
 			}
+#line 5547 "y.tab.c"
 break;
 case 243:
 #line 2333 "gram.y"
@@ -5348,30 +5557,37 @@ case 243:
 					cd = new nlist(n);
 				yyval.p = 0;
 			}
+#line 5561 "y.tab.c"
 break;
 case 245:
 #line 2345 "gram.y"
 	{	yyval.p = new ifstmt(yystack.l_mark[-2].l,yystack.l_mark[-1].pe,yystack.l_mark[0].ps,0); }
+#line 5566 "y.tab.c"
 break;
 case 246:
 #line 2347 "gram.y"
 	{	yyval.p = new ifstmt(yystack.l_mark[-4].l,yystack.l_mark[-3].pe,yystack.l_mark[-2].ps,yystack.l_mark[0].ps); }
+#line 5571 "y.tab.c"
 break;
 case 247:
 #line 2349 "gram.y"
 	{	yyval.p = new estmt(WHILE,yystack.l_mark[-2].l,yystack.l_mark[-1].pe,yystack.l_mark[0].ps); }
+#line 5576 "y.tab.c"
 break;
 case 248:
 #line 2350 "gram.y"
 	{ stmt_seen=1; }
+#line 5581 "y.tab.c"
 break;
 case 249:
 #line 2351 "gram.y"
 	{	yyval.p = new forstmt(yystack.l_mark[-8].l,yystack.l_mark[-5].ps,yystack.l_mark[-4].pe,yystack.l_mark[-2].pe,yystack.l_mark[0].ps); }
+#line 5586 "y.tab.c"
 break;
 case 250:
 #line 2352 "gram.y"
 	{ scd[++scdp] = cd;}
+#line 5591 "y.tab.c"
 break;
 case 251:
 #line 2353 "gram.y"
@@ -5379,30 +5595,36 @@ case 251:
 				--scdp;
 				yyval.p = new estmt(SWITCH,yystack.l_mark[-3].l,yystack.l_mark[-1].pe,yystack.l_mark[0].ps);
 			}
+#line 5599 "y.tab.c"
 break;
 case 252:
 #line 2357 "gram.y"
 	{ yyval.pn = yystack.l_mark[-1].pn; stmt_seen=1; }
+#line 5604 "y.tab.c"
 break;
 case 253:
 #line 2358 "gram.y"
 	{	Pname n = yystack.l_mark[-1].pn;
 				yyval.p = new lstmt(LABEL,n->where,n,yystack.l_mark[0].ps);
 			}
+#line 5611 "y.tab.c"
 break;
 case 254:
 #line 2361 "gram.y"
 	{ yyval.pn = new name(yystack.l_mark[-1].pn->string); stmt_seen=1; }
+#line 5616 "y.tab.c"
 break;
 case 255:
 #line 2362 "gram.y"
 	{	Pname n = yystack.l_mark[-1].pn;
 				yyval.p = new lstmt(LABEL,n->where,n,yystack.l_mark[0].ps);
 			}
+#line 5623 "y.tab.c"
 break;
 case 256:
 #line 2365 "gram.y"
 	{ stmt_seen=1; }
+#line 5628 "y.tab.c"
 break;
 case 257:
 #line 2366 "gram.y"
@@ -5411,10 +5633,12 @@ case 257:
 				if (yystack.l_mark[-2].pe == dummy) error("empty case label");
 				yyval.p = new estmt(CASE,yystack.l_mark[-4].l,yystack.l_mark[-2].pe,yystack.l_mark[0].ps);
 			}
+#line 5637 "y.tab.c"
 break;
 case 258:
 #line 2371 "gram.y"
 	{ stmt_seen=1; }
+#line 5642 "y.tab.c"
 break;
 case 259:
 #line 2372 "gram.y"
@@ -5422,14 +5646,17 @@ case 259:
 				if (scdp>=0 && scd[scdp]!=cd && cd && yystack.l_mark[-1].pe && decl_with_init(cd)) error("jump past initializer (did you forget a '{ }'?)");
 				yyval.p = new stmt(DEFAULT,yystack.l_mark[-3].l,yystack.l_mark[0].ps);
 			}
+#line 5650 "y.tab.c"
 break;
 case 260:
 #line 2377 "gram.y"
 	{ yyval.p = new handler( yystack.l_mark[-1].ps, stmt_unlist(yystack.l_mark[0].sl) ); }
+#line 5655 "y.tab.c"
 break;
 case 261:
 #line 2382 "gram.y"
 	{ yyval.sl = 0; }
+#line 5660 "y.tab.c"
 break;
 case 262:
 #line 2384 "gram.y"
@@ -5442,6 +5669,7 @@ case 262:
 						stmt_seen = 1;
 					}
 			}
+#line 5673 "y.tab.c"
 break;
 case 263:
 #line 2396 "gram.y"
@@ -5452,6 +5680,7 @@ case 263:
 			    }
 			    yyval.ps = yystack.l_mark[0].ps;
 			}
+#line 5684 "y.tab.c"
 break;
 case 264:
 #line 2407 "gram.y"
@@ -5462,10 +5691,12 @@ case 264:
 				else
 					yyval.pn->base = CATCH;
 			}
+#line 5695 "y.tab.c"
 break;
 case 265:
 #line 2415 "gram.y"
 	{ yyval.pn = 0; }
+#line 5700 "y.tab.c"
 break;
 case 266:
 #line 2422 "gram.y"
@@ -5478,14 +5709,17 @@ case 266:
 				}
 				yyval.p = e;
 			}
+#line 5713 "y.tab.c"
 break;
 case 267:
 #line 2434 "gram.y"
 	{	yyval.el = new elist(new expr(ELIST,yystack.l_mark[0].pe,0)); }
+#line 5718 "y.tab.c"
 break;
 case 268:
 #line 2436 "gram.y"
 	{	yystack.l_mark[-2].el->add(new expr(ELIST,yystack.l_mark[0].pe,0)); }
+#line 5723 "y.tab.c"
 break;
 case 270:
 #line 2441 "gram.y"
@@ -5503,86 +5737,107 @@ case 270:
 					e = new expr(ELIST,dummy,0);
 				yyval.p = new expr(ILIST,e,0);
 			}
+#line 5741 "y.tab.c"
 break;
 case 271:
 #line 2458 "gram.y"
 	{	bbinop:	yyval.p = new expr(yystack.l_mark[-1].t,yystack.l_mark[-2].pe,yystack.l_mark[0].pe); }
+#line 5746 "y.tab.c"
 break;
 case 272:
 #line 2459 "gram.y"
 	{	goto bbinop; }
+#line 5751 "y.tab.c"
 break;
 case 273:
 #line 2460 "gram.y"
 	{	goto bbinop; }
+#line 5756 "y.tab.c"
 break;
 case 274:
 #line 2461 "gram.y"
 	{	goto bbinop; }
+#line 5761 "y.tab.c"
 break;
 case 275:
 #line 2462 "gram.y"
 	{	goto bbinop; }
+#line 5766 "y.tab.c"
 break;
 case 276:
 #line 2463 "gram.y"
 	{	goto bbinop; }
+#line 5771 "y.tab.c"
 break;
 case 277:
 #line 2464 "gram.y"
 	{	goto bbinop; }
+#line 5776 "y.tab.c"
 break;
 case 278:
 #line 2465 "gram.y"
 	{ 	goto bbinop; }
+#line 5781 "y.tab.c"
 break;
 case 279:
 #line 2466 "gram.y"
 	{	goto bbinop; }
+#line 5786 "y.tab.c"
 break;
 case 280:
 #line 2467 "gram.y"
 	{	goto bbinop; }
+#line 5791 "y.tab.c"
 break;
 case 281:
 #line 2468 "gram.y"
 	{	goto bbinop; }
+#line 5796 "y.tab.c"
 break;
 case 282:
 #line 2469 "gram.y"
 	{	goto bbinop; }
+#line 5801 "y.tab.c"
 break;
 case 283:
 #line 2470 "gram.y"
 	{	goto bbinop; }
+#line 5806 "y.tab.c"
 break;
 case 284:
 #line 2471 "gram.y"
 	{	goto bbinop; }
+#line 5811 "y.tab.c"
 break;
 case 285:
 #line 2472 "gram.y"
 	{	goto bbinop; }
+#line 5816 "y.tab.c"
 break;
 case 286:
 #line 2473 "gram.y"
 	{	goto bbinop; }
+#line 5821 "y.tab.c"
 break;
 case 287:
 #line 2474 "gram.y"
 	{	goto bbinop; }
+#line 5826 "y.tab.c"
 break;
 case 288:
 #line 2476 "gram.y"
 	{	yyval.p = new qexpr(yystack.l_mark[-4].pe,yystack.l_mark[-2].pe,yystack.l_mark[0].pe); }
+#line 5831 "y.tab.c"
 break;
 case 289:
 #line 2478 "gram.y"
 	{	yyval.p = new expr(yystack.l_mark[-1].t,yystack.l_mark[-2].pe,yystack.l_mark[0].pe); }
+#line 5836 "y.tab.c"
 break;
 case 290:
 #line 2480 "gram.y"
 	{ yyval.p = new expr(DELETE,yystack.l_mark[0].pe,0); }
+#line 5841 "y.tab.c"
 break;
 case 291:
 #line 2482 "gram.y"
@@ -5593,10 +5848,12 @@ case 291:
 				}
 				yyval.p = new expr(DELETE,yystack.l_mark[0].pe,yystack.l_mark[-2].pe);
 			}
+#line 5852 "y.tab.c"
 break;
 case 292:
 #line 2490 "gram.y"
 	{	yyval.p = new expr(GDELETE,yystack.l_mark[0].pe,0); }
+#line 5857 "y.tab.c"
 break;
 case 293:
 #line 2492 "gram.y"
@@ -5607,90 +5864,112 @@ case 293:
 				}
 				yyval.p = new expr(DELETE,yystack.l_mark[0].pe,yystack.l_mark[-2].pe);
 			}
+#line 5868 "y.tab.c"
 break;
 case 295:
 #line 2501 "gram.y"
 	{ yyval.p = dummy; }
+#line 5873 "y.tab.c"
 break;
 case 296:
 #line 2505 "gram.y"
 	{	binop:	yyval.p = new expr(yystack.l_mark[-1].t,yystack.l_mark[-2].pe,yystack.l_mark[0].pe); }
+#line 5878 "y.tab.c"
 break;
 case 297:
 #line 2506 "gram.y"
 	{	goto binop; }
+#line 5883 "y.tab.c"
 break;
 case 298:
 #line 2507 "gram.y"
 	{	goto binop; }
+#line 5888 "y.tab.c"
 break;
 case 299:
 #line 2508 "gram.y"
 	{	goto binop; }
+#line 5893 "y.tab.c"
 break;
 case 300:
 #line 2509 "gram.y"
 	{	goto binop; }
+#line 5898 "y.tab.c"
 break;
 case 301:
 #line 2510 "gram.y"
 	{	goto binop; }
+#line 5903 "y.tab.c"
 break;
 case 302:
 #line 2511 "gram.y"
 	{	goto binop; }
+#line 5908 "y.tab.c"
 break;
 case 303:
 #line 2512 "gram.y"
 	{ 	goto binop; }
+#line 5913 "y.tab.c"
 break;
 case 304:
 #line 2513 "gram.y"
 	{	goto binop; }
+#line 5918 "y.tab.c"
 break;
 case 305:
 #line 2514 "gram.y"
 	{	goto binop; }
+#line 5923 "y.tab.c"
 break;
 case 306:
 #line 2515 "gram.y"
 	{	goto binop; }
+#line 5928 "y.tab.c"
 break;
 case 307:
 #line 2516 "gram.y"
 	{	goto binop; }
+#line 5933 "y.tab.c"
 break;
 case 308:
 #line 2517 "gram.y"
 	{	goto binop; }
+#line 5938 "y.tab.c"
 break;
 case 309:
 #line 2518 "gram.y"
 	{	goto binop; }
+#line 5943 "y.tab.c"
 break;
 case 310:
 #line 2519 "gram.y"
 	{	goto binop; }
+#line 5948 "y.tab.c"
 break;
 case 311:
 #line 2520 "gram.y"
 	{	goto binop; }
+#line 5953 "y.tab.c"
 break;
 case 312:
 #line 2521 "gram.y"
 	{	goto binop; }
+#line 5958 "y.tab.c"
 break;
 case 313:
 #line 2523 "gram.y"
 	{	yyval.p = new qexpr(yystack.l_mark[-4].pe,yystack.l_mark[-2].pe,yystack.l_mark[0].pe); }
+#line 5963 "y.tab.c"
 break;
 case 314:
 #line 2525 "gram.y"
 	{	yyval.p = new expr(yystack.l_mark[-1].t,yystack.l_mark[-2].pe,yystack.l_mark[0].pe); }
+#line 5968 "y.tab.c"
 break;
 case 315:
 #line 2527 "gram.y"
 	{	yyval.p = new expr(DELETE,yystack.l_mark[0].pe,0); }
+#line 5973 "y.tab.c"
 break;
 case 316:
 #line 2529 "gram.y"
@@ -5701,10 +5980,12 @@ case 316:
 				}
 				yyval.p = new expr(DELETE,yystack.l_mark[0].pe,yystack.l_mark[-2].pe);
 			}
+#line 5984 "y.tab.c"
 break;
 case 317:
 #line 2537 "gram.y"
 	{	yyval.p = new expr(GDELETE,yystack.l_mark[0].pe,0); }
+#line 5989 "y.tab.c"
 break;
 case 318:
 #line 2539 "gram.y"
@@ -5715,24 +5996,29 @@ case 318:
 				}
 				yyval.p = new expr(DELETE,yystack.l_mark[0].pe,yystack.l_mark[-2].pe);
 			}
+#line 6000 "y.tab.c"
 break;
 case 319:
 #line 2546 "gram.y"
 	{
 			init_seen = 0;
 			}
+#line 6007 "y.tab.c"
 break;
 case 320:
 #line 2550 "gram.y"
 	{ yyval.p = dummy; }
+#line 6012 "y.tab.c"
 break;
 case 321:
 #line 2552 "gram.y"
 	{	yyval.p = dummy; }
+#line 6017 "y.tab.c"
 break;
 case 322:
 #line 2555 "gram.y"
 	{ goto new1; }
+#line 6022 "y.tab.c"
 break;
 case 323:
 #line 2557 "gram.y"
@@ -5741,10 +6027,12 @@ case 323:
 				yyval.p = new texpr(NEW,t,0);
 				--in_new;
 			}
+#line 6031 "y.tab.c"
 break;
 case 324:
 #line 2562 "gram.y"
 	{ goto new3; }
+#line 6036 "y.tab.c"
 break;
 case 325:
 #line 2564 "gram.y"
@@ -5753,44 +6041,54 @@ case 325:
  				yyval.p = new texpr(GNEW,t,0);
 				--in_new;
  			}
+#line 6045 "y.tab.c"
 break;
 case 326:
 #line 2570 "gram.y"
 	{	yyval.p = new expr(yystack.l_mark[0].t,yystack.l_mark[-1].pe,0); }
+#line 6050 "y.tab.c"
 break;
 case 327:
 #line 2572 "gram.y"
 	{
 				yyval.p = new texpr(CAST,yystack.l_mark[-1].pn->tp,yystack.l_mark[0].pe);
 			}
+#line 6057 "y.tab.c"
 break;
 case 328:
 #line 2576 "gram.y"
 	{	yyval.p = new expr(DEREF,yystack.l_mark[0].pe,0); }
+#line 6062 "y.tab.c"
 break;
 case 329:
 #line 2578 "gram.y"
 	{	yyval.p = new expr(ADDROF,0,yystack.l_mark[0].pe); }
+#line 6067 "y.tab.c"
 break;
 case 330:
 #line 2580 "gram.y"
 	{	yyval.p = new expr(UMINUS,0,yystack.l_mark[0].pe); }
+#line 6072 "y.tab.c"
 break;
 case 331:
 #line 2582 "gram.y"
 	{	yyval.p = new expr(UPLUS,0,yystack.l_mark[0].pe); }
+#line 6077 "y.tab.c"
 break;
 case 332:
 #line 2584 "gram.y"
 	{	yyval.p = new expr(NOT,0,yystack.l_mark[0].pe); }
+#line 6082 "y.tab.c"
 break;
 case 333:
 #line 2586 "gram.y"
 	{	yyval.p = new expr(COMPL,0,yystack.l_mark[0].pe); }
+#line 6087 "y.tab.c"
 break;
 case 334:
 #line 2588 "gram.y"
 	{	yyval.p = new expr(yystack.l_mark[-1].t,0,yystack.l_mark[0].pe); }
+#line 6092 "y.tab.c"
 break;
 case 335:
 #line 2590 "gram.y"
@@ -5798,6 +6096,7 @@ case 335:
 				yyval.p = new texpr(SIZEOF,0,yystack.l_mark[0].pe);
 				--in_sizeof;
 			}
+#line 6100 "y.tab.c"
 break;
 case 336:
 #line 2595 "gram.y"
@@ -5805,14 +6104,17 @@ case 336:
 				yyval.p = new texpr(SIZEOF,yystack.l_mark[0].pn->tp,0);
 				--in_sizeof;
 			}
+#line 6108 "y.tab.c"
 break;
 case 337:
 #line 2600 "gram.y"
 	{	yyval.p = new expr(DEREF,yystack.l_mark[-3].pe,yystack.l_mark[-1].pe); }
+#line 6113 "y.tab.c"
 break;
 case 338:
 #line 2602 "gram.y"
 	{	yyval.p = new ref(REF,yystack.l_mark[-2].pe,yystack.l_mark[0].pn); }
+#line 6118 "y.tab.c"
 break;
 case 339:
 #line 2604 "gram.y"
@@ -5820,6 +6122,7 @@ case 339:
 				yystack.l_mark[0].pn->n_qualifier = yystack.l_mark[-1].pn;
 				yyval.p = new ref(REF,yystack.l_mark[-3].pe,yystack.l_mark[0].pn);
 			}
+#line 6126 "y.tab.c"
 break;
 case 340:
 #line 2609 "gram.y"
@@ -5827,10 +6130,12 @@ case 340:
 				yystack.l_mark[0].pn->n_qualifier = yystack.l_mark[-1].pn;
 				yyval.p = new ref(REF,yystack.l_mark[-3].pe,yystack.l_mark[0].pn);
 			}
+#line 6134 "y.tab.c"
 break;
 case 341:
 #line 2614 "gram.y"
 	{	yyval.p = new ref(REF,yystack.l_mark[-2].pe,yystack.l_mark[0].pn); }
+#line 6139 "y.tab.c"
 break;
 case 342:
 #line 2616 "gram.y"
@@ -5841,6 +6146,7 @@ case 342:
 				if ( yystack.l_mark[-1].pn && yystack.l_mark[-1].pn->n_template_arg != template_type_formal )
 					UNSET_SCOPE();
 			}
+#line 6150 "y.tab.c"
 break;
 case 343:
 #line 2624 "gram.y"
@@ -5852,10 +6158,12 @@ case 343:
 				if ( yystack.l_mark[-1].pn && yystack.l_mark[-1].pn->n_template_arg != template_type_formal )
 					UNSET_SCOPE();
 			}
+#line 6162 "y.tab.c"
 break;
 case 344:
 #line 2633 "gram.y"
 	{	yyval.p = new ref(DOT,yystack.l_mark[-2].pe,yystack.l_mark[0].pn); }
+#line 6167 "y.tab.c"
 break;
 case 345:
 #line 2635 "gram.y"
@@ -5863,6 +6171,7 @@ case 345:
 				yystack.l_mark[0].pn->n_qualifier = yystack.l_mark[-1].pn;
 				yyval.p = new ref(DOT,yystack.l_mark[-3].pe,yystack.l_mark[0].pn);
 			}
+#line 6175 "y.tab.c"
 break;
 case 346:
 #line 2640 "gram.y"
@@ -5870,10 +6179,12 @@ case 346:
 				yystack.l_mark[0].pn->n_qualifier = yystack.l_mark[-1].pn;
 				yyval.p = new ref(DOT,yystack.l_mark[-3].pe,yystack.l_mark[0].pn);
 			}
+#line 6183 "y.tab.c"
 break;
 case 347:
 #line 2645 "gram.y"
 	{	yyval.p = new ref(DOT,yystack.l_mark[-2].pe,yystack.l_mark[0].pn); }
+#line 6188 "y.tab.c"
 break;
 case 348:
 #line 2647 "gram.y"
@@ -5884,6 +6195,7 @@ case 348:
 				if ( yystack.l_mark[-1].pn && yystack.l_mark[-1].pn->n_template_arg != template_type_formal )
 					UNSET_SCOPE();
 			}
+#line 6199 "y.tab.c"
 break;
 case 349:
 #line 2655 "gram.y"
@@ -5895,6 +6207,7 @@ case 349:
 				if ( yystack.l_mark[-1].pn && yystack.l_mark[-1].pn->n_template_arg != template_type_formal )
 					UNSET_SCOPE();
 			}
+#line 6211 "y.tab.c"
 break;
 case 351:
 #line 2665 "gram.y"
@@ -5907,6 +6220,7 @@ case 351:
 				if ( yystack.l_mark[-1].pn && yystack.l_mark[-1].pn->n_template_arg != template_type_formal )
 					UNSET_SCOPE();
 			}
+#line 6224 "y.tab.c"
 break;
 case 352:
 #line 2675 "gram.y"
@@ -5915,6 +6229,7 @@ case 352:
 				yyval.pn->n_qualifier = yystack.l_mark[-2].pn;
 				yyval.pn->n_dtag = yystack.l_mark[0].pn;
 			}
+#line 6233 "y.tab.c"
 break;
 case 353:
 #line 2681 "gram.y"
@@ -5922,6 +6237,7 @@ case 353:
 				yyval.p = dummy_dtor( yystack.l_mark[0].t, yystack.l_mark[0].t );
 				yyval.pn->n_qualifier = yystack.l_mark[-2].pn;
 			}
+#line 6241 "y.tab.c"
 break;
 case 354:
 #line 2686 "gram.y"
@@ -5929,6 +6245,7 @@ case 354:
 			if ( init_seen )
      				error( "syntax error:IrL illegal within ()");
 			}
+#line 6249 "y.tab.c"
 break;
 case 355:
 #line 2692 "gram.y"
@@ -5937,38 +6254,45 @@ case 355:
 					error("syntax error: nullE");
 				yyval.p = yystack.l_mark[-1].p;
 			}
+#line 6258 "y.tab.c"
 break;
 case 356:
 #line 2698 "gram.y"
 	{	yyval.p = zero; }
+#line 6263 "y.tab.c"
 break;
 case 357:
 #line 2700 "gram.y"
 	{	yyval.p = new expr(ICON,0,0);
 				yyval.pe->string = copy_if_need_be(yystack.l_mark[0].s);
 			}
+#line 6270 "y.tab.c"
 break;
 case 358:
 #line 2704 "gram.y"
 	{	yyval.p = new expr(FCON,0,0);
 				yyval.pe->string = copy_if_need_be(yystack.l_mark[0].s);
 			}
+#line 6277 "y.tab.c"
 break;
 case 359:
 #line 2708 "gram.y"
 	{	yyval.p = new expr(STRING,0,0);
 				yyval.pe->string = copy_if_need_be(yystack.l_mark[0].s);
 			}
+#line 6284 "y.tab.c"
 break;
 case 360:
 #line 2712 "gram.y"
 	{	yyval.p = new expr(CCON,0,0);
 				yyval.pe->string = copy_if_need_be(yystack.l_mark[0].s);
 			}
+#line 6291 "y.tab.c"
 break;
 case 361:
 #line 2716 "gram.y"
 	{	yyval.p = new expr(THIS,0,0); }
+#line 6296 "y.tab.c"
 break;
 case 362:
 #line 2720 "gram.y"
@@ -5976,6 +6300,7 @@ case 362:
 				yyval.p = dummy_dtor();
 				yyval.pn->n_dtag = yystack.l_mark[0].pn; /* checked later*/
 			}
+#line 6304 "y.tab.c"
 break;
 case 363:
 #line 2725 "gram.y"
@@ -5984,14 +6309,17 @@ case 363:
 				yyval.pn->n_qualifier = yystack.l_mark[-2].pn; /* checked later*/
 				yyval.pn->n_dtag = yystack.l_mark[0].pn; /* checked later*/
 			}
+#line 6313 "y.tab.c"
 break;
 case 364:
 #line 2731 "gram.y"
 	{ yyval.p = dummy_dtor(yystack.l_mark[-3].t,yystack.l_mark[0].t); }
+#line 6318 "y.tab.c"
 break;
 case 365:
 #line 2733 "gram.y"
 	{ yyval.p = dummy_dtor(yystack.l_mark[0].t,yystack.l_mark[0].t); }
+#line 6323 "y.tab.c"
 break;
 case 366:
 #line 2735 "gram.y"
@@ -5999,6 +6327,7 @@ case 366:
 				yyval.p = dummy_dtor( yystack.l_mark[-3].t, yystack.l_mark[-3].t );
 				yyval.pn->n_dtag = yystack.l_mark[0].pn;
 			}
+#line 6331 "y.tab.c"
 break;
 case 367:
 #line 2740 "gram.y"
@@ -6006,6 +6335,7 @@ case 367:
 				yyval.p = dummy_dtor( yystack.l_mark[0].t, yystack.l_mark[0].t );
 				yyval.pn->n_qualifier = yystack.l_mark[-2].pn;
 			}
+#line 6339 "y.tab.c"
 break;
 case 368:
 #line 2745 "gram.y"
@@ -6014,6 +6344,7 @@ case 368:
 				yyval.pn->n_qualifier = yystack.l_mark[-2].pn;
 				yyval.pn->n_dtag = yystack.l_mark[0].pn;
 			}
+#line 6348 "y.tab.c"
 break;
 case 369:
 #line 2751 "gram.y"
@@ -6021,10 +6352,12 @@ case 369:
 				yyval.p = dummy_dtor( yystack.l_mark[0].t, yystack.l_mark[0].t );
 				yyval.pn->n_qualifier = yystack.l_mark[-2].pn;
 			}
+#line 6356 "y.tab.c"
 break;
 case 370:
 #line 2758 "gram.y"
 	{ 	yyval.p = new texpr(VALUE,tok_to_type(yystack.l_mark[-3].t),yystack.l_mark[-1].pe); }
+#line 6361 "y.tab.c"
 break;
 case 371:
 #line 2763 "gram.y"
@@ -6034,10 +6367,12 @@ case 371:
 					yyval.pe->tp2 = new basetype(TYPE,yystack.l_mark[-3].pn);
 				}
 			}
+#line 6371 "y.tab.c"
 break;
 case 372:
 #line 2769 "gram.y"
 	{ goto new2; }
+#line 6376 "y.tab.c"
 break;
 case 373:
 #line 2771 "gram.y"
@@ -6047,10 +6382,12 @@ case 373:
 				yyval.pe->e2 = yystack.l_mark[-2].pe;
 				--in_new;
 			}
+#line 6386 "y.tab.c"
 break;
 case 374:
 #line 2777 "gram.y"
 	{ goto new4; }
+#line 6391 "y.tab.c"
 break;
 case 375:
 #line 2779 "gram.y"
@@ -6060,6 +6397,7 @@ case 375:
 				yyval.pe->e2 = yystack.l_mark[-2].pe;
 				--in_new;
 			}
+#line 6401 "y.tab.c"
 break;
 case 376:
 #line 2786 "gram.y"
@@ -6071,24 +6409,29 @@ case 376:
 				else
 					yyval.p = new call(e,ee);
 			}
+#line 6413 "y.tab.c"
 break;
 case 377:
 #line 2798 "gram.y"
 	{
 			yyval.pn = parametrized_typename(yystack.l_mark[-3].pn,(expr_unlist(yystack.l_mark[-1].el)));
 	 	 }
+#line 6420 "y.tab.c"
 break;
 case 378:
 #line 2803 "gram.y"
 	{ yyval.pn = yystack.l_mark[0].pn; }
+#line 6425 "y.tab.c"
 break;
 case 379:
 #line 2804 "gram.y"
 	{ yyval.pn = sta_name; }
+#line 6430 "y.tab.c"
 break;
 case 380:
 #line 2805 "gram.y"
 	{ yyval.pn = yystack.l_mark[-1].pn; }
+#line 6435 "y.tab.c"
 break;
 case 381:
 #line 2810 "gram.y"
@@ -6105,28 +6448,33 @@ case 381:
 				}
 				yyval.p = yystack.l_mark[0].pn;
 			}
+#line 6452 "y.tab.c"
 break;
 case 382:
 #line 2824 "gram.y"
 	{	yyval.p = new name(oper_name(yystack.l_mark[0].t));
 				yyval.pn->n_oper = yystack.l_mark[0].t;
 			}
+#line 6459 "y.tab.c"
 break;
 case 383:
 #line 2828 "gram.y"
 	{	yyval.p = yystack.l_mark[0].p;
 				sig_name(yyval.pn);
 			}
+#line 6466 "y.tab.c"
 break;
 case 384:
 #line 2837 "gram.y"
 	{
 				yyval.p = Ncast(yystack.l_mark[-2].p,yystack.l_mark[-1].pn);
 			}
+#line 6473 "y.tab.c"
 break;
 case 385:
 #line 2842 "gram.y"
 	{ check_cast(); }
+#line 6478 "y.tab.c"
 break;
 case 386:
 #line 2846 "gram.y"
@@ -6149,10 +6497,12 @@ case 386:
 				yyval.p = new basetype(t,0);
 
 			}
+#line 6501 "y.tab.c"
 break;
 case 387:
 #line 2865 "gram.y"
 	{ yyval.p = new basetype(TYPE,yystack.l_mark[0].pn); }
+#line 6506 "y.tab.c"
 break;
 case 388:
 #line 2867 "gram.y"
@@ -6172,6 +6522,7 @@ case 388:
 				}
 				DECL_TYPE = 0;
 			}
+#line 6526 "y.tab.c"
 break;
 case 389:
 #line 2884 "gram.y"
@@ -6180,14 +6531,17 @@ case 389:
 			 		yyval.p = yystack.l_mark[-1].pb->name_adj(yystack.l_mark[0].pn);
 				DECL_TYPE = 0;
 			}
+#line 6535 "y.tab.c"
 break;
 case 390:
 #line 2891 "gram.y"
 	{ yyval.p = Ncast(yystack.l_mark[-1].p,yystack.l_mark[0].pn); }
+#line 6540 "y.tab.c"
 break;
 case 391:
 #line 2894 "gram.y"
 	{ yyval.p = Ncast(yystack.l_mark[-1].p,yystack.l_mark[0].pn); }
+#line 6545 "y.tab.c"
 break;
 case 392:
 #line 2897 "gram.y"
@@ -6195,12 +6549,14 @@ case 392:
                          /*      ENTER_NAME($<pn>2);*/
 				yyval.p = Ndata(yystack.l_mark[-1].p,yystack.l_mark[0].pn);
 			}
+#line 6553 "y.tab.c"
 break;
 case 393:
 #line 2902 "gram.y"
 	{
                         /*      ENTER_NAME($<pn>2);*/
                         }
+#line 6560 "y.tab.c"
 break;
 case 394:
 #line 2906 "gram.y"
@@ -6208,6 +6564,7 @@ case 394:
 				yyval.p = Ndata(yystack.l_mark[-4].p,yystack.l_mark[-3].pn);
                                 yyval.pn->n_initializer = yystack.l_mark[0].pe;
                         }
+#line 6568 "y.tab.c"
 break;
 case 395:
 #line 2913 "gram.y"
@@ -6218,6 +6575,7 @@ case 395:
 				yyval.pl = 0;
 				/*SYM -- tn stuff removed*/
 			}
+#line 6579 "y.tab.c"
 break;
 case 396:
 #line 2923 "gram.y"
@@ -6230,6 +6588,7 @@ case 396:
                         POP_SCOPE();/*SYM*/
 			/*RESTORE_STATE();*/
 		    }
+#line 6592 "y.tab.c"
 break;
 case 397:
 #line 2935 "gram.y"
@@ -6244,28 +6603,34 @@ case 397:
 				else
 					error("AD syntax");
 			}
+#line 6607 "y.tab.c"
 break;
 case 398:
 #line 2947 "gram.y"
 	{
 				if (yystack.l_mark[0].p) yyval.nl = new nlist(yystack.l_mark[0].pn);
 			}
+#line 6614 "y.tab.c"
 break;
 case 400:
 #line 2953 "gram.y"
 	{	yyval.p = 0; }
+#line 6619 "y.tab.c"
 break;
 case 401:
 #line 2957 "gram.y"
 	{	yyval.t = 1; }
+#line 6624 "y.tab.c"
 break;
 case 402:
 #line 2959 "gram.y"
 	{	yyval.t = ELLIPSIS; }
+#line 6629 "y.tab.c"
 break;
 case 403:
 #line 2961 "gram.y"
 	{	yyval.t = ELLIPSIS; }
+#line 6634 "y.tab.c"
 break;
 case 404:
 #line 2965 "gram.y"
@@ -6273,6 +6638,7 @@ case 404:
 			yyval.p = new ptr(PTR,0);
 			EXPECT_ID();
 			}
+#line 6642 "y.tab.c"
 break;
 case 405:
 #line 2970 "gram.y"
@@ -6280,10 +6646,12 @@ case 405:
 			yyval.p = new ptr(RPTR,0);
 			EXPECT_ID();
 			}
+#line 6650 "y.tab.c"
 break;
 case 406:
 #line 2975 "gram.y"
 	{	yyval.p = doptr(PTR,yystack.l_mark[0].t); }
+#line 6655 "y.tab.c"
 break;
 case 407:
 #line 2977 "gram.y"
@@ -6299,10 +6667,12 @@ case 407:
 				}
 				yyval.p = yystack.l_mark[-1].pp;
 			}
+#line 6671 "y.tab.c"
 break;
 case 408:
 #line 2990 "gram.y"
 	{	yyval.p = doptr(RPTR,yystack.l_mark[0].t); }
+#line 6676 "y.tab.c"
 break;
 case 409:
 #line 2992 "gram.y"
@@ -6311,6 +6681,7 @@ case 409:
 				memptr_tok = 0;
 				goto memptr1;
 			}
+#line 6685 "y.tab.c"
 break;
 case 410:
 #line 2998 "gram.y"
@@ -6336,6 +6707,7 @@ case 410:
 			}
 			EXPECT_ID();
 			}
+#line 6711 "y.tab.c"
 break;
 case 411:
 #line 3021 "gram.y"
@@ -6344,6 +6716,7 @@ case 411:
 				memptr_tok = yystack.l_mark[0].t;
 				goto memptr1;
 			}
+#line 6720 "y.tab.c"
 break;
 case 412:
 #line 3027 "gram.y"
@@ -6352,16 +6725,19 @@ case 412:
 				memptr_tok = yystack.l_mark[0].t;
 				goto memptr1;
 			}
+#line 6729 "y.tab.c"
 break;
 case 413:
 #line 3034 "gram.y"
 	{ yyval.p = new vec(0,yystack.l_mark[-1].pe!=dummy?yystack.l_mark[-1].pe:0 ); }
+#line 6734 "y.tab.c"
 break;
 case 414:
 #line 3035 "gram.y"
 	{ yyval.p = new vec(0,0); }
+#line 6739 "y.tab.c"
 break;
-#line 6365 "y.tab.c"
+#line 6741 "y.tab.c"
     }
     yystack.s_mark -= yym;
     yystate = *yystack.s_mark;
@@ -6379,11 +6755,12 @@ break;
         *++yystack.l_mark = yyval;
         if (yychar < 0)
         {
-            if ((yychar = YYLEX) < 0) yychar = YYEOF;
+            yychar = YYLEX;
+            if (yychar < 0) yychar = YYEOF;
 #if YYDEBUG
             if (yydebug)
             {
-                yys = yyname[YYTRANSLATE(yychar)];
+                if ((yys = yyname[YYTRANSLATE(yychar)]) == NULL) yys = yyname[YYUNDFTOKEN];
                 printf("%sdebug: state %d, reading %d (%s)\n",
                         YYPREFIX, YYFINAL, yychar, yys);
             }
@@ -6392,8 +6769,8 @@ break;
         if (yychar == YYEOF) goto yyaccept;
         goto yyloop;
     }
-    if ((yyn = yygindex[yym]) && (yyn += yystate) >= 0 &&
-            yyn <= YYTABLESIZE && yycheck[yyn] == yystate)
+    if (((yyn = yygindex[yym]) != 0) && (yyn += yystate) >= 0 &&
+            yyn <= YYTABLESIZE && yycheck[yyn] == (YYINT) yystate)
         yystate = yytable[yyn];
     else
         yystate = yydgoto[yym];
@@ -6402,10 +6779,7 @@ break;
         printf("%sdebug: after reduction, shifting from state %d \
 to state %d\n", YYPREFIX, *yystack.s_mark, yystate);
 #endif
-    if (yystack.s_mark >= yystack.s_last && yygrowstack(&yystack) == YYENOMEM)
-    {
-        goto yyoverflow;
-    }
+    if (yystack.s_mark >= yystack.s_last && yygrowstack(&yystack) == YYENOMEM) goto yyoverflow;
     *++yystack.s_mark = (YYINT) yystate;
     *++yystack.l_mark = yyval;
     goto yyloop;
