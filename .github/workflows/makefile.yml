@@ -34,6 +34,9 @@ jobs:
     - name: Cross compiling for Win64
       run: make clean; ./mk-mingw.sh
 
+    - name: build itself (bootstrap)
+      run: ./mk-mingw.sh cfront_c.exe
+
   build-osx-amd64:
     name: cfront osx/amd64
     runs-on: macos-latest

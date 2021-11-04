@@ -381,7 +381,7 @@ templ_fct::operator delete(void* vp,size_t)
 }
 
 // MSVC uses __cdecl calling convention for new/delete :-O
-#ifdef _MSC_VER
+#if defined(_MSC_VER) && !defined __cfront__
 #  define NEWDEL_CALL __cdecl
 #else
 #  define NEWDEL_CALL

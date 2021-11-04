@@ -21,22 +21,22 @@ CC	=	CC
 CCOMP = gcc
 
 .PHONY: demo
-all: cfront munch libC.a
+all: cfront$(EXEEXT) munch$(EXEEXT) libC.a
 
 libC.a:	always
 	cd lib/mk && $(MAKE) CC="$(CC)" CCOMP="$(CCOMP)" CCFLAGS="$(CCFLAGS)" MSIZE="$(MSIZE)" BSD=$(BSD)
 	mv lib/mk/libC.a .
 
-munch:	_munch/munch.c
+munch$(EXEEXT):	_munch/munch.c
 	$(CCOMP) $(MSIZE) -o munch$(EXEEXT) _munch/munch.c
 
-cfront: always
+cfront$(EXEEXT): always
 	$(MAKE)   CCOMP="$(CCOMP)" MSIZE="$(MSIZE)" -C src
 
-cfront_c:
-	rm src/*.o
-	$(MAKE) CXX=`pwd`/CC  CCOMP="$(CCOMP)" MSIZE="$(MSIZE)" -C src cfront_c
-	mv src/cfront_c .
+cfront_c$(EXEEXT):
+	-rm src/*.o
+	$(MAKE) CXX=`pwd`/CC  CCOMP="$(CCOMP)" MSIZE="$(MSIZE)" -C src cfront_c$(EXEEXT)
+	mv src/cfront_c$(EXEEXT) .
 
 demo: all
 	$(MAKE)   CCOMP="$(CCOMP)" MSIZE="$(MSIZE)" -C demo/hello
@@ -63,5 +63,5 @@ clean:
 	$(MAKE) -C src clean
 	$(MAKE) -C lib/mk clean
 	$(MAKE) -C demo/hello clean
-	rm -f munch libC.a
+	-rm -f munch$(EXEEXT) libC.a
 

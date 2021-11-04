@@ -30,29 +30,29 @@ COMDEP0	= 	szal.result Makefile \
 
 COMDEP	=	$(COMDEP0) yystype.h
 
-cfront:	$(OFILES)
-	#$(CXX)	-o cfront $(OFILES)
+cfront$(EXEEXT):	$(OFILES)
+	#$(CXX)	-o cfront$(EXEEXT) $(OFILES)
 	$(CCOMP) $(MSIZE)	-o cfront$(EXEEXT) $(OFILES)
 	cp cfront$(EXEEXT) ..
 
-cfront_c: $(OFILES)
+cfront_c$(EXEEXT): $(OFILES)
 	$(CCOMP) $(MSIZE) -g -o cfront_c$(EXEEXT) $(OFILES) ../libC.a
 	nm cfront_c$(EXEEXT) | $(EXEWRAPPER) ../munch$(EXEEXT) > cfront_c.cdts..c
 	$(CCOMP) $(MSIZE) -g -o cfront_c$(EXEEXT) $(OFILES) cfront_c.cdts..c ../libC.a
 
-cfront_cc: $(OFILES)
+cfront_cc$(EXEEXT): $(OFILES)
 	$(CCOMP) $(MSIZE) -g -o cfront_cc$(EXEEXT) $(OFILES) ../libC.a
 	nm cfront_cc$(EXEEXT) | $(EXEWRAPPER) ../munch$(EXEEXT) > cfront_cc.cdts..c
 	$(CCOMP) $(MSIZE) -g -o cfront_cc$(EXEEXT) $(OFILES) cfront_cc.cdts..c ../libC.a
 
-cfront_ccc: $(OFILES)
+cfront_ccc$(EXEEXT): $(OFILES)
 	$(CCOMP) $(MSIZE) -g -o cfront_ccc$(EXEEXT) $(OFILES) ../libC.a
 	nm cfront_ccc$(EXEEXT) | $(EXEWRAPPER) ../munch$(EXEEXT) > cfront_ccc.cdts..c
 	$(CCOMP) $(MSIZE) -g -o cfront_ccc$(EXEEXT) $(OFILES) cfront_ccc.cdts..c ../libC.a
 
 szal.result: szal/szal.c
-	$(CCOMP) $(MSIZE) -o szal/szal szal/szal.c
-	$(EXEWRAPPER) ./szal/szal > szal.result
+	$(CCOMP) $(MSIZE) -o szal/szal$(EXEEXT) szal/szal.c
+	$(EXEWRAPPER) ./szal/szal$(EXEEXT) > szal.result
 
 y.tab.cpp yystype.h: gram.y $(COMDEP0)
 	#byacc -d gram.y
@@ -170,6 +170,6 @@ _stdio.o: _stdio.c
 	$(CCOMP)  $(MSIZE) -c _stdio.c
 
 clean:
-	rm -f szal.result szal/szal
-	#rm -f y.tab.cpp yystype.h
-	rm -f *.o *..c cfront #../cfront
+	-rm -f szal.result szal/szal$(EXEEXT)
+	#-rm -f y.tab.cpp yystype.h
+	-rm -f *.o *..c cfront$(EXEEXT) #../cfront
