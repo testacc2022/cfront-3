@@ -40,7 +40,7 @@ jobs:
       run: ./mk-mingw64.sh cfront_c.exe
 
     - name: Cross compiling for Win32
-      run: rm cfront_c.exe; ./mk-mingw32.sh clean; ./mk-mingw32.sh
+      run: ./mk-mingw32.sh clean; ./mk-mingw32.sh
 
     - name: Build itself Win32 (bootstrap)
       run: ./mk-mingw32.sh cfront_c.exe
